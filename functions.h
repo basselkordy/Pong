@@ -4,9 +4,17 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 using namespace std;
+using namespace sf;
 
+// Defining some Constants
+// for the screen
+#define GAMEWIDTH 800
+#define GAMEHEIGHT 600
+// for the bounding the pads
+#define PADDINGTOP 10
+#define PADDINGBOTTOM 10
 // Defined here to be easily accessed by functions 
-sf::Event event;
+Event event;
 
 // Structures
 
@@ -18,9 +26,9 @@ struct PAD
 	// Length will vary
 	int length;
 
-	sf::RectangleShape rect;
+	RectangleShape rect;
 
-	sf::Texture texture;
+	Texture texture;
 
 	int velocity;
 
@@ -29,8 +37,8 @@ struct PAD
 
 struct BALL
 {
-	sf::CircleShape circle;
-	sf::Texture texture;
+	CircleShape circle;
+	Texture texture;
 
 	// Set default ball speed
 	int xVelocity = -5,
@@ -43,28 +51,15 @@ struct BALL
 // Functions
 
 	// takes a key code, returns true if its pressed, false if not
-bool isPressed(int button)
+bool isPressed(Keyboard::Key x)
 {
-	if (event.type == sf::Event::KeyPressed && event.key.code == button)
+	if (Keyboard::isKeyPressed(x))
 	{
 		return true;
 	}
 	return false;
 }
 
-
-
-
-// takes a key code, returns true if its released, false if not
-bool isReleased(int button)
-{
-	if (event.type == sf::Event::KeyReleased && event.key.code == button)
-	{
-		return true;
-	}
-	return false;
-
-}
 
 // takes a reference to a BALL, positions it in a random position in the middle
 void RandomPos(BALL& ball)
@@ -107,17 +102,17 @@ int Get_Movement(bool W, bool S)
 }
 
 // Takes a reference to a RectangleShape, prevents it from getting out of bounds
-void boundcheck(sf::RectangleShape& rect)
+void boundcheck(RectangleShape& rect)
 {
-	if (rect.getPosition().y < 0)
+	if (rect.getPosition().y < PADDINGTOP)
 	{
-		rect.setPosition(rect.getPosition().x, 0);
+		rect.setPosition(rect.getPosition().x, PADDINGTOP);
 		return;
 	}
 
-	if (rect.getPosition().y > 450)
+	if (rect.getPosition().y > GAMEHEIGHT - rect.getSize().y - PADDINGBOTTOM)
 	{
-		rect.setPosition(rect.getPosition().x, 450);
+		rect.setPosition(rect.getPosition().x, GAMEHEIGHT - rect.getSize().y - PADDINGBOTTOM);
 	}
 
 }
@@ -128,13 +123,19 @@ void boundcheck(sf::RectangleShape& rect)
 void boundcheck_ball(BALL& ball)
 {
 	// horizonal bounding
-	if (ball.circle.getPosition().x < 40 || ball.circle.getPosition().x > 760)
+	if (ball.circle.getPosition().x < 0)
 	{
+		// left pad lost
+		RandomPos(ball);
+	}
+	if (ball.circle.getPosition().x > GAMEWIDTH)
+	{
+		// right pad lost
 		RandomPos(ball);
 	}
 
 	//vertical bounding
-	if (ball.circle.getPosition().y < 0 || ball.circle.getPosition().y > 580)
+	if (ball.circle.getPosition().y < 0 || ball.circle.getPosition().y > GAMEHEIGHT - ball.circle.getRadius())
 	{
 		ball.yVelocity *= -1;
 	}

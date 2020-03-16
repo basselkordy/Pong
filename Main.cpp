@@ -1,12 +1,11 @@
 
 // Header containing custom functions, includes, structs definitons, and the Event object
 #include "functions.h"
-
-
 int main(void)
 {
+
 	// Create the main window 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Pong");
+	RenderWindow window(VideoMode(GAMEWIDTH, GAMEHEIGHT), "Pong");
 
 	// Limit FPS to 60
 	window.setFramerateLimit(60);
@@ -23,7 +22,7 @@ int main(void)
 	pad1.length = 150;
 
 	// Create the rectangle shape with given length and width and position it
-	pad1.rect.setSize(sf::Vector2f(pad1.width, pad1.length));
+	pad1.rect.setSize(Vector2f(pad1.width, pad1.length));
 	pad1.rect.setPosition(20, 400);
 
 	// Add texture
@@ -35,7 +34,7 @@ int main(void)
 	pad2.length = 150;
 
 	// Create the rectangle shape with given length and width
-	pad2.rect.setSize(sf::Vector2f(pad1.width, pad1.length));
+	pad2.rect.setSize(Vector2f(pad1.width, pad1.length));
 
 	pad2.rect.setPosition(750, 350);
 
@@ -44,16 +43,12 @@ int main(void)
 	BALL ball;
 
 	// Set radius
-	ball.circle.setRadius(10);
+	ball.circle.setRadius(15);
 
 	// Add texture
 	ball.texture.loadFromFile("resources/col.png");
 
 	ball.circle.setPosition(400, 300);
-
-
-
-
 
 
 	// States
@@ -65,7 +60,7 @@ int main(void)
 	// Variables 
 
 
-	
+
 	// GAME LOOP
 	while (play)
 	{
@@ -73,36 +68,34 @@ int main(void)
 		// EVENTS
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
+			if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape))
 			{
-				window.close();
+				play = false;
 				return 0;
 			}
 
-			// Movement if statments, "if (1)" is just to minimize 
-			if (1)
-			{
-				if (isPressed('W' - 'A'))
-					W = true;
-				if (isPressed('S' - 'A'))
-					S = true;
-				if (isReleased('W' - 'A'))
-					W = false;
-				if (isReleased('S' - 'A'))
-					S = false;
+			// pad1 Movement
+			if (isPressed(Keyboard::W))
+				W = true;
+			else
+				W = false;
 
-				if (isPressed(73))
-					Up = true;
+			if (isPressed(Keyboard::S))
+				S = true;
+			else
+				S = false;
 
-				if (isPressed(74))
-					Down = true;
+			// pad2 Movement
+			if (isPressed(Keyboard::Up))
+				Up = true;
+			else
+				Up = false;
 
-				if (isReleased(73))
-					Up = false;
+			if (isPressed(Keyboard::Down))
+				Down = true;
+			else
+				Down = false;
 
-				if (isReleased(74))
-					Down = false;
-			}
 
 		}
 
@@ -110,13 +103,13 @@ int main(void)
 
 			// Movment
 
-				// Pad1 Movement
-		pad1.velocity = Get_Movement(S, W) * 5;
+		// Pad1 Movement
+		pad1.velocity = Get_Movement(S, W) * 10;
 		pad1.rect.move(0, pad1.velocity);
 		boundcheck(pad1.rect);
 
 		// Pad2 Movement
-		pad2.velocity = Get_Movement(Down, Up) * 5;
+		pad2.velocity = Get_Movement(Down, Up) * 10;
 		pad2.rect.move(0, pad2.velocity);
 		boundcheck(pad2.rect);
 
@@ -129,7 +122,7 @@ int main(void)
 
 		// RENDERING
 
-		window.clear(sf :: Color :: Cyan);
+		window.clear(Color::Black);
 
 		// Draw pads and ball
 		window.draw(pad1.rect);
