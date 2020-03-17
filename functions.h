@@ -21,7 +21,7 @@ Event event;
 struct PAD
 {
 	// Width is constant
-	const int width = 30;
+	const int width = 20;
 
 	// Length will vary
 	int length;
