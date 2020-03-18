@@ -17,7 +17,6 @@ using namespace sf;
 #define ballRadius 15.f
 // Defined here to be easily accessed by functions 
 Event event;
-
 // Structures
 
 struct PAD
@@ -29,7 +28,7 @@ struct PAD
 	int length;
 
 	RectangleShape rect;
-
+	
 	Texture texture;
 
 	int velocity;
@@ -44,7 +43,7 @@ struct BALL
 
 	// Set default ball speed
 	int xVelocity = -5,
-		yVelocity = -5 ;
+		yVelocity = -5;
 
 
 };
@@ -124,7 +123,7 @@ void boundcheck(PAD& pad)
 void boundcheck_ball(BALL& ball)
 {
 	// horizonal bounding
-	if (ball.circle.getPosition().x  + ballRadius< 0)
+	if (ball.circle.getPosition().x + ballRadius < 0)
 	{
 		// left pad lost
 		RandomPos(ball);
@@ -138,7 +137,7 @@ void boundcheck_ball(BALL& ball)
 	//vertical bounding
 	if (
 		ball.circle.getPosition().y + ballRadius > GAMEHEIGHT
-			|| 
+		||
 		ball.circle.getPosition().y - ballRadius < 0
 		)
 	{
@@ -179,7 +178,7 @@ void isColliding(BALL& ball, RectangleShape& shape)
 		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
 		)
 	{
-		
+
 		ball.circle.setPosition(shape.getPosition().x - ballRadius - shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
 		ball.xVelocity *= -1;
 	}
@@ -219,6 +218,6 @@ void isColliding(BALL& ball, RectangleShape& shape)
 	//}
 	//
 
-	
+
 
 }
