@@ -2,7 +2,7 @@
 
 Menu::Menu(float width, float height)
 {
-	if (!font.loadFromFile("Daitengu DEMO.otf") || !font2.loadFromFile("Youmurdererbb-pwoK.otf")) {
+	if (!font.loadFromFile("resources/Daitengu DEMO.otf") || !font2.loadFromFile("resources/Youmurdererbb-pwoK.otf")) {
 
 	}
 	
