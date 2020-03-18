@@ -1,4 +1,5 @@
 // Header containing custom functions, includes, structs definitons, and the Event object
+
 #include "functions.h"
 #include "Menu.h"
 #include<sstream>
@@ -54,7 +55,7 @@ int main(void)
 	pad2.length = 125;
 
 	// Create the rectangle shape with given length and width
-	pad2.rect.setSize(Vector2f(pad1.width, pad1.length));
+	pad2.rect.setSize(Vector2f(pad2.width, pad2.length));
 	// Set the orgin
 	pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
 	// Set the position
@@ -71,6 +72,50 @@ int main(void)
 	// Set the positon and orgin
 	ball.circle.setPosition(400, 300);
 	ball.circle.setOrigin(ballRadius / 2.f, ballRadius / 2.f);
+
+
+	//////powerUps///////
+
+		//longate
+
+		pUp longate; //struct containing powerup attributes
+		Clock longC; //clock decleration to work a timer later for how long the powerup stays
+			longate.isSpawned = false;
+			longate.isActive = false;
+			longate.circle.setFillColor(Color::Red); //pUp color
+			longate.circle.setRadius(10); //pUp size
+
+
+		//freeze 
+
+		pUp freeze;
+		Clock freezeC;
+			freeze.isSpawned = false;
+			freeze.isActive = false;
+			freeze.circle.setFillColor(Color::Blue); //pUp color
+			freeze.circle.setRadius(10); //pUp size	
+
+		//slow
+
+		pUp slow;
+		Clock slowC;
+			slow.isSpawned = false;
+			slow.isActive = false;
+			slow.circle.setFillColor(Color::Green); //pUp color
+			slow.circle.setRadius(10); //pUp size
+
+		//Invisibility
+
+		pUp invis;
+		Clock invisC;
+			invis.isSpawned = false;
+			invis.isActive = false;
+			invis.circle.setFillColor(Color::Magenta); //pUp color
+			invis.circle.setRadius(10); //pUp size
+
+	bool frozen1 = 0, frozen2 = 0, slow1 = 0, slow2 = 0, invis1 = 0 , invis2 = 0;  //could be changed later
+
+
 
 	// States
 	//font of score 
@@ -270,22 +315,155 @@ int main(void)
 		if (play) {
 			// Movement
 
-		// Pad1 Movement
-			pad1.velocity = Get_Movement(S, W) * 10;
-			pad1.rect.move(0, pad1.velocity);
-			boundcheck(pad1);
+			// Pad1 Movement
+				if (!frozen1) //it can only take input if not frozen
+				{
+
+					if (slow1) //changing speed depending if slowed or not
+					{
+						pad1.velocity = Get_Movement(S, W) * 3;
+					}
+					else
+						pad1.velocity = Get_Movement(S, W) * 10;
+
+					pad1.rect.move(0, pad1.velocity);
+					boundcheck(pad1);
+
+				}
 
 
 			// Pad2 Movement
-			pad2.velocity = Get_Movement(Down, Up) * 10;
-			pad2.rect.move(0, pad2.velocity);
-			boundcheck(pad2);
+				if (!frozen2)
+				{
+
+					if (slow2)
+					{
+						pad2.velocity = Get_Movement(Down, Up) * 3;
+					}
+					else
+						pad2.velocity = Get_Movement(Down, Up) * 10;
+
+					pad2.rect.move(0, pad2.velocity);
+					boundcheck(pad2);
+				}
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
 			boundcheck_ball(ball);
-			isColliding(ball, pad1.rect);
-			isColliding(ball, pad2.rect);
+			isColliding(ball, pad1.rect,pad1);
+			isColliding(ball, pad2.rect,pad2);
+
+
+			//PowerUPS
+
+					//spawn
+
+					// spawns only if no player has the pUp , it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
+					if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 90)
+					{
+						longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
+						longate.isSpawned = 1; //change spawned state
+					}
+
+					if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 995)
+					{
+						freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
+						freeze.isSpawned = 1; //change spawned state
+					}
+
+					if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900)
+					{
+						slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+						slow.isSpawned = 1; //change spawned state
+					}
+
+					if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 900)
+					{
+						invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+						invis.isSpawned = 1; //change spawned state
+					}
+
+			//Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
+
+				//ELONGATE
+				if (longate.isActive == true && longC.getElapsedTime() > seconds(6))
+				{
+
+					if (pad1.rect.getSize().y != 125) //if the player that has the pUp is p1  (logic could be changed later)
+					{
+						int len = elongate(pad1, false); //variable for the sake of code readability
+						pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
+						pad1.length = len;
+						pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
+					}
+					else  //if the player that has the pUp is p2  (logic could be changed later)
+					{
+						int len = elongate(pad2, false);  //variable for the sake of code readability
+						pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
+						pad2.length = len;
+						pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+					}
+
+
+					longate.isActive = 0; //pUp is no longer active
+				}
+
+				//FREEZE
+				if (freeze.isActive == true && freezeC.getElapsedTime() > seconds(2))
+				{
+
+					if (frozen1) //if the player that has the pUp is p1  (logic could be changed later)
+					{
+						frozen1 = 0;
+						pad1.rect.setFillColor(Color::Magenta);
+					}
+					else  //if the player that has the pUp is p2  (logic could be changed later)
+					{
+						frozen2 = 0;
+						pad2.rect.setFillColor(Color::White);
+					}
+
+
+					freeze.isActive = 0; //pUp is no longer active
+				}
+
+				//SLOW
+				if (slow.isActive == true && slowC.getElapsedTime() > seconds(4))
+				{
+
+					if (slow1) //if the player that has the pUp is p1  (logic could be changed later)
+					{
+						slow1 = 0;
+						pad1.rect.setFillColor(Color::Magenta);
+					}
+					else  //if the player that has the pUp is p2  (logic could be changed later)
+					{
+						slow2 = 0;
+						pad2.rect.setFillColor(Color::White);
+					}
+
+
+					slow.isActive = 0; //pUp is no longer active
+				}
+
+				//INVIS
+				if (invis.isActive == true && invisC.getElapsedTime() > seconds(2))
+				{
+
+					if (invis1) //if the player that has the pUp is p1  (logic could be changed later)
+					{
+						invis1 = 0;
+						
+					}
+					else  //if the player that has the pUp is p2  (logic could be changed later)
+					{
+						invis2 = 0;
+						
+					}
+
+
+					invis.isActive = 0; //pUp is no longer active
+				}
 
 			// Check collisions between the ball and the screen with x axis // score of player 1 
 			if (ball.circle.getPosition().x +10 < 0.f)
@@ -308,6 +486,124 @@ int main(void)
 			}
 
 		}
+
+
+		//check for collision with ball and pUp and only do so if it's already spawned on screen
+
+				//elongate
+				if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
+				{
+
+					longC.restart(); //reset pUP timer
+					longate.isSpawned = 0; //prevent multi spawn
+					longate.isActive = 1;
+
+
+					//if player1 is the one who took the pUP
+					if (ball.xVelocity > 0)
+					{
+						int len = elongate(pad1, true);
+						pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 longer
+						pad1.length = len;
+						pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
+						cout << pad1.rect.getPosition().y << endl;
+						if (pad1.rect.getPosition().y + len / 2.f > 600)
+						{
+							pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
+						}
+						else if (pad1.rect.getPosition().y - len / 2.f < 0)
+						{
+							pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
+						}
+					}
+					//if player2 is the one who took the pUP
+					else
+					{
+						int len = elongate(pad2, true);
+						pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 longer
+						pad2.length = len;
+						pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+
+						if (pad2.rect.getPosition().y + len / 2.f > 600)
+						{
+							pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
+						}
+						else if (pad2.rect.getPosition().y - len / 2.f < 0)
+						{
+							pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
+						}
+					}
+				}
+
+				//Freeze
+				if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
+				{
+
+					freezeC.restart(); //reset pUP timer
+					freeze.isSpawned = 0; //prevent multi spawn
+					freeze.isActive = 1;
+
+					//if player1 is the one who took the pUP
+					if (ball.xVelocity > 0)
+					{
+						frozen2 = 1; //make p2 frozen
+						pad2.rect.setFillColor(Color::Blue);
+					}
+					//if player2 is the one who took the pUP
+					else
+					{
+						frozen1 = 1; //make p2 longer
+						pad1.rect.setFillColor(Color::White);
+						pad1.rect.setFillColor(Color::Blue);
+					}
+				}
+
+				//Slow
+				if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
+				{
+
+					slowC.restart(); //reset pUP timer
+					slow.isSpawned = 0; //prevent multi spawn
+					slow.isActive = 1;
+
+					//if player1 is the one who took the pUP
+					if (ball.xVelocity > 0)
+					{
+						slow2 = 1; //make p2 frozen
+						pad2.rect.setFillColor(Color::Red);
+
+					}
+					//if player2 is the one who took the pUP
+					else
+					{
+						slow1 = 1; //make p2 longer
+						pad1.rect.setFillColor(Color::White);
+						pad1.rect.setFillColor(Color::Red);
+					}
+				}
+
+				//Invis 
+				if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
+				{
+
+					invisC.restart(); //reset pUP timer
+					invis.isSpawned = 0; //prevent multi spawn
+					invis.isActive = 1;
+
+					//if player1 is the one who took the pUP
+					if (ball.xVelocity > 0)
+					{
+						invis2 = 1; //make p2 frozen
+						
+
+					}
+					//if player2 is the one who took the pUP
+					else
+					{
+						invis1 = 1; //make p2 longer
+						
+					}
+				}
 
 		//Determing the end point of game
 		if (scorep1 == 10 || scorep2 == 10) {
@@ -337,8 +633,33 @@ int main(void)
 		if (play) {
 			// Draw pads and ball
 			window.draw(ball.circle);
-			window.draw(pad1.rect);
-			window.draw(pad2.rect);
+			if (!invis1)
+				window.draw(pad1.rect);
+			if (!invis2)
+				window.draw(pad2.rect);
+
+			//only draw pUP if it's spawned
+
+					//elongate
+					if (longate.isSpawned == true)
+					{
+						window.draw(longate.circle);
+					}
+					//freeze
+					if (freeze.isSpawned == true)
+					{
+						window.draw(freeze.circle);
+					}
+					//slow
+					if (slow.isSpawned == true)
+					{
+						window.draw(slow.circle);
+					}
+					//invis
+					if (invis.isSpawned == true)
+					{
+						window.draw(invis.circle);
+					}
 			//draw score of player 1 
 			window.draw(lblscorep1);
 

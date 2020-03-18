@@ -1,10 +1,13 @@
 // Headers
+//NEW
 #include <stdlib.h>
 #include<iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 using namespace std;
 using namespace sf;
+
+const float padlengthSTD = 125;
 
 // Defining some Constants
 // for the screen
@@ -45,6 +48,17 @@ struct BALL
 	int xVelocity = -5,
 		yVelocity = -5;
 
+
+};
+
+//struct containing powerup attributes
+
+struct pUp
+{
+	CircleShape circle; //pUp shape
+	Texture texture; // pUp texture
+	bool isSpawned; // Bool to check if the pUP on the screen aka "spawned"
+	bool isActive; // bool to check if the a player has picked the pUP and it's working on him now
 
 };
 
@@ -148,7 +162,7 @@ void boundcheck_ball(BALL& ball)
 
 // Takes references to all three components (no idea why references to pads but we might need it) and reverses velocity in the x direction
 // if colliding with either of the pads
-void isColliding(BALL& ball, RectangleShape& shape)
+void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
 {
 	//Collison with an object
 	// From right  |<
@@ -163,7 +177,67 @@ void isColliding(BALL& ball, RectangleShape& shape)
 		)
 	{
 		ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
-		ball.xVelocity *= -1;
+		
+		pad.rect.setOrigin(0, 0);
+
+		//Comments available at left collision
+		/*if ( abs(ball.circle.getPosition().y - pad.rect.getPosition().y ) < 20)
+		{
+			ball.xVelocity = 12;
+			ball.yVelocity = 0;
+		}*/
+		if (ball.circle.getPosition().y > pad.rect.getPosition().y&& ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 4)
+		{
+			
+
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 2)
+		{
+			
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 9;
+			}
+			else
+				ball.yVelocity = -9;
+		}
+		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 2 && ball.circle.getPosition().y < pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4)
+		{
+			
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 9;
+			}
+			else
+				ball.yVelocity = -9;
+		}
+		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y)
+		{
+			
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		if (ball.xVelocity != 12)
+			ball.xVelocity = 15 - abs(ball.yVelocity);
+
+		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
+
+		
+
 	}
 
 
@@ -180,7 +254,67 @@ void isColliding(BALL& ball, RectangleShape& shape)
 	{
 
 		ball.circle.setPosition(shape.getPosition().x - ballRadius - shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
+		
+		pad.rect.setOrigin(0, 0);
+
+		//Dynamic Collison
+
+		/*if (abs(ball.circle.getPosition().y - pad.rect.getPosition().y) < 20) //if the ball hits near the mid it reflects in straight line
+		{
+			ball.xVelocity = 12;
+			ball.yVelocity = 0;
+		}*/
+		if (ball.circle.getPosition().y > pad.rect.getPosition().y&& ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 4) //ball hits near end of pad
+		{
+			
+
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 2) //ball hits near top first quarter of pad
+		{
+			
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 9;
+			}
+			else
+				ball.yVelocity = -9;
+		}
+		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 2 && ball.circle.getPosition().y < pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4) //ball hits near botttom first quarter of pad
+		{
+			
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 9;
+			}
+			else
+				ball.yVelocity = -9;
+		}
+		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y) //ball hits near end of pad
+		{
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+			}
+			else
+				ball.yVelocity = -6;
+		}
+
+		//relating two V's to a constant
+		if (ball.xVelocity != 12)//if not reflecting straight
+			ball.xVelocity = 15 - abs(ball.yVelocity);
 		ball.xVelocity *= -1;
+
+		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
 	}
 
 
@@ -217,6 +351,27 @@ void isColliding(BALL& ball, RectangleShape& shape)
 	//	ball.yVelocity *= -1;
 	//}
 	//
+
+
+
+}
+
+
+
+///////////// POWER UPS  ///////////////
+
+//elongate function takes a pad and a bool to return longer length if it's activated or normal length if it's deactivated
+//the pad part is not crucial but it's for code's flexability 
+int elongate(PAD pad, bool active)
+{
+	if (active == true)
+	{
+		return pad.length *= 2;
+	}
+	else
+	{
+		return pad.length = padlengthSTD;
+	}
 
 
 
