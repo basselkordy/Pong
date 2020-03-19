@@ -119,6 +119,10 @@ void addPlayers(string player)
 void gameOver(string player)
 {
     getLeaderboard();
+    for (int i = 0; i < player.size(); i++)
+    {
+        player[i] = tolower(player[i]);
+    }
     for (int i = 0; i < leaderboard.size(); i++)
     {
         if (player.compare(leaderboard[i].first) == 0)
