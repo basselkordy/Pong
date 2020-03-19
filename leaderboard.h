@@ -11,6 +11,7 @@ sf::Text playerText;
 sf::Text playerNameLeader;
 sf::Text playerScoreLeader;
 sf::Font font;
+const int LEADERBOARD_SIZE = 5;
 
 //Read leaderboard from text file named "leaderboard.txt" and save the data into a vector of pairs
 //First = Name of player
@@ -46,8 +47,8 @@ void viewLeaderboard(RenderWindow& window)
     playerScoreLeader.setFont(font);
     playerScoreLeader.setCharacterSize(40);
     playerScoreLeader.setFillColor(Color::White);
-
-    for (int i = 1; i <= 5; i++)
+    int currentLeaderBoardSize = leaderboard.size();
+    for (int i = 1; i <= min(LEADERBOARD_SIZE, currentLeaderBoardSize); i++)
     {
         playerNameLeader.setPosition(100.f, 100.f * i);
         playerNameLeader.setString(leaderboard[i-1].first);
