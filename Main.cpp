@@ -10,8 +10,8 @@ int main(void)
 	// Sounds
 
 	// Set to true/false to activate or mute
-	bool sfxSwitch = true;
-	bool musicSwitch = true;
+	bool sfxSwitch = false;
+	bool musicSwitch = false;
 
 		//sounds of main menu 
 
@@ -55,14 +55,13 @@ int main(void)
 		pad.loadFromFile("resources/sfx/fire/pad.wav");
 		Sound pad_hit;
 		pad_hit.setBuffer(pad);
-
+		
 
 		// Background
 
 		Music background;
 		background.openFromFile("resources/sfx/fire/background.ogg");
 		background.setLoop(true);
-
 
 		// Powerups
 
@@ -309,7 +308,7 @@ int main(void)
 							{
 								play = true;
 								// Stop theme music
-								theme.stop();
+								theme.pause();
 								// Play background sounds
 								if (musicSwitch)
 								{
@@ -348,7 +347,12 @@ int main(void)
 				}
 			}
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
-			if (isPressed(Keyboard::BackSpace)) {
+			if (isPressed(Keyboard::BackSpace))
+			{
+				if (musicSwitch && play)
+				{
+					theme.play();
+				}
 				opt = false;
 				men = true;
 				p1win_detector = 0;
@@ -356,10 +360,6 @@ int main(void)
 				play = 0;
 				//when you press return sound......
 				whenreturn_detector.play();
-				if (musicSwitch)
-				{
-					theme.play();
-				}
 				background.stop();
 			}
 
@@ -436,7 +436,10 @@ int main(void)
 
 			if (boundcheck_ball(ball))
 			{
-				wall_hit.play();
+				if (sfxSwitch)
+				{
+					wall_hit.play();
+				}
 			}
 			
 			// Ball hit pad sound
@@ -569,7 +572,10 @@ int main(void)
 					*/
 				if (ball.circle.getPosition().x - ballRadius < 0.f)
 				{
-					score_sound.play();
+					if (sfxSwitch)
+					{
+						score_sound.play();
+					}
 					scorep2++;
 					ssScorep2.str("");
 					ssScorep2 << scorep2;
@@ -582,7 +588,10 @@ int main(void)
 
 				if (ball.circle.getPosition().x + ballRadius > GAMEWIDTH)
 				{
-					score_sound.play();
+					if (sfxSwitch)
+					{
+						score_sound.play();
+					}
 					scorep1++;
 					ssScorep1.str("");
 					ssScorep1 << scorep1;
@@ -599,7 +608,10 @@ int main(void)
 				//elongate
 				if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
 				{
-					elongate_sound.play();
+					if (sfxSwitch)
+					{
+						elongate_sound.play();
+					}
 					longC.restart(); //reset pUP timer
 					longate.isSpawned = 0; //prevent multi spawn
 					longate.isActive = 1;
@@ -644,7 +656,10 @@ int main(void)
 				//Freeze
 				if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
 				{
-					freeze_sound.play();
+					if (sfxSwitch)
+					{
+						freeze_sound.play();
+					}
 					freezeC.restart(); //reset pUP timer
 					freeze.isSpawned = 0; //prevent multi spawn
 					freeze.isActive = 1;
@@ -667,7 +682,10 @@ int main(void)
 				//Slow
 				if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
 				{
-					slow_sound.play();
+					if (sfxSwitch)
+					{
+						slow_sound.play();
+					}
 					slowC.restart(); //reset pUP timer
 					slow.isSpawned = 0; //prevent multi spawn
 					slow.isActive = 1;
@@ -691,7 +709,10 @@ int main(void)
 				//Invis 
 				if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
 				{
-					dissapear_sound.play();
+					if (sfxSwitch)
+					{
+						dissapear_sound.play();
+					}
 					invisC.restart(); //reset pUP timer
 					invis.isSpawned = 0; //prevent multi spawn
 					invis.isActive = 1;
