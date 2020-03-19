@@ -1,12 +1,11 @@
 // Header containing custom functions, includes, structs definitons, and the Event object
 #include "functions.h"
+#include "leaderboard.h"
 #include "Menu.h"
 #include <sstream>
 using namespace sf;
 int main(void)
 {
-
-
 	// Sounds
 
 	// Set to true/false to activate or mute
@@ -62,6 +61,7 @@ int main(void)
 		Music background;
 		background.openFromFile("resources/sfx/fire/background.ogg");
 		background.setLoop(true);
+
 
 		// Powerups
 
@@ -268,9 +268,22 @@ int main(void)
 	bool p1win_detector = 0;
 	bool p2win_detector = 0;
 
-
-
-
+	//////////Player Info and Leaderboard///////////
+	sf::Text playerText;
+	bool getPlayerName = false;
+	string playerName;
+	string playerUser1;
+	playerText.setFont(font);
+	playerText.setCharacterSize(40);
+	playerText.setPosition(200.f, 425.f);
+	playerText.setFillColor(Color::White);
+	sf::Text messagePlayerText;
+	messagePlayerText.setFont(font);
+	messagePlayerText.setCharacterSize(40);
+	messagePlayerText.setPosition(100.f, 100.f);
+	messagePlayerText.setFillColor(Color::White);
+	messagePlayerText.setString("Please enter thy name!");
+	bool leader = false;
 
 	// GAME LOOP
 	while (window.isOpen())
@@ -306,7 +319,8 @@ int main(void)
 						case 0:
 							if (!play)
 							{
-								play = true;
+								getPlayerName = true;
+								play = false;
 								// Stop theme music
 								theme.pause();
 								// Play background sounds
@@ -329,7 +343,12 @@ int main(void)
 							break;
 
 						case 2:
-							whenpressed_detector.play();
+							if (!leader)
+							{
+								leader = true;
+								men = false;
+								whenpressed_detector.play();
+							}
 							break;
 
 						case 3:
@@ -341,9 +360,33 @@ int main(void)
 						}
 						break;
 					}
-
-
 					break;
+				}
+				if (getPlayerName)
+				{
+					if (event.type == sf::Event::TextEntered)
+					{
+						if (event.text.unicode == '\b')
+						{
+							if (!playerName.empty())
+							{
+								playerName.erase(playerName.size() - 1);
+								playerText.setString(playerName);
+							}
+						}
+						else
+						{
+							playerName += event.text.unicode;
+							playerText.setString(playerName);
+						}
+					}
+					else if (event.key.code == sf::Keyboard::Return)
+					{
+						addPlayers(playerName);
+						getPlayerName = false;
+						playerText.setString("");
+						play = true;
+					}
 				}
 			}
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
@@ -353,6 +396,7 @@ int main(void)
 				{
 					theme.play();
 				}
+				leader = false;
 				opt = false;
 				men = true;
 				p1win_detector = 0;
@@ -733,7 +777,14 @@ int main(void)
 				}
 
 		//Determing the end point of game
-		if (scorep1 == 10 || scorep2 == 10) {
+		if (scorep1 == 10)
+		{
+			play = false;
+		}
+		else if (scorep2 == 10)
+		{
+			gameOver(playerName);
+			playerName.clear();
 			play = false;
 		}
 
@@ -757,7 +808,13 @@ int main(void)
 
 		window.clear(Color::Black);
 
-		if (play) {
+		if (getPlayerName)
+		{
+			window.draw(messagePlayerText);
+			window.draw(playerText);
+		}
+
+		else if (play) {
 			// Draw pads and ball
 			window.draw(ball.circle);
 			if (!invis1)
@@ -820,6 +877,10 @@ int main(void)
 			if (men) {
 				menu.Draw(window);
 		
+			}
+			if (leader)
+			{
+				viewLeaderboard(window);
 			}
 		}
 
