@@ -350,9 +350,8 @@ int main(void)
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
 			boundcheck_ball(ball);
-			isColliding(ball, pad1.rect,pad1);
-			isColliding(ball, pad2.rect,pad2);
-
+			isCollidingFromLeft(ball, pad2.rect);
+			isCollidingFromRight(ball, pad1.rect);
 
 			//PowerUPS
 
@@ -465,23 +464,30 @@ int main(void)
 					invis.isActive = 0; //pUp is no longer active
 				}
 
-			// Check collisions between the ball and the screen with x axis // score of player 1 
-			if (ball.circle.getPosition().x +10 < 0.f)
+			// Check collisions between the ball and the screen with x axis // score of player 1
+				/*
+						USE THE BALL RADIUS DON'T USE OTHER VALUES
+				*/
+			if (ball.circle.getPosition().x - ballRadius < 0.f)
 			{
 				scorep2++;
 				ssScorep2.str("");
 				ssScorep2 << scorep2;
 				lblscorep2.setString(ssScorep2.str());
+				// handles the bug of counting more than one point
+				RandomPos(ball);
 				p1win_detector = 1;
 			}
 
 			// Check collisions between the ball and the screen with x axis // score of player 2
-			if (ball.circle.getPosition().x -10 > GAMEWIDTH)
+			if (ball.circle.getPosition().x +ballRadius > GAMEWIDTH)
 			{
 				scorep1++;
 				ssScorep1.str("");
 				ssScorep1 << scorep1;
 				lblscorep1.setString(ssScorep1.str());
+				// handle the bug of counting more than one point
+				RandomPos(ball);
 				p2win_detector = 1;
 			}
 

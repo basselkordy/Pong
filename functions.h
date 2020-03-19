@@ -17,11 +17,10 @@ const float padlengthSTD = 125;
 #define PADDINGTOP 10
 #define PADDINGBOTTOM 10
 // ball Radius
-#define ballRadius 15.f
+#define ballRadius 10.f
 // Defined here to be easily accessed by functions 
 Event event;
 // Structures
-
 struct PAD
 {
 	// Width is constant
@@ -79,17 +78,15 @@ bool isPressed(Keyboard::Key x)
 // takes a reference to a BALL, positions it in a random position in the middle
 void RandomPos(BALL& ball)
 {
+	
 	// Random x  300 -> 500
 	int x = 300 + rand() % 200;
-
 	// Random y  100 ->300
 	int y = 100 + rand() % 200;
-
 	// Random direction
 	if (x % 2 == 0)
 		ball.xVelocity *= -1;
-
-	ball.circle.setPosition(x, y);
+	ball.circle.setPosition(x,y);
 }
 
 
@@ -160,113 +157,42 @@ void boundcheck_ball(BALL& ball)
 }
 
 
-// Takes references to all three components (no idea why references to pads but we might need it) and reverses velocity in the x direction
-// if colliding with either of the pads
-void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
+/*
+	Collision functions takes the ball and the rectangleshape and apply collision mechanics
+*/
+
+// Collision form the left (for the Right pad only) >>|
+void isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 {
-	//Collison with an object
-	// From right  |<
 	if (
-		ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
-		&&
-		ball.circle.getPosition().x - ballRadius > shape.getPosition().x
-		&&
-		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
-		&&
-		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
-		)
-	{
-		ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
-		
-		pad.rect.setOrigin(0, 0);
-
-		//Comments available at left collision
-		/*if ( abs(ball.circle.getPosition().y - pad.rect.getPosition().y ) < 20)
-		{
-			ball.xVelocity = 12;
-			ball.yVelocity = 0;
-		}*/
-		if (ball.circle.getPosition().y > pad.rect.getPosition().y&& ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 4)
-		{
-			
-
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 6;
-
-			}
-			else
-				ball.yVelocity = -6;
-		}
-		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 2)
-		{
-			
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 9;
-			}
-			else
-				ball.yVelocity = -9;
-		}
-		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 2 && ball.circle.getPosition().y < pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4)
-		{
-			
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 9;
-			}
-			else
-				ball.yVelocity = -9;
-		}
-		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y)
-		{
-			
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 6;
-			}
-			else
-				ball.yVelocity = -6;
-		}
-		if (ball.xVelocity != 12)
-			ball.xVelocity = 15 - abs(ball.yVelocity);
-
-		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
-
-		
-
-	}
-
-
-	// From left >|
-	if (
+		// to check if the ball has gone into the shape after moving
 		ball.circle.getPosition().x + ballRadius > shape.getPosition().x - shape.getSize().x / 2
 		&&
+		// to check that the ball is at right side of the shape's orgin
 		ball.circle.getPosition().x + ballRadius < shape.getPosition().x
 		&&
+		// to apply collision when only the ball or some of it is touching the left side of the shape
 		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
 		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
 		)
 	{
 
+		// to make the ball bounce back after the collision
 		ball.circle.setPosition(shape.getPosition().x - ballRadius - shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
-		
-		pad.rect.setOrigin(0, 0);
+
+		shape.setOrigin(0, 0);
 
 		//Dynamic Collison
 
-		/*if (abs(ball.circle.getPosition().y - pad.rect.getPosition().y) < 20) //if the ball hits near the mid it reflects in straight line
+		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 20) //if the ball hits near the mid it reflects in straight line
 		{
 			ball.xVelocity = 12;
 			ball.yVelocity = 0;
-		}*/
-		if (ball.circle.getPosition().y > pad.rect.getPosition().y&& ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 4) //ball hits near end of pad
+		}
+		if (ball.circle.getPosition().y > shape.getPosition().y&& ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4) //ball hits near end of pad
 		{
-			
+
 
 			if (ball.yVelocity > 0)
 			{
@@ -276,9 +202,9 @@ void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
 			else
 				ball.yVelocity = -6;
 		}
-		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y / 2) //ball hits near top first quarter of pad
+		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 2) //ball hits near top first quarter of pad
 		{
-			
+
 			//ball.xVelocity *= -1;
 			if (ball.yVelocity > 0)
 			{
@@ -287,9 +213,9 @@ void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
 			else
 				ball.yVelocity = -9;
 		}
-		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + pad.rect.getSize().y / 2 && ball.circle.getPosition().y < pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4) //ball hits near botttom first quarter of pad
+		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 2 && ball.circle.getPosition().y < shape.getPosition().y + 3 * shape.getSize().y / 4) //ball hits near botttom first quarter of pad
 		{
-			
+
 			//ball.xVelocity *= -1;
 			if (ball.yVelocity > 0)
 			{
@@ -298,7 +224,7 @@ void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
 			else
 				ball.yVelocity = -9;
 		}
-		else if (ball.circle.getPosition().y > pad.rect.getPosition().y + 3 * pad.rect.getSize().y / 4 && ball.circle.getPosition().y < pad.rect.getPosition().y + pad.rect.getSize().y) //ball hits near end of pad
+		else if (ball.circle.getPosition().y > shape.getPosition().y + 3 * shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y) //ball hits near end of pad
 		{
 			//ball.xVelocity *= -1;
 			if (ball.yVelocity > 0)
@@ -312,15 +238,94 @@ void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
 		//relating two V's to a constant
 		if (ball.xVelocity != 12)//if not reflecting straight
 			ball.xVelocity = 15 - abs(ball.yVelocity);
-		ball.xVelocity *= -1;
 
-		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
+			ball.xVelocity *= -1;
 	}
+	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+}
+// Collision form the Right (for the left pad only) |<<
+void isCollidingFromRight(BALL& ball, RectangleShape& shape)
+{
+	if (
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
+		&&
+		// to check that the ball is at left side of the shape's orgin
+		ball.circle.getPosition().x - ballRadius > shape.getPosition().x
+		&&
+		// to apply collision when only the ball or some of it is touching the left side of the shape
+		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		&&
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		)
+	{
+		// to make the ball bounce back after the collision
+		ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
+
+		shape.setOrigin(0, 0);
+
+		//Comments available at left collision
+		if ( abs(ball.circle.getPosition().y - shape.getPosition().y ) < 20)
+		{
+			ball.xVelocity = 12;
+			ball.yVelocity = 0;
+		}
+		else if (ball.circle.getPosition().y > shape.getPosition().y&& ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4)
+		{
 
 
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
 
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 2)
+		{
+
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 9;
+			}
+			else
+				ball.yVelocity = -9;
+		}
+		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 2 && ball.circle.getPosition().y < shape.getPosition().y + 3 * shape.getSize().y / 4)
+		{
+
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 9;
+			}
+			else
+				ball.yVelocity = -9;
+		}
+		else if (ball.circle.getPosition().y > shape.getPosition().y + 3 * shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y)
+		{
+
+			//ball.xVelocity *= -1;
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		if (ball.xVelocity != 12)
+			ball.xVelocity = 15 - abs(ball.yVelocity);
+
+		shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+
+	}
+}
+// A general Collision detection (Disabled for now) to be used with other objects
+void isColliding(BALL& ball, RectangleShape& shape)
+{
 	// this collison is disabled for the pads//
-
 	//
 	// From top
 	//if (
@@ -351,9 +356,6 @@ void isColliding(BALL& ball, RectangleShape& shape,PAD& pad)
 	//	ball.yVelocity *= -1;
 	//}
 	//
-
-
-
 }
 
 
