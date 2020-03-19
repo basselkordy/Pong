@@ -18,6 +18,7 @@ int main(void)
 		// Theme music
 		Music theme;
 		theme.openFromFile("resources/sfx/main_menu/theme.ogg");
+		theme.setLoop(true);
 		if (musicSwitch)
 		{
 			theme.play();
@@ -60,6 +61,7 @@ int main(void)
 
 		Music background;
 		background.openFromFile("resources/sfx/fire/background.ogg");
+		background.setLoop(true);
 
 
 		// Powerups
