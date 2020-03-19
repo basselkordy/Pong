@@ -1,12 +1,97 @@
 // Header containing custom functions, includes, structs definitons, and the Event object
-
 #include "functions.h"
 #include "Menu.h"
-#include<sstream>
+#include <sstream>
 using namespace sf;
 int main(void)
 {
-	
+
+
+	// Sounds
+
+	// Set to true/false to activate or mute
+	bool sfxSwitch = true;
+	bool musicSwitch = true;
+
+		//sounds of main menu 
+
+		// Theme music
+		Music theme;
+		theme.openFromFile("resources/sfx/main_menu/theme.ogg");
+		if (musicSwitch)
+		{
+			theme.play();
+		}
+
+		//sound of when you press enter.....
+		SoundBuffer whenpressed;
+		whenpressed.loadFromFile("resources/sfx/main_menu/choose_button.wav");
+		Sound whenpressed_detector;
+		whenpressed_detector.setBuffer(whenpressed);
+
+		//when return sound....(when you press backspace)
+		SoundBuffer whenreturn;
+		whenreturn.loadFromFile("resources/sfx/main_menu/switch.wav");
+		Sound whenreturn_detector;
+		whenreturn_detector.setBuffer(whenreturn);
+
+
+
+
+		// Ball sounds
+		// Score
+		SoundBuffer scor;
+		scor.loadFromFile("resources/sfx/fire/score.wav");
+		Sound score_sound;
+		score_sound.setBuffer(scor);
+		// Wall hit
+		SoundBuffer wall;
+		wall.loadFromFile("resources/sfx/fire/wall.wav");
+		Sound wall_hit;
+		wall_hit.setBuffer(wall);
+		// Pad hit
+		SoundBuffer pad;
+		pad.loadFromFile("resources/sfx/fire/pad.wav");
+		Sound pad_hit;
+		pad_hit.setBuffer(pad);
+
+
+		// Background
+
+		Music background;
+		background.openFromFile("resources/sfx/fire/background.ogg");
+
+
+		// Powerups
+
+		// Elongate
+		SoundBuffer Elon_bfr;
+		Elon_bfr.loadFromFile("resources/sfx/powerups/elongate.wav");
+		Sound elongate_sound;
+		elongate_sound.setBuffer(Elon_bfr);
+
+		// Freeze
+		SoundBuffer frz_bfr;
+		frz_bfr.loadFromFile("resources/sfx/powerups/freeze.wav");
+		Sound freeze_sound;
+		freeze_sound.setBuffer(frz_bfr);
+
+		// Slow
+		SoundBuffer slow_bfr;
+		slow_bfr.loadFromFile("resources/sfx/powerups/slow.wav");
+		Sound slow_sound;
+		slow_sound.setBuffer(slow_bfr);
+
+		// Dissapear
+		SoundBuffer dspr_bfr;
+		dspr_bfr.loadFromFile("resources/sfx/powerups/dissapear.wav");
+		Sound dissapear_sound;
+		dissapear_sound.setBuffer(dspr_bfr);
+
+
+
+
+
 
 	// Create the main window 
 	RenderWindow window(VideoMode(GAMEWIDTH, GAMEHEIGHT), "Pong");
@@ -23,9 +108,9 @@ int main(void)
 	bool opt = false;
 	//option font 
 	Font font;
-	if (!font.loadFromFile("resources/Pacifico.ttf"))
+	if (!font.loadFromFile("resources/fonts/Pacifico.ttf"))
 		return EXIT_FAILURE;
-
+	
 	//option message 
 	Text option;
 	option.setFont(font);
@@ -67,8 +152,6 @@ int main(void)
 	// Set radius
 	ball.circle.setRadius(15);
 
-	// Add texture
-	ball.texture.loadFromFile("resources/col.png");
 	// Set the positon and orgin
 	ball.circle.setPosition(400, 300);
 	ball.circle.setOrigin(ballRadius / 2.f, ballRadius / 2.f);
@@ -120,7 +203,7 @@ int main(void)
 	// States
 	//font of score 
 	sf::Font scorefont;
-	scorefont.loadFromFile("resources/Pacifico.ttf");
+	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
   
 	// score of player 1  // 3dad score 1 
 	float scorep1 = 0;
@@ -160,27 +243,12 @@ int main(void)
 	// main menu 
 	Menu menu(window.getSize().x, window.getSize().y);
 	bool men = true;
-	//sounds of main menu 
-	// main menu song....
-	//lesa m7ttsh sound ll menu .......
-
-	//sound of when you press enter.....
-	SoundBuffer whenpressed;
-	whenpressed.loadFromFile("resources/choose_button.wav");
-	Sound whenpressed_detector;
-	whenpressed_detector.setBuffer(whenpressed);
-
-	//when return sound....(when you press backspace)
-	SoundBuffer whenreturn;
-	whenreturn.loadFromFile("resources/switch.wav");
-	Sound whenreturn_detector;
-	whenreturn_detector.setBuffer(whenreturn);
 
 
 	//losing/wining message 
 	//lw_font 
 	Font lw_font;
-	lw_font.loadFromFile("resources/Youmurdererbb-pwoK.otf");
+	lw_font.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf");
 	//p1 winning message 
 	Text p1win;
 	p1win.setCharacterSize(100);
@@ -238,6 +306,13 @@ int main(void)
 							if (!play)
 							{
 								play = true;
+								// Stop theme music
+								theme.stop();
+								// Play background sounds
+								if (musicSwitch)
+								{
+									background.play();
+								}
 								whenpressed_detector.play();
 								
 							}
@@ -279,6 +354,11 @@ int main(void)
 				play = 0;
 				//when you press return sound......
 				whenreturn_detector.play();
+				if (musicSwitch)
+				{
+					theme.play();
+				}
+				background.stop();
 			}
 
 
@@ -349,15 +429,31 @@ int main(void)
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
-			boundcheck_ball(ball);
-			isCollidingFromLeft(ball, pad2.rect);
-			isCollidingFromRight(ball, pad1.rect);
+			// sound_key is a number refering to which sound should be played
+
+
+			if (boundcheck_ball(ball))
+			{
+				wall_hit.play();
+			}
+			
+			// Ball hit pad sound
+			if (isCollidingFromLeft(ball, pad2.rect) || isCollidingFromRight(ball, pad1.rect))
+			{
+				if (sfxSwitch)
+				{
+					pad_hit.play();
+				}
+			}
+			
+
 
 			//PowerUPS
 
 					//spawn
 
-					// spawns only if no player has the pUp , it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
+					// spawns only if no player has the pUp ,
+					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
 					if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 90)
 					{
 						longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
@@ -464,33 +560,35 @@ int main(void)
 					invis.isActive = 0; //pUp is no longer active
 				}
 
-			// Check collisions between the ball and the screen with x axis // score of player 1
-				/*
-						USE THE BALL RADIUS DON'T USE OTHER VALUES
-				*/
-			if (ball.circle.getPosition().x - ballRadius < 0.f)
-			{
-				scorep2++;
-				ssScorep2.str("");
-				ssScorep2 << scorep2;
-				lblscorep2.setString(ssScorep2.str());
-				// handles the bug of counting more than one point
-				RandomPos(ball);
-				p1win_detector = 1;
-			}
 
-			// Check collisions between the ball and the screen with x axis // score of player 2
-			if (ball.circle.getPosition().x +ballRadius > GAMEWIDTH)
-			{
-				scorep1++;
-				ssScorep1.str("");
-				ssScorep1 << scorep1;
-				lblscorep1.setString(ssScorep1.str());
-				// handle the bug of counting more than one point
-				RandomPos(ball);
-				p2win_detector = 1;
-			}
+				// Check collisions between the ball and the screen with x axis // score of player 1
+					/*
+							USE THE BALL RADIUS DON'T USE OTHER VALUES
+					*/
+				if (ball.circle.getPosition().x - ballRadius < 0.f)
+				{
+					score_sound.play();
+					scorep2++;
+					ssScorep2.str("");
+					ssScorep2 << scorep2;
+					lblscorep2.setString(ssScorep2.str());
+					// handles the bug of counting more than one point
+					RandomPos(ball);
+					p1win_detector = 1;
+				}
 
+
+				if (ball.circle.getPosition().x + ballRadius > GAMEWIDTH)
+				{
+					score_sound.play();
+					scorep1++;
+					ssScorep1.str("");
+					ssScorep1 << scorep1;
+					lblscorep1.setString(ssScorep1.str());
+					// handle the bug of counting more than one point
+					RandomPos(ball);
+					p2win_detector = 1;
+				}
 		}
 
 
@@ -499,7 +597,7 @@ int main(void)
 				//elongate
 				if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
 				{
-
+					elongate_sound.play();
 					longC.restart(); //reset pUP timer
 					longate.isSpawned = 0; //prevent multi spawn
 					longate.isActive = 1;
@@ -544,7 +642,7 @@ int main(void)
 				//Freeze
 				if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
 				{
-
+					freeze_sound.play();
 					freezeC.restart(); //reset pUP timer
 					freeze.isSpawned = 0; //prevent multi spawn
 					freeze.isActive = 1;
@@ -558,7 +656,7 @@ int main(void)
 					//if player2 is the one who took the pUP
 					else
 					{
-						frozen1 = 1; //make p2 longer
+						frozen1 = 1; //make p2 frozen
 						pad1.rect.setFillColor(Color::White);
 						pad1.rect.setFillColor(Color::Blue);
 					}
@@ -567,7 +665,7 @@ int main(void)
 				//Slow
 				if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
 				{
-
+					slow_sound.play();
 					slowC.restart(); //reset pUP timer
 					slow.isSpawned = 0; //prevent multi spawn
 					slow.isActive = 1;
@@ -591,7 +689,7 @@ int main(void)
 				//Invis 
 				if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
 				{
-
+					dissapear_sound.play();
 					invisC.restart(); //reset pUP timer
 					invis.isSpawned = 0; //prevent multi spawn
 					invis.isActive = 1;

@@ -3,12 +3,11 @@
 Menu::Menu(float width, float height)
 {
 	//sound of switching 
-	switiching_sound.loadFromFile("resources/switch.wav" );
+	switiching_sound.loadFromFile("resources/sfx/main_menu/switch.wav" );
 	switching.setBuffer(switiching_sound);
 
 	//font properties 
-	if (!font.loadFromFile("resources/Daitengu DEMO.otf") || !font2.loadFromFile("resources/Youmurdererbb-pwoK.otf")) {
-		
+	if (!font.loadFromFile("resources/fonts/Daitengu DEMO.otf") || !font2.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf")) {
 	}
 	text[0].setFont(font);
 	text[0].setFillColor(sf::Color::White);

@@ -131,18 +131,22 @@ void boundcheck(PAD& pad)
 
 // Takes a reference to the ball, reverses velocity in the y direction when it hits a wall
 // and brings it back to a random position in the middle when out of horizontal bounds
-void boundcheck_ball(BALL& ball)
+
+// changed return type to int to get a return key represeting what sound should be played 
+int boundcheck_ball(BALL& ball)
 {
 	// horizonal bounding
 	if (ball.circle.getPosition().x + ballRadius < 0)
 	{
 		// left pad lost
 		RandomPos(ball);
+		return 1; // Score sound should be plated
 	}
 	if (ball.circle.getPosition().x - ballRadius > GAMEWIDTH)
 	{
 		// right pad lost
 		RandomPos(ball);
+		return 1;
 	}
 
 	//vertical bounding
@@ -153,8 +157,13 @@ void boundcheck_ball(BALL& ball)
 		)
 	{
 		ball.yVelocity *= -1;
+		return 2; // Wall hit sound should be played
 	}
+	return 0; // nothing should be played
 }
+
+
+
 
 
 /*
@@ -162,8 +171,9 @@ void boundcheck_ball(BALL& ball)
 */
 
 // Collision form the left (for the Right pad only) >>|
-void isCollidingFromLeft(BALL& ball, RectangleShape& shape)
+bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 {
+	bool return_value = false;
 	if (
 		// to check if the ball has gone into the shape after moving
 		ball.circle.getPosition().x + ballRadius > shape.getPosition().x - shape.getSize().x / 2
@@ -177,7 +187,7 @@ void isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
 		)
 	{
-
+		return_value = true;
 		// to make the ball bounce back after the collision
 		ball.circle.setPosition(shape.getPosition().x - ballRadius - shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
 
@@ -239,13 +249,15 @@ void isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 		if (ball.xVelocity != 12)//if not reflecting straight
 			ball.xVelocity = 15 - abs(ball.yVelocity);
 
-			ball.xVelocity *= -1;
+		ball.xVelocity *= -1;
 	}
 	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+	return return_value;
 }
 // Collision form the Right (for the left pad only) |<<
-void isCollidingFromRight(BALL& ball, RectangleShape& shape)
+bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 {
+	bool return_value = false;
 	if (
 		// to check if the ball has gone into the shape after moving
 		ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
@@ -259,13 +271,14 @@ void isCollidingFromRight(BALL& ball, RectangleShape& shape)
 		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
 		)
 	{
+		return_value = true;
 		// to make the ball bounce back after the collision
 		ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
 
 		shape.setOrigin(0, 0);
 
 		//Comments available at left collision
-		if ( abs(ball.circle.getPosition().y - shape.getPosition().y ) < 20)
+		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 20)
 		{
 			ball.xVelocity = 12;
 			ball.yVelocity = 0;
@@ -317,11 +330,16 @@ void isCollidingFromRight(BALL& ball, RectangleShape& shape)
 		}
 		if (ball.xVelocity != 12)
 			ball.xVelocity = 15 - abs(ball.yVelocity);
-
-		shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
-
 	}
+	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+	return return_value;
+
 }
+
+
+
+
+
 // A general Collision detection (Disabled for now) to be used with other objects
 void isColliding(BALL& ball, RectangleShape& shape)
 {
@@ -357,7 +375,6 @@ void isColliding(BALL& ball, RectangleShape& shape)
 	//}
 	//
 }
-
 
 
 ///////////// POWER UPS  ///////////////
