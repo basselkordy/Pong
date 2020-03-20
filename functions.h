@@ -61,7 +61,6 @@ struct pUp
 
 };
 
-
 // Functions
 
 	// takes a key code, returns true if its pressed, false if not
@@ -79,13 +78,20 @@ bool isPressed(Keyboard::Key x)
 void RandomPos(BALL& ball)
 {
 	
-	// Random x  300 -> 500
-	int x = 300 + rand() % 200;
-	// Random y  100 ->300
-	int y = 100 + rand() % 200;
+	//spawn at centre
+	int x = 400;
+	
+	int y = 300;
+
+	//Reset velocity to a sum of 8 to give players some kind of reset after a goal (the ball starts slow then speeds up after first contact with pad)
+	ball.xVelocity = 6 + rand() % 2;
+	ball.yVelocity = 8 - ball.xVelocity;
 	// Random direction
-	if (x % 2 == 0)
+	if (rand() % 2 == 0)
 		ball.xVelocity *= -1;
+	if (rand() % 2 == 0)
+		ball.yVelocity *= -1;
+
 	ball.circle.setPosition(x,y);
 }
 
@@ -191,58 +197,85 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 		// to make the ball bounce back after the collision
 		ball.circle.setPosition(shape.getPosition().x - ballRadius - shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
 
-		shape.setOrigin(0, 0);
+		
 
 		//Dynamic Collison
 
 		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 20) //if the ball hits near the mid it reflects in straight line
 		{
-			ball.xVelocity = 12;
+			ball.xVelocity = 10;
 			ball.yVelocity = 0;
 		}
-		if (ball.circle.getPosition().y > shape.getPosition().y&& ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4) //ball hits near end of pad
+		//First 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y > shape.getPosition().y - shape.getSize().y / 2
+			&&
+			// bottom
+			ball.circle.getPosition().y <= shape.getPosition().y - shape.getSize().y / 4
+			)
 		{
 
 
 			if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 6;
+				ball.yVelocity = 8;
 
 			}
 			else
-				ball.yVelocity = -6;
+				ball.yVelocity = -8;
 		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 2) //ball hits near top first quarter of pad
+		//Second 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y > shape.getPosition().y - shape.getSize().y / 4
+			&&
+			// bottom
+			ball.circle.getPosition().y < shape.getPosition().y
+			)
 		{
 
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 9;
-			}
-			else
-				ball.yVelocity = -9;
-		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 2 && ball.circle.getPosition().y < shape.getPosition().y + 3 * shape.getSize().y / 4) //ball hits near botttom first quarter of pad
-		{
-
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 9;
-			}
-			else
-				ball.yVelocity = -9;
-		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y + 3 * shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y) //ball hits near end of pad
-		{
-			//ball.xVelocity *= -1;
+			
 			if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 6;
 			}
 			else
 				ball.yVelocity = -6;
+		}
+		//Third 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y > shape.getPosition().y
+			&&
+			// bottom
+			ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4
+			)
+		{
+
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		//Fourth 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y >= shape.getPosition().y + shape.getSize().y / 4
+			&&
+			// bottom
+			ball.circle.getPosition().y <= shape.getPosition().y + shape.getSize().y / 2
+			)
+		{
+			
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 8;
+			}
+			else
+				ball.yVelocity = -8;
 		}
 
 		//relating two V's to a constant
@@ -251,7 +284,7 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 
 		ball.xVelocity *= -1;
 	}
-	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+	
 	return return_value;
 }
 // Collision form the Right (for the left pad only) |<<
@@ -275,7 +308,7 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 		// to make the ball bounce back after the collision
 		ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
 
-		shape.setOrigin(0, 0);
+		//shape.setOrigin(0, 0);
 
 		//Comments available at left collision
 		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 20)
@@ -283,55 +316,84 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 			ball.xVelocity = 12;
 			ball.yVelocity = 0;
 		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y&& ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4)
+		//First 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y >= shape.getPosition().y - shape.getSize().y / 2
+			&&
+			// bottom
+			ball.circle.getPosition().y <= shape.getPosition().y - shape.getSize().y / 4
+			)
 		{
 
-
+			
 			if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 6;
+				ball.yVelocity = 8;
 
 			}
 			else
-				ball.yVelocity = -6;
+				ball.yVelocity = -8;
 		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 2)
+		// Second 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y > shape.getPosition().y - shape.getSize().y / 4
+			&&
+			// bottom
+			ball.circle.getPosition().y < shape.getPosition().y
+			)
 		{
+			
 
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 9;
-			}
-			else
-				ball.yVelocity = -9;
-		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y + shape.getSize().y / 2 && ball.circle.getPosition().y < shape.getPosition().y + 3 * shape.getSize().y / 4)
-		{
-
-			//ball.xVelocity *= -1;
-			if (ball.yVelocity > 0)
-			{
-				ball.yVelocity = 9;
-			}
-			else
-				ball.yVelocity = -9;
-		}
-		else if (ball.circle.getPosition().y > shape.getPosition().y + 3 * shape.getSize().y / 4 && ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y)
-		{
-
-			//ball.xVelocity *= -1;
+			
 			if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 6;
 			}
 			else
 				ball.yVelocity = -6;
+		}
+		//Third 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y > shape.getPosition().y
+			&&
+			// bottom
+			ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4
+			)
+		{
+			
+			
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 6;
+			}
+			else
+				ball.yVelocity = -6;
+		}
+		//Fourth 1/4
+		else if (
+			// top
+			ball.circle.getPosition().y >= shape.getPosition().y + shape.getSize().y / 4
+			&&
+			// bottom
+			ball.circle.getPosition().y <= shape.getPosition().y + shape.getSize().y / 2
+			)
+		{
+			
+			
+			if (ball.yVelocity > 0)
+			{
+				ball.yVelocity = 8;
+			}
+			else
+				ball.yVelocity = -8;
 		}
 		if (ball.xVelocity != 12)
 			ball.xVelocity = 15 - abs(ball.yVelocity);
 	}
-	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+	
 	return return_value;
 
 }
@@ -376,22 +438,143 @@ void isColliding(BALL& ball, RectangleShape& shape)
 	//
 }
 
+// the function checks wether the ball is below or above the pad and moves the pad accordingly
+int ai_move(PAD& pad, BALL& ball)
+{
+	//ball going towards pad       ball above pad
+	if (ball.xVelocity < 0 && pad.rect.getPosition().y - ball.circle.getPosition().y >= 10)
+	{
+		return -1; //move it up
+		
+
+	}
+	//ball going towards pad       ball below pad
+	else if (ball.xVelocity < 0 && pad.rect.getPosition().y - ball.circle.getPosition().y < 10)
+	{
+		return 1; //move it down
+	}
+}
 
 ///////////// POWER UPS  ///////////////
 
 //elongate function takes a pad and a bool to return longer length if it's activated or normal length if it's deactivated
 //the pad part is not crucial but it's for code's flexability 
-int elongate(PAD pad, bool active)
+void elongate(PAD& pad1,PAD& pad2, bool active,char c)
 {
-	if (active == true)
+	if (active)
 	{
-		return pad.length *= 2;
+		if (c == '1')
+		{
+			int len = padlengthSTD * 2;
+			pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 longer
+			pad1.length = len;
+			pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
+
+			if (pad1.rect.getPosition().y + len / 2.f > 600)
+			{
+				pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
+			}
+			else if (pad1.rect.getPosition().y - len / 2.f < 0)
+			{
+				pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
+			}
+		}
+		else
+		{
+			int len = padlengthSTD * 2;
+			pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 longer
+			pad2.length = len;
+			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+
+			//if the pad after elongated is out of screen return it in
+			if (pad2.rect.getPosition().y + len / 2.f > 600)
+			{
+				pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
+			}
+			else if (pad2.rect.getPosition().y - len / 2.f < 0)
+			{
+				pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
+			}
+		}
+		
 	}
 	else
 	{
-		return pad.length = padlengthSTD;
+		if (pad1.rect.getSize().y != padlengthSTD) //if the player that has the pUp is p1  (logic could be changed later)
+		{
+			int len = padlengthSTD; //variable for the sake of code readability
+			pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
+			pad1.length = len;
+			pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
+		}
+		else  //if the player that has the pUp is p2  (logic could be changed later)
+		{
+			int len = padlengthSTD;  //variable for the sake of code readability
+			pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
+			pad2.length = len;
+			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+		}
 	}
 
 
+
+}
+
+//////////////  THEMES ////////////////
+
+//Control themes functions , takes char indicating selected theme and switches all elements accordingly
+void set_theme (PAD& pad1,PAD& pad2,BALL& ball,Texture& backgT,RectangleShape& backg,char c)
+{
+	//Hell
+	if (c == 'h')
+	{
+		//Load files
+		pad1.texture.loadFromFile("resources/vfx/hell/hellpadleft.png");
+		
+
+		pad2.texture.loadFromFile("resources/vfx/hell/hellpadright.png");
+		
+
+		ball.texture.loadFromFile("resources/vfx/hell/hellball.png");
+		
+
+		backgT.loadFromFile("resources/vfx/hell/hellbackg.jpg");
+		
+
+	}
+	//Ice
+	else if (c == 'i')
+	{
+		pad1.texture.loadFromFile("resources/vfx/ice/icepadleft.png");
+
+
+		pad2.texture.loadFromFile("resources/vfx/ice/icepadright.png");
+
+
+		ball.texture.loadFromFile("resources/vfx/ice/iceball.png");
+
+
+		backgT.loadFromFile("resources/vfx/ice/icebackg.png");
+	}
+	//Forest
+	else if (c == 'f')
+	{
+		pad1.texture.loadFromFile("resources/vfx/forest/forestpadleft.png");
+
+
+		pad2.texture.loadFromFile("resources/vfx/forest/forestpadright.png");
+
+
+		ball.texture.loadFromFile("resources/vfx/forest/forestball.png");
+
+
+		backgT.loadFromFile("resources/vfx/forest/forestbackg.png");
+	}
+
+	//Set files
+	backg.setTexture(&backgT);
+	ball.circle.setTexture(&ball.texture);
+	pad1.rect.setTexture(&pad1.texture);
+	pad2.rect.setTexture(&pad2.texture);
 
 }

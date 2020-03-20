@@ -7,11 +7,24 @@
 using namespace sf;
 int main(void)
 {
+
+	// THEMES //
+
+	bool hell = false, ice = false, forest = false; //still no use but could be helpful when switching ingame
+	char c; //indicate theme
+	Texture backgT; //background
+	RectangleShape backg; 
+	backg.setSize(Vector2f(800.0, 600.0));
+	
+	
+		
+	
 	// Sounds
 
 	// Set to true/false to activate or mute
-	bool sfxSwitch = true;
-	bool musicSwitch = true;
+	
+	bool sfxSwitch = false;
+	bool musicSwitch = false;
 
 	//sounds of main menu 
 
@@ -134,8 +147,8 @@ int main(void)
 	// Set the position
 	pad1.rect.setPosition(pad1.width + /*the needed distance*/ 30, 400);
 	// texture
-	pad1.texture.loadFromFile("resources/test.png");
-	pad1.rect.setTexture(&pad1.texture);
+	//pad1.texture.loadFromFile("resources/test.png");
+	//pad1.rect.setTexture(&pad1.texture);
 
 	PAD pad2;
 	// Set length of pad
@@ -288,7 +301,15 @@ int main(void)
 	messagePlayerText.setString("Please enter thy name!");
 	bool leader = false;
 
-	// GAME LOOP
+
+	////theme test
+
+	cout << "Enter theme letter (h : hell , i : ice , f : forest)" << endl;
+	cin >> c;
+
+	set_theme(pad1, pad2, ball, backgT, backg, c);
+
+	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 	
 
 
@@ -500,15 +521,18 @@ int main(void)
 			// Movement
 
 			// Pad1 Movement
+			//ai_move(pad1, ball);
 			if (!frozen1) //it can only take input if not frozen
 			{
 
 				if (slow1) //changing speed depending if slowed or not
 				{
-					pad1.velocity = Get_Movement(S, W) * 3;
+					pad1.velocity = ai_move(pad1, ball) * 4;
+					//pad1.velocity = Get_Movement(S, W) * 3;
 				}
 				else
-					pad1.velocity = Get_Movement(S, W) * 10;
+					pad1.velocity = ai_move(pad1, ball) * 10;
+					//pad1.velocity = Get_Movement(S, W) * 10;
 
 				pad1.rect.move(0, pad1.velocity);
 				boundcheck(pad1);
@@ -522,6 +546,7 @@ int main(void)
 
 				if (slow2)
 				{
+					
 					pad2.velocity = Get_Movement(Down, Up) * 3;
 				}
 				else
@@ -561,13 +586,14 @@ int main(void)
 
 					// spawns only if no player has the pUp ,
 					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 90)
+
+			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96)
 			{
 				longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				longate.isSpawned = 1; //change spawned state
 			}
 
-			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 995)
+			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998)
 			{
 				freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				freeze.isSpawned = 1; //change spawned state
@@ -579,7 +605,7 @@ int main(void)
 				slow.isSpawned = 1; //change spawned state
 			}
 
-			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 900)
+			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998)
 			{
 				invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				invis.isSpawned = 1; //change spawned state
@@ -590,23 +616,7 @@ int main(void)
 				//ELONGATE
 			if (longate.isActive == true && longC.getElapsedTime() > seconds(6))
 			{
-
-				if (pad1.rect.getSize().y != 125) //if the player that has the pUp is p1  (logic could be changed later)
-				{
-					int len = elongate(pad1, false); //variable for the sake of code readability
-					pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
-					pad1.length = len;
-					pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
-				}
-				else  //if the player that has the pUp is p2  (logic could be changed later)
-				{
-					int len = elongate(pad2, false);  //variable for the sake of code readability
-					pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
-					pad2.length = len;
-					pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-				}
-
-
+				elongate(pad1, pad2, false,'1');
 				longate.isActive = 0; //pUp is no longer active
 			}
 
@@ -617,7 +627,7 @@ int main(void)
 				if (frozen1) //if the player that has the pUp is p1  (logic could be changed later)
 				{
 					frozen1 = 0;
-					pad1.rect.setFillColor(Color::Magenta);
+					pad1.rect.setFillColor(Color::White);
 				}
 				else  //if the player that has the pUp is p2  (logic could be changed later)
 				{
@@ -625,18 +635,17 @@ int main(void)
 					pad2.rect.setFillColor(Color::White);
 				}
 
-
 				freeze.isActive = 0; //pUp is no longer active
 			}
 
 			//SLOW
-			if (slow.isActive == true && slowC.getElapsedTime() > seconds(4))
+			if (slow.isActive == true && slowC.getElapsedTime() > seconds(3))
 			{
 
 				if (slow1) //if the player that has the pUp is p1  (logic could be changed later)
 				{
 					slow1 = 0;
-					pad1.rect.setFillColor(Color::Magenta);
+					pad1.rect.setFillColor(Color::White);
 				}
 				else  //if the player that has the pUp is p2  (logic could be changed later)
 				{
@@ -649,7 +658,7 @@ int main(void)
 			}
 
 			//INVIS
-			if (invis.isActive == true && invisC.getElapsedTime() > seconds(2))
+			if (invis.isActive == true && invisC.getElapsedTime() > seconds(1))
 			{
 
 				if (invis1) //if the player that has the pUp is p1  (logic could be changed later)
@@ -662,7 +671,6 @@ int main(void)
 					invis2 = 0;
 
 				}
-
 
 				invis.isActive = 0; //pUp is no longer active
 			}
@@ -718,40 +726,15 @@ int main(void)
 			longate.isSpawned = 0; //prevent multi spawn
 			longate.isActive = 1;
 
-
 			//if player1 is the one who took the pUP
 			if (ball.xVelocity > 0)
 			{
-				int len = elongate(pad1, true);
-				pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 longer
-				pad1.length = len;
-				pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
-				cout << pad1.rect.getPosition().y << endl;
-				if (pad1.rect.getPosition().y + len / 2.f > 600)
-				{
-					pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
-				}
-				else if (pad1.rect.getPosition().y - len / 2.f < 0)
-				{
-					pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
-				}
+				elongate(pad1, pad2, true, '1');
 			}
 			//if player2 is the one who took the pUP
 			else
 			{
-				int len = elongate(pad2, true);
-				pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 longer
-				pad2.length = len;
-				pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-
-				if (pad2.rect.getPosition().y + len / 2.f > 600)
-				{
-					pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
-				}
-				else if (pad2.rect.getPosition().y - len / 2.f < 0)
-				{
-					pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
-				}
+				elongate(pad1, pad2, true, '2');
 			}
 		}
 
@@ -873,7 +856,11 @@ int main(void)
 		}
 
 		else if (play) {
+			//
+			window.draw(backg);
 			// Draw pads and ball
+			
+			
 			window.draw(ball.circle);
 			if (!invis1)
 				window.draw(pad1.rect);

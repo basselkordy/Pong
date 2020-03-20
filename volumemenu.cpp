@@ -51,17 +51,17 @@ volumemenu::~volumemenu()
 
 void volumemenu::drawvolume(RenderWindow& windowvolume)
 {
-	
-		for (int j = 0 ; j < 5 ; ++j)
-		{
-			windowvolume.draw(Volumechange[j]);
-		}
+
+	for (int j = 0; j < 5; ++j)
+	{
+		windowvolume.draw(Volumechange[j]);
+	}
 
 }
 
 void volumemenu::MoveRight()
 {
-	if (SelectedVolumeLevel +1  < 5 ) {
+	if (SelectedVolumeLevel + 1 < 5) {
 		Volumechange[SelectedVolumeLevel].setFont(font);
 		Volumechange[SelectedVolumeLevel].setCharacterSize(30);
 		Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::White);
