@@ -52,7 +52,7 @@ volumemenu::~volumemenu()
 void volumemenu::drawvolume(RenderWindow& windowvolume)
 {
 	
-		for (int j = 0; j < Items_Of_Volume; j++)
+		for (int j = 0 ; j < 5 ; ++j)
 		{
 			windowvolume.draw(Volumechange[j]);
 		}
@@ -61,20 +61,24 @@ void volumemenu::drawvolume(RenderWindow& windowvolume)
 
 void volumemenu::MoveRight()
 {
-	Volumechange[SelectedVolumeLevel].setFont(font);
-	Volumechange[SelectedVolumeLevel].setCharacterSize(30);
-	Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::White);
-	SelectedVolumeLevel++;
-	Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::Red);
-	switching.play();
+	if (SelectedVolumeLevel +1  < 5 ) {
+		Volumechange[SelectedVolumeLevel].setFont(font);
+		Volumechange[SelectedVolumeLevel].setCharacterSize(30);
+		Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::White);
+		SelectedVolumeLevel++;
+		Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::Red);
+		switching.play();
+	}
 }
 
 void volumemenu::MoveLeft()
 {
-	Volumechange[SelectedVolumeLevel].setFont(font);
-	Volumechange[SelectedVolumeLevel].setCharacterSize(30);
-	Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::White);
-	SelectedVolumeLevel--;
-	Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::Red);
-	switching.play();
+	if (SelectedVolumeLevel - 1 >= 0) {
+		Volumechange[SelectedVolumeLevel].setFont(font);
+		Volumechange[SelectedVolumeLevel].setCharacterSize(30);
+		Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::White);
+		SelectedVolumeLevel--;
+		Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::Red);
+		switching.play();
+	}
 }
