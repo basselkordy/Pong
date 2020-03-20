@@ -39,6 +39,10 @@ Menu::Menu(float width, float height)
 		text[0].setFillColor(sf::Color::Red);
 	}
 
+	
+
+
+
 }
 
 Menu::~Menu()
@@ -53,6 +57,7 @@ void Menu::Draw(sf::RenderWindow& window)
 		
 	}
 }
+
 
 //function to update the index when move up
 void Menu::MoveUp()
@@ -85,3 +90,6 @@ void Menu::MoveDown()
 		switching.play();
 	}
 }
+
+
+

@@ -2,6 +2,7 @@
 #include "functions.h"
 #include "leaderboard.h"
 #include "Menu.h"
+#include "volumemenu.h"
 #include <sstream>
 using namespace sf;
 int main(void)
@@ -9,85 +10,85 @@ int main(void)
 	// Sounds
 
 	// Set to true/false to activate or mute
-	bool sfxSwitch = false;
-	bool musicSwitch = false;
+	bool sfxSwitch = true;
+	bool musicSwitch = true;
 
-		//sounds of main menu 
+	//sounds of main menu 
 
-		// Theme music
-		Music theme;
-		theme.openFromFile("resources/sfx/main_menu/theme.ogg");
-		theme.setLoop(true);
-		if (musicSwitch)
-		{
-			theme.play();
-		}
+	// Theme music
+	Music theme;
+	theme.openFromFile("resources/sfx/main_menu/theme.ogg");
+	theme.setLoop(true);
+	if (musicSwitch)
+	{
+		theme.play();
+	}
 
-		//sound of when you press enter.....
-		SoundBuffer whenpressed;
-		whenpressed.loadFromFile("resources/sfx/main_menu/choose_button.wav");
-		Sound whenpressed_detector;
-		whenpressed_detector.setBuffer(whenpressed);
+	//sound of when you press enter.....
+	SoundBuffer whenpressed;
+	whenpressed.loadFromFile("resources/sfx/main_menu/choose_button.wav");
+	Sound whenpressed_detector;
+	whenpressed_detector.setBuffer(whenpressed);
 
-		//when return sound....(when you press backspace)
-		SoundBuffer whenreturn;
-		whenreturn.loadFromFile("resources/sfx/main_menu/switch.wav");
-		Sound whenreturn_detector;
-		whenreturn_detector.setBuffer(whenreturn);
-
-
+	//when return sound....(when you press backspace)
+	SoundBuffer whenreturn;
+	whenreturn.loadFromFile("resources/sfx/main_menu/switch.wav");
+	Sound whenreturn_detector;
+	whenreturn_detector.setBuffer(whenreturn);
 
 
-		// Ball sounds
-		// Score
-		SoundBuffer scor;
-		scor.loadFromFile("resources/sfx/fire/score.wav");
-		Sound score_sound;
-		score_sound.setBuffer(scor);
-		// Wall hit
-		SoundBuffer wall;
-		wall.loadFromFile("resources/sfx/fire/wall.wav");
-		Sound wall_hit;
-		wall_hit.setBuffer(wall);
-		// Pad hit
-		SoundBuffer pad;
-		pad.loadFromFile("resources/sfx/fire/pad.wav");
-		Sound pad_hit;
-		pad_hit.setBuffer(pad);
-		
-
-		// Background
-
-		Music background;
-		background.openFromFile("resources/sfx/fire/background.ogg");
-		background.setLoop(true);
 
 
-		// Powerups
+	// Ball sounds
+	// Score
+	SoundBuffer scor;
+	scor.loadFromFile("resources/sfx/fire/score.wav");
+	Sound score_sound;
+	score_sound.setBuffer(scor);
+	// Wall hit
+	SoundBuffer wall;
+	wall.loadFromFile("resources/sfx/fire/wall.wav");
+	Sound wall_hit;
+	wall_hit.setBuffer(wall);
+	// Pad hit
+	SoundBuffer pad;
+	pad.loadFromFile("resources/sfx/fire/pad.wav");
+	Sound pad_hit;
+	pad_hit.setBuffer(pad);
 
-		// Elongate
-		SoundBuffer Elon_bfr;
-		Elon_bfr.loadFromFile("resources/sfx/powerups/elongate.wav");
-		Sound elongate_sound;
-		elongate_sound.setBuffer(Elon_bfr);
 
-		// Freeze
-		SoundBuffer frz_bfr;
-		frz_bfr.loadFromFile("resources/sfx/powerups/freeze.wav");
-		Sound freeze_sound;
-		freeze_sound.setBuffer(frz_bfr);
+	// Background
 
-		// Slow
-		SoundBuffer slow_bfr;
-		slow_bfr.loadFromFile("resources/sfx/powerups/slow.wav");
-		Sound slow_sound;
-		slow_sound.setBuffer(slow_bfr);
+	Music background;
+	background.openFromFile("resources/sfx/fire/background.ogg");
+	background.setLoop(true);
 
-		// Dissapear
-		SoundBuffer dspr_bfr;
-		dspr_bfr.loadFromFile("resources/sfx/powerups/dissapear.wav");
-		Sound dissapear_sound;
-		dissapear_sound.setBuffer(dspr_bfr);
+
+	// Powerups
+
+	// Elongate
+	SoundBuffer Elon_bfr;
+	Elon_bfr.loadFromFile("resources/sfx/powerups/elongate.wav");
+	Sound elongate_sound;
+	elongate_sound.setBuffer(Elon_bfr);
+
+	// Freeze
+	SoundBuffer frz_bfr;
+	frz_bfr.loadFromFile("resources/sfx/powerups/freeze.wav");
+	Sound freeze_sound;
+	freeze_sound.setBuffer(frz_bfr);
+
+	// Slow
+	SoundBuffer slow_bfr;
+	slow_bfr.loadFromFile("resources/sfx/powerups/slow.wav");
+	Sound slow_sound;
+	slow_sound.setBuffer(slow_bfr);
+
+	// Dissapear
+	SoundBuffer dspr_bfr;
+	dspr_bfr.loadFromFile("resources/sfx/powerups/dissapear.wav");
+	Sound dissapear_sound;
+	dissapear_sound.setBuffer(dspr_bfr);
 
 
 
@@ -111,7 +112,7 @@ int main(void)
 	Font font;
 	if (!font.loadFromFile("resources/fonts/Pacifico.ttf"))
 		return EXIT_FAILURE;
-	
+
 	//option message 
 	Text option;
 	option.setFont(font);
@@ -162,42 +163,42 @@ int main(void)
 
 		//longate
 
-		pUp longate; //struct containing powerup attributes
-		Clock longC; //clock decleration to work a timer later for how long the powerup stays
-			longate.isSpawned = false;
-			longate.isActive = false;
-			longate.circle.setFillColor(Color::Red); //pUp color
-			longate.circle.setRadius(10); //pUp size
+	pUp longate; //struct containing powerup attributes
+	Clock longC; //clock decleration to work a timer later for how long the powerup stays
+	longate.isSpawned = false;
+	longate.isActive = false;
+	longate.circle.setFillColor(Color::Red); //pUp color
+	longate.circle.setRadius(10); //pUp size
 
 
-		//freeze 
+//freeze 
 
-		pUp freeze;
-		Clock freezeC;
-			freeze.isSpawned = false;
-			freeze.isActive = false;
-			freeze.circle.setFillColor(Color::Blue); //pUp color
-			freeze.circle.setRadius(10); //pUp size	
+	pUp freeze;
+	Clock freezeC;
+	freeze.isSpawned = false;
+	freeze.isActive = false;
+	freeze.circle.setFillColor(Color::Blue); //pUp color
+	freeze.circle.setRadius(10); //pUp size	
 
-		//slow
+//slow
 
-		pUp slow;
-		Clock slowC;
-			slow.isSpawned = false;
-			slow.isActive = false;
-			slow.circle.setFillColor(Color::Green); //pUp color
-			slow.circle.setRadius(10); //pUp size
+	pUp slow;
+	Clock slowC;
+	slow.isSpawned = false;
+	slow.isActive = false;
+	slow.circle.setFillColor(Color::Green); //pUp color
+	slow.circle.setRadius(10); //pUp size
 
-		//Invisibility
+//Invisibility
 
-		pUp invis;
-		Clock invisC;
-			invis.isSpawned = false;
-			invis.isActive = false;
-			invis.circle.setFillColor(Color::Magenta); //pUp color
-			invis.circle.setRadius(10); //pUp size
+	pUp invis;
+	Clock invisC;
+	invis.isSpawned = false;
+	invis.isActive = false;
+	invis.circle.setFillColor(Color::Magenta); //pUp color
+	invis.circle.setRadius(10); //pUp size
 
-	bool frozen1 = 0, frozen2 = 0, slow1 = 0, slow2 = 0, invis1 = 0 , invis2 = 0;  //could be changed later
+	bool frozen1 = 0, frozen2 = 0, slow1 = 0, slow2 = 0, invis1 = 0, invis2 = 0;  //could be changed later
 
 
 
@@ -205,7 +206,7 @@ int main(void)
 	//font of score 
 	sf::Font scorefont;
 	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
-  
+
 	// score of player 1  // 3dad score 1 
 	float scorep1 = 0;
 	std::ostringstream ssScorep1;
@@ -244,6 +245,8 @@ int main(void)
 	// main menu 
 	Menu menu(window.getSize().x, window.getSize().y);
 	bool men = true;
+	//lvl of volume in game 
+	volumemenu Level_of_volume(window.getSize().x, window.getSize().y);
 
 
 	//losing/wining message 
@@ -286,6 +289,9 @@ int main(void)
 	bool leader = false;
 
 	// GAME LOOP
+	
+
+
 	while (window.isOpen())
 	{
 
@@ -298,7 +304,59 @@ int main(void)
 				window.close();
 				return 0;
 			}
+			
+			/////volume changer ///////
+			////volume change event //////////
+			if (opt) {
+				if (event.type == Event::KeyReleased) {
+					switch (event.key.code)
+					{
+					case Keyboard::Right:
+						Level_of_volume.MoveRight();
+						break;
 
+					case Keyboard::Left:
+						Level_of_volume.MoveLeft();
+						break;
+
+					case sf::Keyboard::Return:
+
+						///volume changer /////////
+						switch (Level_of_volume.GetVolumechange())
+						{
+						case 0:
+
+							theme.setVolume(0);
+							background.setVolume(0);
+
+							break;
+						case 1:
+							theme.setVolume(25);
+							background.setVolume(25);
+
+							break;
+
+						case 2:
+							theme.setVolume(50);
+							background.setVolume(50);
+							break;
+
+						case 3:
+							theme.setVolume(75);
+							background.setVolume(75);
+
+							break;
+
+						case 4:
+							theme.setVolume(100);
+							background.setVolume(100);
+							break;
+						}
+						break;
+					}
+                     break;
+				}
+			}
 
 			if (men) {
 				if (event.type == Event::KeyReleased) {
@@ -329,7 +387,7 @@ int main(void)
 									background.play();
 								}
 								whenpressed_detector.play();
-								
+
 							}
 							break;
 						case 1:
@@ -354,7 +412,7 @@ int main(void)
 						case 3:
 							whenpressed_detector.play();
 							window.close();
-							
+
 
 							break;
 						}
@@ -442,36 +500,36 @@ int main(void)
 			// Movement
 
 			// Pad1 Movement
-				if (!frozen1) //it can only take input if not frozen
+			if (!frozen1) //it can only take input if not frozen
+			{
+
+				if (slow1) //changing speed depending if slowed or not
 				{
-
-					if (slow1) //changing speed depending if slowed or not
-					{
-						pad1.velocity = Get_Movement(S, W) * 3;
-					}
-					else
-						pad1.velocity = Get_Movement(S, W) * 10;
-
-					pad1.rect.move(0, pad1.velocity);
-					boundcheck(pad1);
-
+					pad1.velocity = Get_Movement(S, W) * 3;
 				}
+				else
+					pad1.velocity = Get_Movement(S, W) * 10;
+
+				pad1.rect.move(0, pad1.velocity);
+				boundcheck(pad1);
+
+			}
 
 
 			// Pad2 Movement
-				if (!frozen2)
+			if (!frozen2)
+			{
+
+				if (slow2)
 				{
-
-					if (slow2)
-					{
-						pad2.velocity = Get_Movement(Down, Up) * 3;
-					}
-					else
-						pad2.velocity = Get_Movement(Down, Up) * 10;
-
-					pad2.rect.move(0, pad2.velocity);
-					boundcheck(pad2);
+					pad2.velocity = Get_Movement(Down, Up) * 3;
 				}
+				else
+					pad2.velocity = Get_Movement(Down, Up) * 10;
+
+				pad2.rect.move(0, pad2.velocity);
+				boundcheck(pad2);
+			}
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
@@ -485,7 +543,7 @@ int main(void)
 					wall_hit.play();
 				}
 			}
-			
+
 			// Ball hit pad sound
 			if (isCollidingFromLeft(ball, pad2.rect) || isCollidingFromRight(ball, pad1.rect))
 			{
@@ -494,7 +552,7 @@ int main(void)
 					pad_hit.play();
 				}
 			}
-			
+
 
 
 			//PowerUPS
@@ -503,278 +561,278 @@ int main(void)
 
 					// spawns only if no player has the pUp ,
 					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-					if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 90)
-					{
-						longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
-						longate.isSpawned = 1; //change spawned state
-					}
+			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 90)
+			{
+				longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
+				longate.isSpawned = 1; //change spawned state
+			}
 
-					if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 995)
-					{
-						freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
-						freeze.isSpawned = 1; //change spawned state
-					}
+			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 995)
+			{
+				freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
+				freeze.isSpawned = 1; //change spawned state
+			}
 
-					if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900)
-					{
-						slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
-						slow.isSpawned = 1; //change spawned state
-					}
+			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900)
+			{
+				slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+				slow.isSpawned = 1; //change spawned state
+			}
 
-					if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 900)
-					{
-						invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
-						invis.isSpawned = 1; //change spawned state
-					}
+			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 900)
+			{
+				invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+				invis.isSpawned = 1; //change spawned state
+			}
 
 			//Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
 
 				//ELONGATE
-				if (longate.isActive == true && longC.getElapsedTime() > seconds(6))
+			if (longate.isActive == true && longC.getElapsedTime() > seconds(6))
+			{
+
+				if (pad1.rect.getSize().y != 125) //if the player that has the pUp is p1  (logic could be changed later)
 				{
-
-					if (pad1.rect.getSize().y != 125) //if the player that has the pUp is p1  (logic could be changed later)
-					{
-						int len = elongate(pad1, false); //variable for the sake of code readability
-						pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
-						pad1.length = len;
-						pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
-					}
-					else  //if the player that has the pUp is p2  (logic could be changed later)
-					{
-						int len = elongate(pad2, false);  //variable for the sake of code readability
-						pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
-						pad2.length = len;
-						pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-					}
-
-
-					longate.isActive = 0; //pUp is no longer active
+					int len = elongate(pad1, false); //variable for the sake of code readability
+					pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
+					pad1.length = len;
+					pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
 				}
-
-				//FREEZE
-				if (freeze.isActive == true && freezeC.getElapsedTime() > seconds(2))
+				else  //if the player that has the pUp is p2  (logic could be changed later)
 				{
-
-					if (frozen1) //if the player that has the pUp is p1  (logic could be changed later)
-					{
-						frozen1 = 0;
-						pad1.rect.setFillColor(Color::Magenta);
-					}
-					else  //if the player that has the pUp is p2  (logic could be changed later)
-					{
-						frozen2 = 0;
-						pad2.rect.setFillColor(Color::White);
-					}
-
-
-					freeze.isActive = 0; //pUp is no longer active
-				}
-
-				//SLOW
-				if (slow.isActive == true && slowC.getElapsedTime() > seconds(4))
-				{
-
-					if (slow1) //if the player that has the pUp is p1  (logic could be changed later)
-					{
-						slow1 = 0;
-						pad1.rect.setFillColor(Color::Magenta);
-					}
-					else  //if the player that has the pUp is p2  (logic could be changed later)
-					{
-						slow2 = 0;
-						pad2.rect.setFillColor(Color::White);
-					}
-
-
-					slow.isActive = 0; //pUp is no longer active
-				}
-
-				//INVIS
-				if (invis.isActive == true && invisC.getElapsedTime() > seconds(2))
-				{
-
-					if (invis1) //if the player that has the pUp is p1  (logic could be changed later)
-					{
-						invis1 = 0;
-						
-					}
-					else  //if the player that has the pUp is p2  (logic could be changed later)
-					{
-						invis2 = 0;
-						
-					}
-
-
-					invis.isActive = 0; //pUp is no longer active
+					int len = elongate(pad2, false);  //variable for the sake of code readability
+					pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
+					pad2.length = len;
+					pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
 				}
 
 
-				// Check collisions between the ball and the screen with x axis // score of player 1
-					/*
-							USE THE BALL RADIUS DON'T USE OTHER VALUES
-					*/
-				if (ball.circle.getPosition().x - ballRadius < 0.f)
+				longate.isActive = 0; //pUp is no longer active
+			}
+
+			//FREEZE
+			if (freeze.isActive == true && freezeC.getElapsedTime() > seconds(2))
+			{
+
+				if (frozen1) //if the player that has the pUp is p1  (logic could be changed later)
 				{
-					if (sfxSwitch)
-					{
-						score_sound.play();
-					}
-					scorep2++;
-					ssScorep2.str("");
-					ssScorep2 << scorep2;
-					lblscorep2.setString(ssScorep2.str());
-					// handles the bug of counting more than one point
-					RandomPos(ball);
-					p1win_detector = 1;
+					frozen1 = 0;
+					pad1.rect.setFillColor(Color::Magenta);
+				}
+				else  //if the player that has the pUp is p2  (logic could be changed later)
+				{
+					frozen2 = 0;
+					pad2.rect.setFillColor(Color::White);
 				}
 
 
-				if (ball.circle.getPosition().x + ballRadius > GAMEWIDTH)
+				freeze.isActive = 0; //pUp is no longer active
+			}
+
+			//SLOW
+			if (slow.isActive == true && slowC.getElapsedTime() > seconds(4))
+			{
+
+				if (slow1) //if the player that has the pUp is p1  (logic could be changed later)
 				{
-					if (sfxSwitch)
-					{
-						score_sound.play();
-					}
-					scorep1++;
-					ssScorep1.str("");
-					ssScorep1 << scorep1;
-					lblscorep1.setString(ssScorep1.str());
-					// handle the bug of counting more than one point
-					RandomPos(ball);
-					p2win_detector = 1;
+					slow1 = 0;
+					pad1.rect.setFillColor(Color::Magenta);
 				}
+				else  //if the player that has the pUp is p2  (logic could be changed later)
+				{
+					slow2 = 0;
+					pad2.rect.setFillColor(Color::White);
+				}
+
+
+				slow.isActive = 0; //pUp is no longer active
+			}
+
+			//INVIS
+			if (invis.isActive == true && invisC.getElapsedTime() > seconds(2))
+			{
+
+				if (invis1) //if the player that has the pUp is p1  (logic could be changed later)
+				{
+					invis1 = 0;
+
+				}
+				else  //if the player that has the pUp is p2  (logic could be changed later)
+				{
+					invis2 = 0;
+
+				}
+
+
+				invis.isActive = 0; //pUp is no longer active
+			}
+
+
+			// Check collisions between the ball and the screen with x axis // score of player 1
+				/*
+						USE THE BALL RADIUS DON'T USE OTHER VALUES
+				*/
+			if (ball.circle.getPosition().x - ballRadius < 0.f)
+			{
+				if (sfxSwitch)
+				{
+					score_sound.play();
+				}
+				scorep2++;
+				ssScorep2.str("");
+				ssScorep2 << scorep2;
+				lblscorep2.setString(ssScorep2.str());
+				// handles the bug of counting more than one point
+				RandomPos(ball);
+				p1win_detector = 1;
+			}
+
+
+			if (ball.circle.getPosition().x + ballRadius > GAMEWIDTH)
+			{
+				if (sfxSwitch)
+				{
+					score_sound.play();
+				}
+				scorep1++;
+				ssScorep1.str("");
+				ssScorep1 << scorep1;
+				lblscorep1.setString(ssScorep1.str());
+				// handle the bug of counting more than one point
+				RandomPos(ball);
+				p2win_detector = 1;
+			}
 		}
 
 
 		//check for collision with ball and pUp and only do so if it's already spawned on screen
 
 				//elongate
-				if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
+		if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
+		{
+			if (sfxSwitch)
+			{
+				elongate_sound.play();
+			}
+			longC.restart(); //reset pUP timer
+			longate.isSpawned = 0; //prevent multi spawn
+			longate.isActive = 1;
+
+
+			//if player1 is the one who took the pUP
+			if (ball.xVelocity > 0)
+			{
+				int len = elongate(pad1, true);
+				pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 longer
+				pad1.length = len;
+				pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
+				cout << pad1.rect.getPosition().y << endl;
+				if (pad1.rect.getPosition().y + len / 2.f > 600)
 				{
-					if (sfxSwitch)
-					{
-						elongate_sound.play();
-					}
-					longC.restart(); //reset pUP timer
-					longate.isSpawned = 0; //prevent multi spawn
-					longate.isActive = 1;
-
-
-					//if player1 is the one who took the pUP
-					if (ball.xVelocity > 0)
-					{
-						int len = elongate(pad1, true);
-						pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 longer
-						pad1.length = len;
-						pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
-						cout << pad1.rect.getPosition().y << endl;
-						if (pad1.rect.getPosition().y + len / 2.f > 600)
-						{
-							pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
-						}
-						else if (pad1.rect.getPosition().y - len / 2.f < 0)
-						{
-							pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
-						}
-					}
-					//if player2 is the one who took the pUP
-					else
-					{
-						int len = elongate(pad2, true);
-						pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 longer
-						pad2.length = len;
-						pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-
-						if (pad2.rect.getPosition().y + len / 2.f > 600)
-						{
-							pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
-						}
-						else if (pad2.rect.getPosition().y - len / 2.f < 0)
-						{
-							pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
-						}
-					}
+					pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
 				}
-
-				//Freeze
-				if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
+				else if (pad1.rect.getPosition().y - len / 2.f < 0)
 				{
-					if (sfxSwitch)
-					{
-						freeze_sound.play();
-					}
-					freezeC.restart(); //reset pUP timer
-					freeze.isSpawned = 0; //prevent multi spawn
-					freeze.isActive = 1;
-
-					//if player1 is the one who took the pUP
-					if (ball.xVelocity > 0)
-					{
-						frozen2 = 1; //make p2 frozen
-						pad2.rect.setFillColor(Color::Blue);
-					}
-					//if player2 is the one who took the pUP
-					else
-					{
-						frozen1 = 1; //make p2 frozen
-						pad1.rect.setFillColor(Color::White);
-						pad1.rect.setFillColor(Color::Blue);
-					}
+					pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
 				}
+			}
+			//if player2 is the one who took the pUP
+			else
+			{
+				int len = elongate(pad2, true);
+				pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 longer
+				pad2.length = len;
+				pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
 
-				//Slow
-				if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
+				if (pad2.rect.getPosition().y + len / 2.f > 600)
 				{
-					if (sfxSwitch)
-					{
-						slow_sound.play();
-					}
-					slowC.restart(); //reset pUP timer
-					slow.isSpawned = 0; //prevent multi spawn
-					slow.isActive = 1;
-
-					//if player1 is the one who took the pUP
-					if (ball.xVelocity > 0)
-					{
-						slow2 = 1; //make p2 frozen
-						pad2.rect.setFillColor(Color::Red);
-
-					}
-					//if player2 is the one who took the pUP
-					else
-					{
-						slow1 = 1; //make p2 longer
-						pad1.rect.setFillColor(Color::White);
-						pad1.rect.setFillColor(Color::Red);
-					}
+					pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
 				}
-
-				//Invis 
-				if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
+				else if (pad2.rect.getPosition().y - len / 2.f < 0)
 				{
-					if (sfxSwitch)
-					{
-						dissapear_sound.play();
-					}
-					invisC.restart(); //reset pUP timer
-					invis.isSpawned = 0; //prevent multi spawn
-					invis.isActive = 1;
-
-					//if player1 is the one who took the pUP
-					if (ball.xVelocity > 0)
-					{
-						invis2 = 1; //make p2 frozen
-						
-
-					}
-					//if player2 is the one who took the pUP
-					else
-					{
-						invis1 = 1; //make p2 longer
-						
-					}
+					pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
 				}
+			}
+		}
+
+		//Freeze
+		if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
+		{
+			if (sfxSwitch)
+			{
+				freeze_sound.play();
+			}
+			freezeC.restart(); //reset pUP timer
+			freeze.isSpawned = 0; //prevent multi spawn
+			freeze.isActive = 1;
+
+			//if player1 is the one who took the pUP
+			if (ball.xVelocity > 0)
+			{
+				frozen2 = 1; //make p2 frozen
+				pad2.rect.setFillColor(Color::Blue);
+			}
+			//if player2 is the one who took the pUP
+			else
+			{
+				frozen1 = 1; //make p2 frozen
+				pad1.rect.setFillColor(Color::White);
+				pad1.rect.setFillColor(Color::Blue);
+			}
+		}
+
+		//Slow
+		if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
+		{
+			if (sfxSwitch)
+			{
+				slow_sound.play();
+			}
+			slowC.restart(); //reset pUP timer
+			slow.isSpawned = 0; //prevent multi spawn
+			slow.isActive = 1;
+
+			//if player1 is the one who took the pUP
+			if (ball.xVelocity > 0)
+			{
+				slow2 = 1; //make p2 frozen
+				pad2.rect.setFillColor(Color::Red);
+
+			}
+			//if player2 is the one who took the pUP
+			else
+			{
+				slow1 = 1; //make p2 longer
+				pad1.rect.setFillColor(Color::White);
+				pad1.rect.setFillColor(Color::Red);
+			}
+		}
+
+		//Invis 
+		if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
+		{
+			if (sfxSwitch)
+			{
+				dissapear_sound.play();
+			}
+			invisC.restart(); //reset pUP timer
+			invis.isSpawned = 0; //prevent multi spawn
+			invis.isActive = 1;
+
+			//if player1 is the one who took the pUP
+			if (ball.xVelocity > 0)
+			{
+				invis2 = 1; //make p2 frozen
+
+
+			}
+			//if player2 is the one who took the pUP
+			else
+			{
+				invis1 = 1; //make p2 longer
+
+			}
+		}
 
 		//Determing the end point of game
 		if (scorep1 == 10)
@@ -798,10 +856,10 @@ int main(void)
 
 			scorep2 = 0;
 			ssScorep2.str("");
-			ssScorep2  << scorep2;
+			ssScorep2 << scorep2;
 			lblscorep2.setString(ssScorep2.str());
 
-			
+
 		}
 
 		// RENDERING
@@ -825,25 +883,25 @@ int main(void)
 			//only draw pUP if it's spawned
 
 					//elongate
-					if (longate.isSpawned == true)
-					{
-						window.draw(longate.circle);
-					}
-					//freeze
-					if (freeze.isSpawned == true)
-					{
-						window.draw(freeze.circle);
-					}
-					//slow
-					if (slow.isSpawned == true)
-					{
-						window.draw(slow.circle);
-					}
-					//invis
-					if (invis.isSpawned == true)
-					{
-						window.draw(invis.circle);
-					}
+			if (longate.isSpawned == true)
+			{
+				window.draw(longate.circle);
+			}
+			//freeze
+			if (freeze.isSpawned == true)
+			{
+				window.draw(freeze.circle);
+			}
+			//slow
+			if (slow.isSpawned == true)
+			{
+				window.draw(slow.circle);
+			}
+			//invis
+			if (invis.isSpawned == true)
+			{
+				window.draw(invis.circle);
+			}
 			//draw score of player 1 
 			window.draw(lblscorep1);
 
@@ -852,31 +910,32 @@ int main(void)
 			men = false;
 		}
 
-		
+
 		else {
-		     //rendering p1 winning message 
-		     if (p1win_detector) {
-			
-			window.draw(p1win);
-			window.draw(option);
-		     }
+			//rendering p1 winning message 
+			if (p1win_detector) {
 
-		     //rendering p2 winning message 
-		    if (p2win_detector) {
+				window.draw(p1win);
+				window.draw(option);
+			}
 
-			window.draw(p2win);
-			window.draw(option);
-		    }
+			//rendering p2 winning message 
+			if (p2win_detector) {
 
-		    //render option window 
-		    if (opt) {
+				window.draw(p2win);
+				window.draw(option);
+			}
+
+			//render option window 
+			if (opt) {
 				window.draw(option);
 				men = false;
+				Level_of_volume.drawvolume(window);
 			}
 			// Rendering main menu 
 			if (men) {
 				menu.Draw(window);
-		
+
 			}
 			if (leader)
 			{
