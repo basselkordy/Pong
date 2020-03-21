@@ -4,11 +4,14 @@
 #include "Menu.h"
 #include "volumemenu.h"
 #include "thememenu.h"
+#include "Pong/Pong/pauseMenu.h"
 #include <sstream>
+
 using namespace sf;
 int main(void)
 {
-
+	//MODE(t for training, 2 for 2 player , a for ai)
+	char MODE = 't';
 	// THEMES //
 
 	bool hell = false, ice = false, forest = false; //still no use but could be helpful when switching ingame
@@ -16,9 +19,6 @@ int main(void)
 	Texture backgT; //background
 	RectangleShape backg; 
 	backg.setSize(Vector2f(800.0, 600.0));
-	
-	
-		
 	
 	// Sounds
 
@@ -166,11 +166,11 @@ int main(void)
 	BALL ball;
 
 	// Set radius
-	ball.circle.setRadius(15);
+	ball.circle.setRadius(ballRadius);
 
 	// Set the positon and orgin
 	ball.circle.setPosition(400, 300);
-	ball.circle.setOrigin(ballRadius / 2.f, ballRadius / 2.f);
+	ball.circle.setOrigin(ballRadius, ballRadius);
 
 
 	//////powerUps///////
@@ -264,6 +264,10 @@ int main(void)
 	//theme changer/////////
     thememenu change_the_theme(window.getSize().x, window.getSize().y);
 
+	//pause menu
+	bool pause = false;
+	pauseMenu pMenu(window.getSize().x, window.getSize().y);
+
 
 	//losing/wining message 
 	//lw_font 
@@ -327,6 +331,56 @@ int main(void)
 				window.close();
 				return 0;
 			}
+
+			//pause menu events
+			if (pause)
+			{
+				if (event.type == Event::KeyReleased)
+				{
+					switch (event.key.code)
+					{
+						case Keyboard::Up:
+							pMenu.moveUp();
+							break;
+
+						case Keyboard::Down:
+							pMenu.moveDown();
+							break;
+
+						case Keyboard::Return:
+							switch (pMenu.getPresseditem())
+							{
+								//resume
+							case 0:
+								if (pause)
+								{
+									pause = false;
+									whenpressed_detector.play();
+									break;
+								}
+								//open option menu
+							case 1:
+								opt = true;
+								pause = false;
+								whenpressed_detector.play();
+								break;
+								//exit
+							case 2:
+								whenpressed_detector.play();
+								window.close();
+								break;
+
+
+							default:
+								break;
+							}
+					default:
+						break;
+					}
+					
+					
+				}
+			}
 			
 			/////volume changer ///////
 			////volume change event //////////
@@ -380,7 +434,7 @@ int main(void)
 							background.setVolume(100);
 							break;
 						}
-                                           //////theme changer event /////////////////
+
 						switch (change_the_theme.GetThemechange())
 						{
 						case 0:
@@ -499,16 +553,22 @@ int main(void)
 				}
 				leader = false;
 				opt = false;
-				men = true;
+				if (!play)
+					men = true;
+				else
+					pause = true;
+
 				p1win_detector = 0;
 				p2win_detector = 0;
-				play = 0;
+				
 				//when you press return sound......
 				whenreturn_detector.play();
 				background.stop();
 			}
 
-
+			//pause
+			if (isPressed(Keyboard::P))
+				pause = true;
 		}
 
 
@@ -539,27 +599,12 @@ int main(void)
 
 
 
-		if (play) {
+		if (play && !pause && !opt) {
 			// Movement
 
 			// Pad1 Movement
-			//ai_move(pad1, ball);
-			if (!frozen1) //it can only take input if not frozen
-			{
-
-				if (slow1) //changing speed depending if slowed or not
-				{
-					pad1.velocity = ai_move(pad1, ball) * 4;
-					//pad1.velocity = Get_Movement(S, W) * 3;
-				}
-				else
-					pad1.velocity = ai_move(pad1, ball) * 10;
-					//pad1.velocity = Get_Movement(S, W) * 10;
-				
-				pad1.rect.move(0, pad1.velocity);
-				boundcheck(pad1);
-
-			}
+			//depends on the mode
+			Modes(pad1, ball, MODE, frozen1, slow1, W, S);
 
 
 			// Pad2 Movement
@@ -609,25 +654,25 @@ int main(void)
 					// spawns only if no player has the pUp ,
 					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
 
-			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96)
+			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
 			{
 				longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				longate.isSpawned = 1; //change spawned state
 			}
 
-			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998)
+			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
 			{
 				freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				freeze.isSpawned = 1; //change spawned state
 			}
 
-			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900)
+			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE != 't')
 			{
 				slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				slow.isSpawned = 1; //change spawned state
 			}
 
-			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998)
+			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
 			{
 				invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				invis.isSpawned = 1; //change spawned state
@@ -917,6 +962,17 @@ int main(void)
 			//draw score of player 2
 			window.draw(lblscorep2);
 			men = false;
+
+			//rendering pause window(draw pause window if option window is not opened)
+			if (pause && !opt)
+				pMenu.DRAW(window);
+
+			if (opt) {
+				window.draw(option);
+				men = false;
+				Level_of_volume.drawvolume(window);
+				change_the_theme.drawtheme(window);
+			}
 		}
 
 
@@ -951,6 +1007,7 @@ int main(void)
 			{
 				viewLeaderboard(window);
 			}
+
 		}
 
 		window.display();

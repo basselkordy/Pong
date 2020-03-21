@@ -578,3 +578,58 @@ void set_theme (PAD& pad1,PAD& pad2,BALL& ball,Texture& backgT,RectangleShape& b
 	pad2.rect.setTexture(&pad2.texture);
 
 }
+
+////////// MODES /////////
+
+void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S)
+{
+	//AI player mode
+	if (c == 'a')
+	{
+		if (!froze) //it can only take input if not frozen
+		{
+
+			if (slow) //changing speed depending if slowed or not
+			{
+				pad.velocity = ai_move(pad, ball) * 4;
+			}
+			else
+				pad.velocity = ai_move(pad, ball) * 10;
+
+			pad.rect.move(0, pad.velocity);
+			boundcheck(pad);
+
+		}
+	}
+
+	//two player mode
+	if (c == '2')
+	{
+		if (!froze) //it can only take input if not frozen
+		{
+
+			if (slow) //changing speed depending if slowed or not
+			{
+				pad.velocity = Get_Movement(S, W) * 3;
+			}
+			else
+				pad.velocity = Get_Movement(S, W) * 10;
+
+			pad.rect.move(0, pad.velocity);
+			boundcheck(pad);
+
+		}
+	}
+
+	//trainig mode
+	if (c == 't')
+	{
+		pad.length = GAMEHEIGHT;
+		pad.rect.setSize(Vector2f(pad.width, pad.length));
+		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
+		pad.rect.setPosition(pad.width + /*the needed distance*/ 30, 300);
+		pad.velocity = Get_Movement(false, false);
+	}
+
+}
+
