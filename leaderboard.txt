@@ -8,4 +8,15 @@ hello 1
 j1j$$1dd 1
 bavlly 1
 bassel 0
- 0
+bavlly 0
+bavlly 0
+bavlly 0
+b 0
+bb 0
+bbb 0
+bbv 0
+bbvh 0
+bbvhl 0
+bbvhll 0
+bv 0
+bvb 0

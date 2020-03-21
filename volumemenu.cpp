@@ -42,7 +42,6 @@ volumemenu::volumemenu(float width, float height)
 		Volumechange[0].setFont(font);
 		Volumechange[0].setFillColor(sf::Color::Red);
 	}
-
 }
 
 volumemenu::~volumemenu()
@@ -58,6 +57,7 @@ void volumemenu::drawvolume(RenderWindow& windowvolume)
 	}
 
 }
+
 
 void volumemenu::MoveRight()
 {
@@ -80,5 +80,10 @@ void volumemenu::MoveLeft()
 		SelectedVolumeLevel--;
 		Volumechange[SelectedVolumeLevel].setFillColor(sf::Color::Red);
 		switching.play();
+
 	}
 }
+
+
+
+

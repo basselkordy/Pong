@@ -3,6 +3,7 @@
 #include "leaderboard.h"
 #include "Menu.h"
 #include "volumemenu.h"
+#include "thememenu.h"
 #include <sstream>
 using namespace sf;
 int main(void)
@@ -23,8 +24,8 @@ int main(void)
 
 	// Set to true/false to activate or mute
 	
-	bool sfxSwitch = false;
-	bool musicSwitch = false;
+	bool sfxSwitch = true;
+	bool musicSwitch = true;
 
 	//sounds of main menu 
 
@@ -260,6 +261,8 @@ int main(void)
 	bool men = true;
 	//lvl of volume in game 
 	volumemenu Level_of_volume(window.getSize().x, window.getSize().y);
+	//theme changer/////////
+    thememenu change_the_theme(window.getSize().x, window.getSize().y);
 
 
 	//losing/wining message 
@@ -303,11 +306,10 @@ int main(void)
 
 
 	////theme test
+	set_theme(pad1, pad2, ball, backgT, backg, 'h');
 
-	cout << "Enter theme letter (h : hell , i : ice , f : forest)" << endl;
-	cin >> c;
 
-	set_theme(pad1, pad2, ball, backgT, backg, c);
+	
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 	
@@ -339,7 +341,12 @@ int main(void)
 					case Keyboard::Left:
 						Level_of_volume.MoveLeft();
 						break;
-
+					case Keyboard::A :
+						change_the_theme.Move_A(); ///move to left using A key ////////////
+						break;
+					case Keyboard::D:
+						change_the_theme.Move_D();////move to right using D key ///////////////
+						break;
 					case sf::Keyboard::Return:
 
 						///volume changer /////////
@@ -373,6 +380,25 @@ int main(void)
 							background.setVolume(100);
 							break;
 						}
+
+						switch (change_the_theme.GetThemechange())
+						{
+						case 0:
+
+							
+							set_theme(pad1, pad2, ball, backgT, backg, 'h');
+
+							break;
+						case 1:
+							set_theme(pad1, pad2, ball, backgT, backg, 'i');
+							break;
+
+						case 2:
+							set_theme(pad1, pad2, ball, backgT, backg, 'f');
+							break;
+
+						}
+
 						break;
 					}
                      break;
@@ -403,10 +429,6 @@ int main(void)
 								// Stop theme music
 								theme.pause();
 								// Play background sounds
-								if (musicSwitch)
-								{
-									background.play();
-								}
 								whenpressed_detector.play();
 
 							}
@@ -533,7 +555,7 @@ int main(void)
 				else
 					pad1.velocity = ai_move(pad1, ball) * 10;
 					//pad1.velocity = Get_Movement(S, W) * 10;
-
+				
 				pad1.rect.move(0, pad1.velocity);
 				boundcheck(pad1);
 
@@ -918,6 +940,7 @@ int main(void)
 				window.draw(option);
 				men = false;
 				Level_of_volume.drawvolume(window);
+				change_the_theme.drawtheme(window);
 			}
 			// Rendering main menu 
 			if (men) {
