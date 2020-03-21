@@ -4,14 +4,14 @@
 #include "Menu.h"
 #include "volumemenu.h"
 #include "thememenu.h"
-#include "Pong/Pong/pauseMenu.h"
+#include "pauseMenu.h"
 #include <sstream>
 
 using namespace sf;
 int main(void)
 {
 	//MODE(t for training, 2 for 2 player , a for ai)
-	char MODE = 't';
+	char MODE ;
 	// THEMES //
 
 	bool hell = false, ice = false, forest = false; //still no use but could be helpful when switching ingame
@@ -367,17 +367,16 @@ int main(void)
 								//exit
 							case 2:
 								whenpressed_detector.play();
-								window.close();
-								break;
-
-
-							default:
+								getPlayerName = false;
+								play = false;
+								pause = false;
+								men = true;
 								break;
 							}
-					default:
+					
 						break;
 					}
-					
+					break;
 					
 				}
 			}
@@ -480,10 +479,12 @@ int main(void)
 							{
 								getPlayerName = true;
 								play = false;
+								men = false;
 								// Stop theme music
 								theme.pause();
 								// Play background sounds
 								whenpressed_detector.play();
+								MODE = 'a';
 
 							}
 							break;
@@ -508,40 +509,47 @@ int main(void)
 
 						case 3:
 							whenpressed_detector.play();
+							theme.pause();
+							play = true;
+							MODE = 't';
+							break;
+
+						case 4:
+							whenpressed_detector.play();
 							window.close();
-
-
 							break;
 						}
 						break;
 					}
 					break;
 				}
-				if (getPlayerName)
+
+		
+			}
+			if (getPlayerName)
+			{
+				if (event.type == sf::Event::TextEntered)
 				{
-					if (event.type == sf::Event::TextEntered)
+					if (event.text.unicode == '\b')
 					{
-						if (event.text.unicode == '\b')
+						if (!playerName.empty())
 						{
-							if (!playerName.empty())
-							{
-								playerName.erase(playerName.size() - 1);
-								playerText.setString(playerName);
-							}
-						}
-						else
-						{
-							playerName += event.text.unicode;
+							playerName.erase(playerName.size() - 1);
 							playerText.setString(playerName);
 						}
 					}
-					else if (event.key.code == sf::Keyboard::Return)
+					else
 					{
-						addPlayers(playerName);
-						getPlayerName = false;
-						playerText.setString("");
-						play = true;
+						playerName += event.text.unicode;
+						playerText.setString(playerName);
 					}
+				}
+				else if (event.key.code == sf::Keyboard::Return)
+				{
+					addPlayers(playerName);
+					getPlayerName = false;
+					playerText.setString("");
+					play = true;
 				}
 			}
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
@@ -567,8 +575,13 @@ int main(void)
 			}
 
 			//pause
-			if (isPressed(Keyboard::P))
+			if (isPressed(Keyboard::P)) {
 				pause = true;
+				if (musicSwitch && play)
+				{
+					theme.play();
+				}
+			}
 		}
 
 
@@ -596,8 +609,31 @@ int main(void)
 		else
 			Down = false;
 
+		/////reset the game after close /////////////////////
+		if (!play) {
+			RandomPos(ball);
+			//  rectangle shape with given length and width
+			pad1.rect.setSize(Vector2f(20, 125));
+			// Set the orgin
+			pad1.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+			// Set the position
+			pad1.rect.setPosition(pad1.width + /*the needed distance*/ 30, 400);
+
+			//  rectangle shape with given length and width
+			pad2.rect.setSize(Vector2f(20, 125));
+			// Set the orgin
+			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+			// Set the position
+			pad2.rect.setPosition(GAMEWIDTH - pad2.width -  /*the needed distance*/ 30, 350);
 
 
+
+			longate.isSpawned = 0; longate.isActive == 1;
+			freeze.isSpawned = 0;  freeze.isActive == 1;
+			slow.isSpawned = 0;    slow.isActive == 1;
+			invis.isActive = 0;    invis.isActive == 1;
+			
+		}
 
 		if (play && !pause && !opt) {
 			// Movement
@@ -654,25 +690,25 @@ int main(void)
 					// spawns only if no player has the pUp ,
 					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
 
-			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
+			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE == 'a')
 			{
 				longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				longate.isSpawned = 1; //change spawned state
 			}
 
-			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
+			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE == 'a')
 			{
 				freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				freeze.isSpawned = 1; //change spawned state
 			}
 
-			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE != 't')
+			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE == 'a')
 			{
 				slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				slow.isSpawned = 1; //change spawned state
 			}
 
-			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
+			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE == 'a')
 			{
 				invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				invis.isSpawned = 1; //change spawned state
@@ -759,7 +795,6 @@ int main(void)
 				lblscorep2.setString(ssScorep2.str());
 				// handles the bug of counting more than one point
 				RandomPos(ball);
-				p1win_detector = 1;
 			}
 
 
@@ -775,7 +810,6 @@ int main(void)
 				lblscorep1.setString(ssScorep1.str());
 				// handle the bug of counting more than one point
 				RandomPos(ball);
-				p2win_detector = 1;
 			}
 		}
 
@@ -887,10 +921,12 @@ int main(void)
 		//Determing the end point of game
 		if (scorep1 == 10)
 		{
+			p2win_detector = 1;
 			play = false;
 		}
 		else if (scorep2 == 10)
 		{
+			p1win_detector = 1;
 			gameOver(playerName);
 			playerName.clear();
 			play = false;
@@ -922,7 +958,7 @@ int main(void)
 			window.draw(playerText);
 		}
 
-		else if (play) {
+		 if (play) {
 			//
 			window.draw(backg);
 			// Draw pads and ball

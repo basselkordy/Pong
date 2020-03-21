@@ -3,7 +3,7 @@
 Menu::Menu(float width, float height)
 {
 	//sound of switching 
-	switiching_sound.loadFromFile("resources/sfx/main_menu/switch.wav" );
+	switiching_sound.loadFromFile("resources/sfx/main_menu/switch.wav");
 	switching.setBuffer(switiching_sound);
 
 	//font properties 
@@ -27,8 +27,13 @@ Menu::Menu(float width, float height)
 
 	text[3].setFont(font);
 	text[3].setFillColor(sf::Color::White);
-	text[3].setString("Exit");
-	text[3].setPosition(sf::Vector2f((width / 2) - 35, height / (MAX_NUMBER_OF_ITEMS + 1) * 4));
+	text[3].setString("Training");
+	text[3].setPosition(sf::Vector2f((width / 2) - 60, height / (MAX_NUMBER_OF_ITEMS + 1) * 4));
+
+	text[4].setFont(font);
+	text[4].setFillColor(sf::Color::White);
+	text[4].setString("Exit");
+	text[4].setPosition(sf::Vector2f((width / 2) - 35, height / (MAX_NUMBER_OF_ITEMS + 1) * 5));
 
 	SelectedItemIndex = 0;
 
@@ -39,7 +44,7 @@ Menu::Menu(float width, float height)
 		text[0].setFillColor(sf::Color::Red);
 	}
 
-	
+
 
 
 
@@ -54,7 +59,7 @@ void Menu::Draw(sf::RenderWindow& window)
 {
 	for (int i = 0; i < MAX_NUMBER_OF_ITEMS; i++) {
 		window.draw(text[i]);
-		
+
 	}
 }
 
@@ -63,7 +68,7 @@ void Menu::Draw(sf::RenderWindow& window)
 void Menu::MoveUp()
 {
 	if (SelectedItemIndex - 1 >= 0) {
-		
+
 		text[SelectedItemIndex].setFont(font);
 		text[SelectedItemIndex].setCharacterSize(30);
 		text[SelectedItemIndex].setFillColor(sf::Color::White);
@@ -73,13 +78,23 @@ void Menu::MoveUp()
 		text[SelectedItemIndex].setFillColor(sf::Color::Red);
 		switching.play();
 	}
+
+	else if (SelectedItemIndex - 1 < 0)
+	{
+		text[SelectedItemIndex].setFillColor(Color::White);
+		text[SelectedItemIndex].setCharacterSize(30);
+		SelectedItemIndex = 4;
+		text[SelectedItemIndex].setFont(font2);
+		text[SelectedItemIndex].setFillColor(Color::Red);
+		text[SelectedItemIndex].setCharacterSize(40);
+	}
 }
 
 //function to update the index when move Down 
 void Menu::MoveDown()
 {
 	if (SelectedItemIndex + 1 < MAX_NUMBER_OF_ITEMS) {
-	
+
 		text[SelectedItemIndex].setFont(font);
 		text[SelectedItemIndex].setCharacterSize(30);
 		text[SelectedItemIndex].setFillColor(sf::Color::White);
@@ -88,6 +103,16 @@ void Menu::MoveDown()
 		text[SelectedItemIndex].setFont(font2);
 		text[SelectedItemIndex].setFillColor(sf::Color::Red);
 		switching.play();
+	}
+
+	else if (SelectedItemIndex + 1 >= MAX_NUMBER_OF_ITEMS)
+	{
+		text[SelectedItemIndex].setFillColor(Color::White);
+		text[SelectedItemIndex].setCharacterSize(30);
+		SelectedItemIndex = 0;
+		text[SelectedItemIndex].setFont(font2);
+		text[SelectedItemIndex].setFillColor(Color::Red);
+		text[SelectedItemIndex].setCharacterSize(40);
 	}
 }
 

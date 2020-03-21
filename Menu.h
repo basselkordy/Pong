@@ -2,7 +2,7 @@
 #include <sfml/Graphics.hpp>
 #include <SFML/Audio.hpp>
 using namespace sf;
-#define MAX_NUMBER_OF_ITEMS 4
+#define MAX_NUMBER_OF_ITEMS 5
 
 class Menu
 {

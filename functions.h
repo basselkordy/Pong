@@ -595,9 +595,10 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 			}
 			else
 				pad.velocity = ai_move(pad, ball) * 10;
-
+			pad.length = 125.0f;
 			pad.rect.move(0, pad.velocity);
 			boundcheck(pad);
+			
 
 		}
 	}
