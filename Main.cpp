@@ -380,7 +380,7 @@ int main(void)
 							background.setVolume(100);
 							break;
 						}
-
+                                           //////theme changer event /////////////////
 						switch (change_the_theme.GetThemechange())
 						{
 						case 0:
