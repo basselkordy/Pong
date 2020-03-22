@@ -19,7 +19,7 @@ pauseMenu::pauseMenu(float width, float height)
 
 	items[2].setFont(font);
 	items[2].setFillColor(Color::White);
-	items[2].setString("Exit");
+	items[2].setString("Menu");
 	items[2].setPosition(Vector2f((width / 2) - 50, height / (3 + 1) * 3));
 
 	selectedItemIndex = 0;

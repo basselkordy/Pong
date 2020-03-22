@@ -597,6 +597,7 @@ int main(void)
 			{
 				leader = false;
 				opt = false;
+				getPlayerName = false;
 				if (!play)
 				{
 					men = true;
@@ -649,6 +650,14 @@ int main(void)
 			Down = false;
 
 		/////reset the game after close /////////////////////
+		if (men ) {
+			if (!playerName.empty())
+			{
+				playerName.erase();
+				playerText.setString("");
+
+			}
+		}
 		if (!play) {
 			RandomPos(ball);
 			//  rectangle shape with given length and width
@@ -666,7 +675,7 @@ int main(void)
 			pad2.rect.setPosition(GAMEWIDTH - pad2.width -  /*the needed distance*/ 30, 350);
 
 
-
+			////reseting power ups /////////////
 			longate.isSpawned = 0; longate.isActive == 1;
 			freeze.isSpawned = 0;  freeze.isActive == 1;
 			slow.isSpawned = 0;    slow.isActive == 1;
@@ -741,25 +750,25 @@ int main(void)
 					// spawns only if no player has the pUp ,
 					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
 
-			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE == 'a')
+			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
 			{
 				longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				longate.isSpawned = 1; //change spawned state
 			}
 
-			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE == 'a')
+			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
 			{
 				freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
 				freeze.isSpawned = 1; //change spawned state
 			}
 
-			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE == 'a')
+			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE != 't')
 			{
 				slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				slow.isSpawned = 1; //change spawned state
 			}
 
-			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE == 'a')
+			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
 			{
 				invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 				invis.isSpawned = 1; //change spawned state
