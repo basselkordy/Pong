@@ -10,12 +10,15 @@
 using namespace sf;
 int main(void)
 {
+	bool themePlaying = true;
+
 	//MODE(t for training, 2 for 2 player , a for ai)
 	char MODE ;
+
 	// THEMES //
 
 	bool hell = false, ice = false, forest = false; //still no use but could be helpful when switching ingame
-	char c; //indicate theme
+	char c = 'h'; //indicate theme
 	Texture backgT; //background
 	RectangleShape backg; 
 	backg.setSize(Vector2f(800.0, 600.0));
@@ -54,27 +57,27 @@ int main(void)
 
 
 	// Ball sounds
+
 	// Score
 	SoundBuffer scor;
-	scor.loadFromFile("resources/sfx/fire/score.wav");
 	Sound score_sound;
 	score_sound.setBuffer(scor);
+
 	// Wall hit
 	SoundBuffer wall;
-	wall.loadFromFile("resources/sfx/fire/wall.wav");
 	Sound wall_hit;
 	wall_hit.setBuffer(wall);
+
 	// Pad hit
 	SoundBuffer pad;
-	pad.loadFromFile("resources/sfx/fire/pad.wav");
 	Sound pad_hit;
 	pad_hit.setBuffer(pad);
 
 
 	// Background
-
-	Music background;
-	background.openFromFile("resources/sfx/fire/background.ogg");
+	SoundBuffer background_bfr;
+	Sound background;
+	background.setBuffer(background_bfr);
 	background.setLoop(true);
 
 
@@ -310,14 +313,18 @@ int main(void)
 
 
 	////theme test
-	set_theme(pad1, pad2, ball, backgT, backg, 'h');
+	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c);
 
 
-	
+
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 	
-
+	// Variable used to determine wether the user's Enter press in options is to change themes or to change volume
+	// '0' means nothing happend yet
+	// 'v' means enter should change volume
+	// 't' means enter should change theme
+	char Indecator = '0';
 
 	while (window.isOpen())
 	{
@@ -341,10 +348,12 @@ int main(void)
 					{
 						case Keyboard::Up:
 							pMenu.moveUp();
+							whenreturn_detector.play();
 							break;
 
 						case Keyboard::Down:
 							pMenu.moveDown();
+							whenreturn_detector.play();
 							break;
 
 						case Keyboard::Return:
@@ -371,6 +380,12 @@ int main(void)
 								play = false;
 								pause = false;
 								men = true;
+								if (musicSwitch)
+								{
+									background.stop();
+									theme.play();
+
+								}
 								break;
 							}
 					
@@ -380,75 +395,92 @@ int main(void)
 					
 				}
 			}
-			
+	
+
 			/////volume changer ///////
 			////volume change event //////////
 			if (opt) {
+				
 				if (event.type == Event::KeyReleased) {
 					switch (event.key.code)
 					{
 					case Keyboard::Right:
 						Level_of_volume.MoveRight();
+						Indecator = 'v';
 						break;
 
 					case Keyboard::Left:
 						Level_of_volume.MoveLeft();
+						Indecator = 'v';
 						break;
 					case Keyboard::A :
-						change_the_theme.Move_A(); ///move to left using A key ////////////
+						change_the_theme.Move_A(); ///move to left using A key //////////// 
+						Indecator = 't';
 						break;
 					case Keyboard::D:
 						change_the_theme.Move_D();////move to right using D key ///////////////
+						Indecator = 't';
 						break;
+
 					case sf::Keyboard::Return:
 
 						///volume changer /////////
-						switch (Level_of_volume.GetVolumechange())
+						if (Indecator == 'v')	// See line 323 for explaination
 						{
-						case 0:
+							switch (Level_of_volume.GetVolumechange())
+							{
+							case 0:
+								theme.setVolume(0);
+								background.setVolume(0);
 
-							theme.setVolume(0);
-							background.setVolume(0);
+								break;
+							case 1:
+								theme.setVolume(25);
+								background.setVolume(25);
 
-							break;
-						case 1:
-							theme.setVolume(25);
-							background.setVolume(25);
+								break;
 
-							break;
+							case 2:
+								theme.setVolume(50);
+								background.setVolume(50);
+								break;
 
-						case 2:
-							theme.setVolume(50);
-							background.setVolume(50);
-							break;
+							case 3:
+								theme.setVolume(75);
+								background.setVolume(75);
 
-						case 3:
-							theme.setVolume(75);
-							background.setVolume(75);
+								break;
 
-							break;
+							case 4:
+								theme.setVolume(100);
+								background.setVolume(100);
+								break;
+							}
 
-						case 4:
-							theme.setVolume(100);
-							background.setVolume(100);
-							break;
 						}
 
-						switch (change_the_theme.GetThemechange())
+						// theme changer
+						
+						if (Indecator == 't') // See line 323 for explaination
 						{
-						case 0:
+							switch (change_the_theme.GetThemechange())
+							{
+							case 0:
 
-							
-							set_theme(pad1, pad2, ball, backgT, backg, 'h');
+								set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'h');
+								c = 'h';
+								break;
+							case 1:
+								set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
+								c = 'i';
+								break;
 
-							break;
-						case 1:
-							set_theme(pad1, pad2, ball, backgT, backg, 'i');
-							break;
+							case 2:
+								set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f');
+								c = 'f';
+								break;
 
-						case 2:
-							set_theme(pad1, pad2, ball, backgT, backg, 'f');
-							break;
+							}
 
 						}
 
@@ -459,6 +491,8 @@ int main(void)
 			}
 
 			if (men) {
+
+				
 				if (event.type == Event::KeyReleased) {
 					switch (event.key.code)
 					{
@@ -477,12 +511,14 @@ int main(void)
 						case 0:
 							if (!play)
 							{
+								if (musicSwitch)
+								{
+									theme.pause();
+									background.play();
+								}
 								getPlayerName = true;
 								play = false;
 								men = false;
-								// Stop theme music
-								theme.pause();
-								// Play background sounds
 								whenpressed_detector.play();
 								MODE = 'a';
 
@@ -509,8 +545,12 @@ int main(void)
 
 						case 3:
 							whenpressed_detector.play();
-							theme.pause();
 							play = true;
+							if (musicSwitch)
+							{
+								theme.pause();
+								background.play();
+							}
 							MODE = 't';
 							break;
 
@@ -553,16 +593,20 @@ int main(void)
 				}
 			}
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
-			if (isPressed(Keyboard::BackSpace))
+			if (isPressed(Keyboard::BackSpace) && !getPlayerName)
 			{
-				if (musicSwitch && play)
-				{
-					theme.play();
-				}
 				leader = false;
 				opt = false;
 				if (!play)
+				{
 					men = true;
+					if (!themePlaying)
+					{
+						background.stop();
+						theme.play();
+						themePlaying = true;
+					}
+				}
 				else
 					pause = true;
 
@@ -571,16 +615,11 @@ int main(void)
 				
 				//when you press return sound......
 				whenreturn_detector.play();
-				background.stop();
 			}
 
 			//pause
 			if (isPressed(Keyboard::P)) {
 				pause = true;
-				if (musicSwitch && play)
-				{
-					theme.play();
-				}
 			}
 		}
 
@@ -632,10 +671,22 @@ int main(void)
 			freeze.isSpawned = 0;  freeze.isActive == 1;
 			slow.isSpawned = 0;    slow.isActive == 1;
 			invis.isActive = 0;    invis.isActive == 1;
+
+			// Disable active powerups
+			invis1 = false;    slow1 = false;   
+			invis2 = false;    slow2 = false;
+
+			pad1.rect.setFillColor(Color::White);
+			pad2.rect.setFillColor(Color :: White);
+			
+
+
 			
 		}
 
 		if (play && !pause && !opt) {
+
+
 			// Movement
 
 			// Pad1 Movement
@@ -816,7 +867,7 @@ int main(void)
 
 		//check for collision with ball and pUp and only do so if it's already spawned on screen
 
-				//elongate
+		//elongate
 		if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
 		{
 			if (sfxSwitch)
@@ -887,7 +938,6 @@ int main(void)
 			else
 			{
 				slow1 = 1; //make p2 longer
-				pad1.rect.setFillColor(Color::White);
 				pad1.rect.setFillColor(Color::Red);
 			}
 		}
@@ -919,17 +969,21 @@ int main(void)
 		}
 
 		//Determing the end point of game
-		if (scorep1 == 10)
+		if (scorep1 == 1)
 		{
 			p2win_detector = 1;
 			play = false;
+			themePlaying = false;
+
 		}
-		else if (scorep2 == 10)
+		else if (scorep2 == 1)
 		{
 			p1win_detector = 1;
 			gameOver(playerName);
 			playerName.clear();
 			play = false;
+			themePlaying = false;
+
 		}
 
 		// reset the score of p1 and p2 

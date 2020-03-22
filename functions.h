@@ -523,24 +523,34 @@ void elongate(PAD& pad1,PAD& pad2, bool active,char c)
 //////////////  THEMES ////////////////
 
 //Control themes functions , takes char indicating selected theme and switches all elements accordingly
-void set_theme (PAD& pad1,PAD& pad2,BALL& ball,Texture& backgT,RectangleShape& backg,char c)
+void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
+	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c)
 {
 	//Hell
 	if (c == 'h')
 	{
 		//Load files
+
+			// vfx
 		pad1.texture.loadFromFile("resources/vfx/hell/hellpadleft.png");
-		
+
 
 		pad2.texture.loadFromFile("resources/vfx/hell/hellpadright.png");
-		
+
 
 		ball.texture.loadFromFile("resources/vfx/hell/hellball.png");
-		
+
 
 		backgT.loadFromFile("resources/vfx/hell/hellbackg.jpg");
-		
 
+
+		// sfx
+		pad.loadFromFile("resources/sfx/fire/pad.wav");
+		wall.loadFromFile("resources/sfx/fire/wall.wav");
+		score.loadFromFile("resources/sfx/fire/score.wav");
+		background.loadFromFile("resources/sfx/fire/background.ogg");
+
+	
 	}
 	//Ice
 	else if (c == 'i')
@@ -555,6 +565,15 @@ void set_theme (PAD& pad1,PAD& pad2,BALL& ball,Texture& backgT,RectangleShape& b
 
 
 		backgT.loadFromFile("resources/vfx/ice/icebackg.png");
+
+
+
+		// sfx
+		pad.loadFromFile("resources/sfx/ice/pad.wav");
+		wall.loadFromFile("resources/sfx/ice/wall.wav");
+		score.loadFromFile("resources/sfx/ice/score.wav");
+		background.loadFromFile("resources/sfx/ice/background.wav");
+
 	}
 	//Forest
 	else if (c == 'f')
@@ -569,6 +588,14 @@ void set_theme (PAD& pad1,PAD& pad2,BALL& ball,Texture& backgT,RectangleShape& b
 
 
 		backgT.loadFromFile("resources/vfx/forest/forestbackg.png");
+
+
+
+		pad.loadFromFile("resources/sfx/forest/pad.wav");
+		wall.loadFromFile("resources/sfx/forest/wall.wav");
+		score.loadFromFile("resources/sfx/forest/score.wav");
+		background.loadFromFile("resources/sfx/forest/background.wav");
+
 	}
 
 	//Set files
@@ -578,7 +605,6 @@ void set_theme (PAD& pad1,PAD& pad2,BALL& ball,Texture& backgT,RectangleShape& b
 	pad2.rect.setTexture(&pad2.texture);
 
 }
-
 ////////// MODES /////////
 
 void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S)
