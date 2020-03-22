@@ -81,6 +81,7 @@ void Menu::MoveUp()
 
 	else if (SelectedItemIndex - 1 < 0)
 	{
+		text[SelectedItemIndex].setFont(font);
 		text[SelectedItemIndex].setFillColor(Color::White);
 		text[SelectedItemIndex].setCharacterSize(30);
 		SelectedItemIndex = 4;
@@ -107,6 +108,7 @@ void Menu::MoveDown()
 
 	else if (SelectedItemIndex + 1 >= MAX_NUMBER_OF_ITEMS)
 	{
+		text[SelectedItemIndex].setFont(font);
 		text[SelectedItemIndex].setFillColor(Color::White);
 		text[SelectedItemIndex].setCharacterSize(30);
 		SelectedItemIndex = 0;
