@@ -4,22 +4,28 @@
 #include<iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+
 using namespace std;
 using namespace sf;
 
 const float padlengthSTD = 125;
 
 // Defining some Constants
+
 // for the screen
 #define GAMEWIDTH 800
 #define GAMEHEIGHT 600
+
 // for the bounding the pads
 #define PADDINGTOP 10
 #define PADDINGBOTTOM 10
+
 // ball Radius
 #define ballRadius 10.f
+
 // Defined here to be easily accessed by functions 
 Event event;
+
 // Structures
 struct PAD
 {
@@ -30,10 +36,83 @@ struct PAD
 	int length;
 
 	RectangleShape rect;
-	
+
 	Texture texture;
 
 	int velocity;
+
+	bool isFrozen = 0;
+
+	bool isInvis = 0;
+
+	bool isSlow = 0;
+
+	// Resets all variable pad attributes
+	// Take a a pad's number (1 or 2) to set each pad's position correctly
+	void ResetPad(int pad_number)
+	{
+		// Set length of pad
+		length = 125;
+
+		// Create the rectangle shape with given length and width
+		rect.setSize(Vector2f(width, length));
+
+		// Set the orgin
+		rect.setOrigin(width / 2.f, length / 2.f);
+
+		// Set the position
+		if (pad_number == 2)
+			rect.setPosition(GAMEWIDTH - width -  /*the needed distance*/ 30, 350);
+		else
+			rect.setPosition(width + /*the needed distance*/ 30, 400);
+
+		// This is done to return the pad's fill color back to normal if the game exits while it isn't
+		rect.setFillColor(Color::White);
+		
+		isInvis = 0;
+		isSlow = 0;
+		isFrozen = 0;
+	}
+
+	// Takes states of buttons and returns a key representing how the pad should move
+	// 0 = Don't move, +ve = Move up, -ve = Move down
+	int Get_Movement(bool W, bool S)
+	{
+		// if the pad is currently slowed v = 3, else v = 10
+		int v = isSlow ? 3 : 10;
+
+		// Both or neither keys are pressed
+		if ((W && S) || (!W && !S) || isFrozen)
+		{
+			return 0;
+		}
+
+		if (W)
+		{
+			return v;
+		}
+
+		if (S)
+		{
+			return -v;
+		}
+
+		return 0;
+	}
+	// Takes a reference to a pad, prevents it from getting out of bounds
+	// to set the bounds change the constant PADDINGTOP & PADDINGBOTTOM
+	void boundcheck()
+	{
+		if (rect.getPosition().y - length / 2 < PADDINGTOP)
+		{
+			rect.move(0, -velocity);
+		}
+		if (rect.getPosition().y + length / 2 > GAMEHEIGHT - PADDINGBOTTOM)
+		{
+			rect.move(0, -velocity);
+		}
+
+	}
 
 };
 
@@ -50,20 +129,10 @@ struct BALL
 
 };
 
-//struct containing powerup attributes
-
-struct pUp
-{
-	CircleShape circle; //pUp shape
-	Texture texture; // pUp texture
-	bool isSpawned; // Bool to check if the pUP on the screen aka "spawned"
-	bool isActive; // bool to check if the a player has picked the pUP and it's working on him now
-
-};
 
 // Functions
 
-	// takes a key code, returns true if its pressed, false if not
+// takes a key code, returns true if its pressed, false if not
 bool isPressed(Keyboard::Key x)
 {
 	if (Keyboard::isKeyPressed(x))
@@ -96,43 +165,6 @@ void RandomPos(BALL& ball)
 }
 
 
-// Takes states of buttons and returns a key representing how the pad should move
-// 0 = Don't move, 1 = Move up, -1 = Move down
-int Get_Movement(bool W, bool S)
-{
-	// Both or neither keys are pressed
-	if ((W && S) || (!W && !S))
-	{
-		return 0;
-	}
-
-	if (W)
-	{
-		return 1;
-	}
-
-	if (S)
-	{
-		return -1;
-	}
-
-	return 0;
-}
-
-// Takes a reference to a pad, prevents it from getting out of bounds
-// to set the bounds change the constant PADDINGTOP & PADDINGBOTTOM
-void boundcheck(PAD& pad)
-{
-	if (pad.rect.getPosition().y - pad.length / 2 < PADDINGTOP)
-	{
-		pad.rect.move(0, -pad.velocity);
-	}
-	if (pad.rect.getPosition().y + pad.length / 2 > GAMEHEIGHT - PADDINGBOTTOM)
-	{
-		pad.rect.move(0, -pad.velocity);
-	}
-
-}
 
 
 // Takes a reference to the ball, reverses velocity in the y direction when it hits a wall
@@ -455,70 +487,7 @@ int ai_move(PAD& pad, BALL& ball)
 	}
 }
 
-///////////// POWER UPS  ///////////////
 
-//elongate function takes a pad and a bool to return longer length if it's activated or normal length if it's deactivated
-//the pad part is not crucial but it's for code's flexability 
-void elongate(PAD& pad1,PAD& pad2, bool active,char c)
-{
-	if (active)
-	{
-		if (c == '1')
-		{
-			int len = padlengthSTD * 2;
-			pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 longer
-			pad1.length = len;
-			pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
-
-			if (pad1.rect.getPosition().y + len / 2.f > 600)
-			{
-				pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
-			}
-			else if (pad1.rect.getPosition().y - len / 2.f < 0)
-			{
-				pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
-			}
-		}
-		else
-		{
-			int len = padlengthSTD * 2;
-			pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 longer
-			pad2.length = len;
-			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-
-			//if the pad after elongated is out of screen return it in
-			if (pad2.rect.getPosition().y + len / 2.f > 600)
-			{
-				pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
-			}
-			else if (pad2.rect.getPosition().y - len / 2.f < 0)
-			{
-				pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
-			}
-		}
-		
-	}
-	else
-	{
-		if (pad1.rect.getSize().y != padlengthSTD) //if the player that has the pUp is p1  (logic could be changed later)
-		{
-			int len = padlengthSTD; //variable for the sake of code readability
-			pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
-			pad1.length = len;
-			pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
-		}
-		else  //if the player that has the pUp is p2  (logic could be changed later)
-		{
-			int len = padlengthSTD;  //variable for the sake of code readability
-			pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
-			pad2.length = len;
-			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-		}
-	}
-
-
-
-}
 
 //////////////  THEMES ////////////////
 
@@ -607,6 +576,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 }
 ////////// MODES /////////
 
+
+
 void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S)
 {
 	//AI player mode
@@ -623,7 +594,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 				pad.velocity = ai_move(pad, ball) * 10;
 			pad.length = 125.0f;
 			pad.rect.move(0, pad.velocity);
-			boundcheck(pad);
+			pad.boundcheck();
 			
 
 		}
@@ -632,20 +603,20 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 	//two player mode
 	if (c == '2')
 	{
-		if (!froze) //it can only take input if not frozen
-		{
+			//it can only take input if not frozen
+		
 
 			if (slow) //changing speed depending if slowed or not
 			{
-				pad.velocity = Get_Movement(S, W) * 3;
+				pad.velocity = pad.Get_Movement(S, W);
 			}
 			else
-				pad.velocity = Get_Movement(S, W) * 10;
+				pad.velocity = pad.Get_Movement(S, W);
 
 			pad.rect.move(0, pad.velocity);
-			boundcheck(pad);
+			pad.boundcheck();
 
-		}
+		
 	}
 
 	//trainig mode
@@ -655,8 +626,34 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 		pad.rect.setSize(Vector2f(pad.width, pad.length));
 		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
 		pad.rect.setPosition(pad.width + /*the needed distance*/ 30, 300);
-		pad.velocity = Get_Movement(false, false);
+		pad.velocity = pad.Get_Movement(false, false);
 	}
 
 }
+
+// Takes references to everything drawn in game and handles their drawing conditions
+void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, BALL& ball, Text& lblscorep1, Text& lblscorep2)
+{
+
+	// Background
+	window.draw(backg);
+
+	// Ball
+	window.draw(ball.circle);
+
+	// Pads
+	if (!pad1.isInvis)
+		window.draw(pad1.rect);
+	if (!pad2.isInvis)
+		window.draw(pad2.rect);
+
+	//draw score of player 1 
+	window.draw(lblscorep1);
+
+	//draw score of player 2
+	window.draw(lblscorep2);
+
+}
+
+
 

@@ -4,12 +4,12 @@ ayman 4
 perry 3
 w 3
 badr 2
+d 2
+d 2
 hello 1
 j1j$$1dd 1
 bavlly 1
 k 1
-d 1
-d 1
 bavlly 0
 bavlly 0
 b 0
@@ -55,3 +55,4 @@ uuy 0
 hgfhgf 0
 fgdgh 0
 hgf 0
+ 0

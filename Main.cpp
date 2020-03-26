@@ -5,6 +5,7 @@
 #include "volumemenu.h"
 #include "thememenu.h"
 #include "pauseMenu.h"
+#include "powerups.h"
 #include <sstream>
 
 using namespace sf;
@@ -18,7 +19,7 @@ int main(void)
 	// THEMES //
 
 	bool hell = false, ice = false, forest = false; //still no use but could be helpful when switching ingame
-	char c = 'h'; //indicate theme
+	char c = 'f'; //indicate theme
 	Texture backgT; //background
 	RectangleShape backg; 
 	backg.setSize(Vector2f(800.0, 600.0));
@@ -27,8 +28,8 @@ int main(void)
 
 	// Set to true/false to activate or mute
 	
-	bool sfxSwitch = true;
 	bool musicSwitch = true;
+	bool sfxSwitch = true;
 
 	//sounds of main menu 
 
@@ -56,7 +57,7 @@ int main(void)
 
 
 
-	// Ball sounds
+	// Sound 
 
 	// Score
 	SoundBuffer scor;
@@ -80,34 +81,18 @@ int main(void)
 	background.setBuffer(background_bfr);
 	background.setLoop(true);
 
-
-	// Powerups
-
-	// Elongate
+	// Powerups sound buffers
 	SoundBuffer Elon_bfr;
 	Elon_bfr.loadFromFile("resources/sfx/powerups/elongate.wav");
-	Sound elongate_sound;
-	elongate_sound.setBuffer(Elon_bfr);
 
-	// Freeze
 	SoundBuffer frz_bfr;
 	frz_bfr.loadFromFile("resources/sfx/powerups/freeze.wav");
-	Sound freeze_sound;
-	freeze_sound.setBuffer(frz_bfr);
 
-	// Slow
 	SoundBuffer slow_bfr;
 	slow_bfr.loadFromFile("resources/sfx/powerups/slow.wav");
-	Sound slow_sound;
-	slow_sound.setBuffer(slow_bfr);
 
-	// Dissapear
 	SoundBuffer dspr_bfr;
 	dspr_bfr.loadFromFile("resources/sfx/powerups/dissapear.wav");
-	Sound dissapear_sound;
-	dissapear_sound.setBuffer(dspr_bfr);
-
-
 
 
 
@@ -118,13 +103,13 @@ int main(void)
 	// Limit FPS to 60
 	window.setFramerateLimit(60);
 
-
 	// Game loop bool
 	bool play = false;
 
 
 	//option selection 
 	bool opt = false;
+
 	//option font 
 	Font font;
 	if (!font.loadFromFile("resources/fonts/Pacifico.ttf"))
@@ -141,29 +126,10 @@ int main(void)
 
 	// Pads
 	PAD pad1;
-	// Set length of pad
-	pad1.length = 125;
-
-	// Create the rectangle shape with given length and width
-	pad1.rect.setSize(Vector2f(pad1.width, pad1.length));
-	// Set the orgin
-	pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
-	// Set the position
-	pad1.rect.setPosition(pad1.width + /*the needed distance*/ 30, 400);
-	// texture
-	//pad1.texture.loadFromFile("resources/test.png");
-	//pad1.rect.setTexture(&pad1.texture);
+	pad1.ResetPad(1);
 
 	PAD pad2;
-	// Set length of pad
-	pad2.length = 125;
-
-	// Create the rectangle shape with given length and width
-	pad2.rect.setSize(Vector2f(pad2.width, pad2.length));
-	// Set the orgin
-	pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-	// Set the position
-	pad2.rect.setPosition(GAMEWIDTH - pad2.width -  /*the needed distance*/ 30, 350);
+	pad2.ResetPad(2);
 
 	// Ball
 	BALL ball;
@@ -176,50 +142,16 @@ int main(void)
 	ball.circle.setOrigin(ballRadius, ballRadius);
 
 
-	//////powerUps///////
 
-		//longate
-
-	pUp longate; //struct containing powerup attributes
-	Clock longC; //clock decleration to work a timer later for how long the powerup stays
-	longate.isSpawned = false;
-	longate.isActive = false;
-	longate.circle.setFillColor(Color::Red); //pUp color
-	longate.circle.setRadius(10); //pUp size
-
-
-//freeze 
-
+	// Declaration of powersups and setting their textures and radii
+	pUp longate;
 	pUp freeze;
-	Clock freezeC;
-	freeze.isSpawned = false;
-	freeze.isActive = false;
-	freeze.circle.setFillColor(Color::Blue); //pUp color
-	freeze.circle.setRadius(10); //pUp size	
-
-//slow
-
 	pUp slow;
-	Clock slowC;
-	slow.isSpawned = false;
-	slow.isActive = false;
-	slow.circle.setFillColor(Color::Green); //pUp color
-	slow.circle.setRadius(10); //pUp size
-
-//Invisibility
-
 	pUp invis;
-	Clock invisC;
-	invis.isSpawned = false;
-	invis.isActive = false;
-	invis.circle.setFillColor(Color::Magenta); //pUp color
-	invis.circle.setRadius(10); //pUp size
-
-	bool frozen1 = 0, frozen2 = 0, slow1 = 0, slow2 = 0, invis1 = 0, invis2 = 0;  //could be changed later
+	initialize_powerups(longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr);
 
 
 
-	// States
 	//font of score 
 	sf::Font scorefont;
 	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
@@ -254,7 +186,7 @@ int main(void)
 
 	// States
 
-		// Keyboard buttons  
+	// Keyboard buttons  
 	bool W = false, S = false;
 	bool Up = false, Down = false;
 
@@ -650,80 +582,46 @@ int main(void)
 			Down = false;
 
 		/////reset the game after close /////////////////////
-		if (men ) {
+		if (men)
+		{
 			if (!playerName.empty())
 			{
 				playerName.erase();
 				playerText.setString("");
-
 			}
 		}
-		if (!play) {
+		if (!play)
+		{
 			RandomPos(ball);
-			//  rectangle shape with given length and width
-			pad1.rect.setSize(Vector2f(20, 125));
-			// Set the orgin
-			pad1.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-			// Set the position
-			pad1.rect.setPosition(pad1.width + /*the needed distance*/ 30, 400);
-
-			//  rectangle shape with given length and width
-			pad2.rect.setSize(Vector2f(20, 125));
-			// Set the orgin
-			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
-			// Set the position
-			pad2.rect.setPosition(GAMEWIDTH - pad2.width -  /*the needed distance*/ 30, 350);
-
+			pad1.ResetPad(1);
+			pad2.ResetPad(2);
 
 			////reseting power ups /////////////
 			longate.isSpawned = 0; longate.isActive == 1;
 			freeze.isSpawned = 0;  freeze.isActive == 1;
 			slow.isSpawned = 0;    slow.isActive == 1;
-			invis.isActive = 0;    invis.isActive == 1;
-
-			// Disable active powerups
-			invis1 = false;    slow1 = false;   
-			invis2 = false;    slow2 = false;
-
-			pad1.rect.setFillColor(Color::White);
-			pad2.rect.setFillColor(Color :: White);
-			
-
-
-			
+			invis.isActive = 0;    invis.isActive == 1;			
 		}
 
-		if (play && !pause && !opt) {
+		if (play && !pause && !opt)
+		{
 
-
-			// Movement
 
 			// Pad1 Movement
 			//depends on the mode
-			Modes(pad1, ball, MODE, frozen1, slow1, W, S);
+			Modes(pad1, ball, MODE, pad1.isFrozen, pad1.isSlow, W, S);
 
 
 			// Pad2 Movement
-			if (!frozen2)
-			{
-
-				if (slow2)
-				{
-					
-					pad2.velocity = Get_Movement(Down, Up) * 3;
-				}
-				else
-					pad2.velocity = Get_Movement(Down, Up) * 10;
-
-				pad2.rect.move(0, pad2.velocity);
-				boundcheck(pad2);
-			}
+			pad2.velocity = pad2.Get_Movement(Down, Up);
+			pad2.rect.move(0, pad2.velocity);
+			pad2.boundcheck();
+			
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
-			// sound_key is a number refering to which sound should be played
-
-
+			
+			// Ball hit wall sound
 			if (boundcheck_ball(ball))
 			{
 				if (sfxSwitch)
@@ -742,101 +640,16 @@ int main(void)
 			}
 
 
+			// PowerUPS
 
-			//PowerUPS
+			// Spawn
+			SpawnPowerups(longate, freeze, slow, invis, MODE);
 
-					//spawn
+			// Activate
+			isTakenPowerup(longate, freeze, slow, invis, ball, pad1, pad2, sfxSwitch);
 
-					// spawns only if no player has the pUp ,
-					//it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-
-			if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
-			{
-				longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
-				longate.isSpawned = 1; //change spawned state
-			}
-
-			if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
-			{
-				freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
-				freeze.isSpawned = 1; //change spawned state
-			}
-
-			if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE != 't')
-			{
-				slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
-				slow.isSpawned = 1; //change spawned state
-			}
-
-			if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
-			{
-				invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
-				invis.isSpawned = 1; //change spawned state
-			}
-
-			//Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
-
-				//ELONGATE
-			if (longate.isActive == true && longC.getElapsedTime() > seconds(6))
-			{
-				elongate(pad1, pad2, false,'1');
-				longate.isActive = 0; //pUp is no longer active
-			}
-
-			//FREEZE
-			if (freeze.isActive == true && freezeC.getElapsedTime() > seconds(2))
-			{
-
-				if (frozen1) //if the player that has the pUp is p1  (logic could be changed later)
-				{
-					frozen1 = 0;
-					pad1.rect.setFillColor(Color::White);
-				}
-				else  //if the player that has the pUp is p2  (logic could be changed later)
-				{
-					frozen2 = 0;
-					pad2.rect.setFillColor(Color::White);
-				}
-
-				freeze.isActive = 0; //pUp is no longer active
-			}
-
-			//SLOW
-			if (slow.isActive == true && slowC.getElapsedTime() > seconds(3))
-			{
-
-				if (slow1) //if the player that has the pUp is p1  (logic could be changed later)
-				{
-					slow1 = 0;
-					pad1.rect.setFillColor(Color::White);
-				}
-				else  //if the player that has the pUp is p2  (logic could be changed later)
-				{
-					slow2 = 0;
-					pad2.rect.setFillColor(Color::White);
-				}
-
-
-				slow.isActive = 0; //pUp is no longer active
-			}
-
-			//INVIS
-			if (invis.isActive == true && invisC.getElapsedTime() > seconds(1))
-			{
-
-				if (invis1) //if the player that has the pUp is p1  (logic could be changed later)
-				{
-					invis1 = 0;
-
-				}
-				else  //if the player that has the pUp is p2  (logic could be changed later)
-				{
-					invis2 = 0;
-
-				}
-
-				invis.isActive = 0; //pUp is no longer active
-			}
+			// Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
+			DeactivatePowerups(longate, freeze, slow, invis, pad1, pad2);
 
 
 			// Check collisions between the ball and the screen with x axis // score of player 1
@@ -873,126 +686,21 @@ int main(void)
 			}
 		}
 
-
-		//check for collision with ball and pUp and only do so if it's already spawned on screen
-
-		//elongate
-		if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
-		{
-			if (sfxSwitch)
-			{
-				elongate_sound.play();
-			}
-			longC.restart(); //reset pUP timer
-			longate.isSpawned = 0; //prevent multi spawn
-			longate.isActive = 1;
-
-			//if player1 is the one who took the pUP
-			if (ball.xVelocity > 0)
-			{
-				elongate(pad1, pad2, true, '1');
-			}
-			//if player2 is the one who took the pUP
-			else
-			{
-				elongate(pad1, pad2, true, '2');
-			}
-		}
-
-		//Freeze
-		if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
-		{
-			if (sfxSwitch)
-			{
-				freeze_sound.play();
-			}
-			freezeC.restart(); //reset pUP timer
-			freeze.isSpawned = 0; //prevent multi spawn
-			freeze.isActive = 1;
-
-			//if player1 is the one who took the pUP
-			if (ball.xVelocity > 0)
-			{
-				frozen2 = 1; //make p2 frozen
-				pad2.rect.setFillColor(Color::Blue);
-			}
-			//if player2 is the one who took the pUP
-			else
-			{
-				frozen1 = 1; //make p2 frozen
-				pad1.rect.setFillColor(Color::White);
-				pad1.rect.setFillColor(Color::Blue);
-			}
-		}
-
-		//Slow
-		if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
-		{
-			if (sfxSwitch)
-			{
-				slow_sound.play();
-			}
-			slowC.restart(); //reset pUP timer
-			slow.isSpawned = 0; //prevent multi spawn
-			slow.isActive = 1;
-
-			//if player1 is the one who took the pUP
-			if (ball.xVelocity > 0)
-			{
-				slow2 = 1; //make p2 frozen
-				pad2.rect.setFillColor(Color::Red);
-
-			}
-			//if player2 is the one who took the pUP
-			else
-			{
-				slow1 = 1; //make p2 longer
-				pad1.rect.setFillColor(Color::Red);
-			}
-		}
-
-		//Invis 
-		if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
-		{
-			if (sfxSwitch)
-			{
-				dissapear_sound.play();
-			}
-			invisC.restart(); //reset pUP timer
-			invis.isSpawned = 0; //prevent multi spawn
-			invis.isActive = 1;
-
-			//if player1 is the one who took the pUP
-			if (ball.xVelocity > 0)
-			{
-				invis2 = 1; //make p2 frozen
-
-
-			}
-			//if player2 is the one who took the pUP
-			else
-			{
-				invis1 = 1; //make p2 longer
-
-			}
-		}
-
 		//Determing the end point of game
-		if (scorep1 == 1)
+		if (scorep1 == 10)
 		{
 			p2win_detector = 1;
 			play = false;
 			themePlaying = false;
 
 		}
-		else if (scorep2 == 1)
+		else if (scorep2 == 10)
 		{
 			p1win_detector = 1;
 			gameOver(playerName);
 			playerName.clear();
 			play = false;
 			themePlaying = false;
-
 		}
 
 		// reset the score of p1 and p2 
@@ -1007,8 +715,6 @@ int main(void)
 			ssScorep2.str("");
 			ssScorep2 << scorep2;
 			lblscorep2.setString(ssScorep2.str());
-
-
 		}
 
 		// RENDERING
@@ -1021,46 +727,11 @@ int main(void)
 			window.draw(playerText);
 		}
 
-		 if (play) {
-			//
-			window.draw(backg);
-			// Draw pads and ball
-			
-			
-			window.draw(ball.circle);
-			if (!invis1)
-				window.draw(pad1.rect);
-			if (!invis2)
-				window.draw(pad2.rect);
-
-			//only draw pUP if it's spawned
-
-					//elongate
-			if (longate.isSpawned == true)
-			{
-				window.draw(longate.circle);
-			}
-			//freeze
-			if (freeze.isSpawned == true)
-			{
-				window.draw(freeze.circle);
-			}
-			//slow
-			if (slow.isSpawned == true)
-			{
-				window.draw(slow.circle);
-			}
-			//invis
-			if (invis.isSpawned == true)
-			{
-				window.draw(invis.circle);
-			}
-			//draw score of player 1 
-			window.draw(lblscorep1);
-
-			//draw score of player 2
-			window.draw(lblscorep2);
-			men = false;
+		 if (play)
+		 {
+			 DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2);
+			 DrawPowerups(window, longate, freeze, slow, invis);
+			 men = false;
 
 			//rendering pause window(draw pause window if option window is not opened)
 			if (pause && !opt)
@@ -1075,7 +746,8 @@ int main(void)
 		}
 
 
-		else {
+		else 
+		{
 			//rendering p1 winning message 
 			if (p1win_detector) {
 
