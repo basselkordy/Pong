@@ -2,8 +2,7 @@
 #include "functions.h"
 #include "leaderboard.h"
 #include "Menu.h"
-#include "volumemenu.h"
-#include "thememenu.h"
+#include "Optionmenu.h"
 #include "pauseMenu.h"
 #include "powerups.h"
 #include <sstream>
@@ -194,10 +193,12 @@ int main(void)
 	// main menu 
 	Menu menu(window.getSize().x, window.getSize().y);
 	bool men = true;
+	///// switch fo switching up and down /////
+	bool switcher = true;
 	//lvl of volume in game 
-	volumemenu Level_of_volume(window.getSize().x, window.getSize().y);
+	Optionmenu Level_of_volume(window.getSize().x, window.getSize().y);
 	//theme changer/////////
-    thememenu change_the_theme(window.getSize().x, window.getSize().y);
+    Optionmenu change_the_theme(window.getSize().x, window.getSize().y);
 
 	//pause menu
 	bool pause = false;
@@ -252,11 +253,7 @@ int main(void)
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 	
-	// Variable used to determine wether the user's Enter press in options is to change themes or to change volume
-	// '0' means nothing happend yet
-	// 'v' means enter should change volume
-	// 't' means enter should change theme
-	char Indecator = '0';
+
 
 	while (window.isOpen())
 	{
@@ -337,27 +334,35 @@ int main(void)
 					switch (event.key.code)
 					{
 					case Keyboard::Right:
-						Level_of_volume.MoveRight();
-						Indecator = 'v';
+						if (switcher)
+							Level_of_volume.MoveRight();
+						else
+							change_the_theme.MoveRight();
 						break;
 
 					case Keyboard::Left:
-						Level_of_volume.MoveLeft();
-						Indecator = 'v';
+						if (switcher)
+							Level_of_volume.MoveLeft();
+						else
+							change_the_theme.MoveLeft();
+					
 						break;
-					case Keyboard::A :
-						change_the_theme.Move_A(); ///move to left using A key //////////// 
-						Indecator = 't';
-						break;
-					case Keyboard::D:
-						change_the_theme.Move_D();////move to right using D key ///////////////
-						Indecator = 't';
+				
+					case Keyboard::Up:
+						Level_of_volume.MoveUp();
+						change_the_theme.MoveUp();
+						switcher = true;
 						break;
 
+					case Keyboard::Down:
+						Level_of_volume.MoveDown();
+						change_the_theme.MoveDown();
+						switcher = false;
+						break;
 					case sf::Keyboard::Return:
 
 						///volume changer /////////
-						if (Indecator == 'v')	// See line 323 for explaination
+						if (switcher)	/// this for switching up and down 
 						{
 							switch (Level_of_volume.GetVolumechange())
 							{
@@ -393,7 +398,7 @@ int main(void)
 
 						// theme changer
 						
-						if (Indecator == 't') // See line 323 for explaination
+						else
 						{
 							switch (change_the_theme.GetThemechange())
 							{
