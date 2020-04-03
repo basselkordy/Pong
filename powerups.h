@@ -73,7 +73,7 @@ void elongate(PAD& pad1, PAD& pad2, bool active, char c)
 }
 
 // Takes references to all powerups and sets their textures, radii and sounds
-void initialize_powerups(pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
+void initialize_powerups(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
 						SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr)
 {
 	////longate
@@ -96,11 +96,15 @@ void initialize_powerups(pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
 	invis.circle.setFillColor(Color::Magenta); //pUp color
 	invis.circle.setRadius(10); //pUp size
 	invis.sound.setBuffer(invsbfr);
+
+	//Reverse
+	/*invis.circle.setFillColor(Color::Black); //pUp color
+	invis.circle.setRadius(10);*/
 }
 
 
 // Draws powerups if they are spawned
-void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pUp& invis)
+void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& reverse)
 {
 
 	//elongate
@@ -123,6 +127,11 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 	{
 		window.draw(invis.circle);
 	}
+	//Reverse
+	/*if (reverse.isSpawned == true)
+	{
+		window.draw(reverse.circle);
+	}*/
 
 }
 
@@ -130,7 +139,7 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 
 //check for collision with ball and pUp and only do so if it's already spawned on screen
 // and activates powerups if they are taken 
-void isTakenPowerup(pUp& longate, pUp& freeze, pUp& slow, pUp& invis, BALL ball, PAD& pad1, PAD& pad2, bool sfxSwitch)
+void isTakenPowerup(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invis, BALL ball, PAD& pad1, PAD& pad2, bool sfxSwitch)
 {
 
 	//elongate
@@ -232,12 +241,36 @@ void isTakenPowerup(pUp& longate, pUp& freeze, pUp& slow, pUp& invis, BALL ball,
 
 		}
 	}
+	/*if (reverse.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(reverse.circle.getGlobalBounds()))
+	{
+		if (sfxSwitch)
+		{
+			reverse.sound.play();
+		}
+		reverse.clock.restart(); //reset pUP timer
+		reverse.isSpawned = 0; //prevent multi spawn
+		reverse.isActive = 1;
+
+		//if player1 is the one who took the pUP
+		if (ball.xVelocity > 0)
+		{
+			pad2.isReverse = 1; //make p2 frozen
+			pad2.rect.setFillColor(Color::Black);
+
+		}
+		//if player2 is the one who took the pUP
+		else
+		{
+			pad1.isReverse = 1; //make p2 longer
+			pad1.rect.setFillColor(Color::Black);
+		}
+	}*/
 }
 
 
 // spawns only if no player has the pUp ,
 //it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-void SpawnPowerups(pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE)
+void SpawnPowerups(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE)
 {
 
 	if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
@@ -263,11 +296,16 @@ void SpawnPowerups(pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE)
 		invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
 		invis.isSpawned = 1; //change spawned state
 	}
+	/*if (reverse.isActive == false && reverse.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
+	{
+		reverse.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+		reverse.isSpawned = 1; //change spawned state
+	}*/
 
 }
 
 
-void DeactivatePowerups(pUp& longate, pUp& freeze, pUp& slow, pUp& invis, PAD& pad1, PAD& pad2)
+void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, PAD& pad1, PAD& pad2)
 {
 	//ELONGATE
 	if (longate.isActive == true && longate.clock.getElapsedTime() > seconds(6))
@@ -330,5 +368,23 @@ void DeactivatePowerups(pUp& longate, pUp& freeze, pUp& slow, pUp& invis, PAD& p
 
 		invis.isActive = 0; //pUp is no longer active
 	}
+	
+	//Reverse
+	/*if (reverse.isActive == true && reverse.clock.getElapsedTime() > seconds(1))
+	{
+
+		if (pad1.isReverse) //if the player that has the pUp is p1  (logic could be changed later)
+		{
+			pad1.isReverse = 0;
+
+		}
+		else  //if the player that has the pUp is p2  (logic could be changed later)
+		{
+			pad2.isReverse = 0;
+
+		}
+
+		reverse.isActive = 0; //pUp is no longer active
+	}*/
 
 }

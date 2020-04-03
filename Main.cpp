@@ -6,8 +6,13 @@
 #include "pauseMenu.h"
 #include "powerups.h"
 #include <sstream>
+#include "menus options.h"
+
+
 
 using namespace sf;
+using namespace std;
+
 int main(void)
 {
 	bool themePlaying = true;
@@ -15,15 +20,8 @@ int main(void)
 	//MODE(t for training, 2 for 2 player , a for ai)
 	char MODE ;
 
-	// THEMES //
-
-	bool hell = false, ice = false, forest = false; //still no use but could be helpful when switching ingame
-	char c = 'f'; //indicate theme
-	Texture backgT; //background
-	RectangleShape backg; 
-	backg.setSize(Vector2f(800.0, 600.0));
-	
-	// Sounds
+	/// SFX ///
+	//searchSound
 
 	// Set to true/false to activate or mute
 	
@@ -54,9 +52,6 @@ int main(void)
 	whenreturn_detector.setBuffer(whenreturn);
 
 
-
-
-	// Sound 
 
 	// Score
 	SoundBuffer scor;
@@ -95,6 +90,8 @@ int main(void)
 
 
 
+	// Main Window
+	//searchMainWindow
 
 	// Create the main window 
 	RenderWindow window(VideoMode(GAMEWIDTH, GAMEHEIGHT), "Pong");
@@ -106,6 +103,10 @@ int main(void)
 	bool play = false;
 
 
+	/// Menus ///
+	//searchMenus
+
+	//Options
 	//option selection 
 	bool opt = false;
 
@@ -116,12 +117,66 @@ int main(void)
 
 	//option message 
 	Text option;
-	option.setFont(font);
-	option.setCharacterSize(40);
-	option.setPosition(200.f, 425.f);
-	option.setFillColor(Color::White);
-	option.setString("Press Backspace to return");
+	textInit(option,font);
 
+
+	//Main Menu
+	Menu menu(window.getSize().x, window.getSize().y);
+	bool men = true;
+
+	///// switch fo switching up and down /////
+	bool switcher = true;
+
+	//lvl of volume in game 
+	Optionmenu Level_of_volume(window.getSize().x, window.getSize().y);
+
+	//theme changer/////////
+	Optionmenu change_the_theme(window.getSize().x, window.getSize().y);
+
+	//Pause Menu
+	bool pause = false;
+	pauseMenu pMenu(window.getSize().x, window.getSize().y);
+
+	//Scores / Win lose
+	//Score
+	//font of score 
+	sf::Font scorefont;
+	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
+
+	// score of players 
+	float scorep1 = 0;
+	float scorep2 = 0;
+
+	ostringstream ssScorep1;
+	ostringstream ssScorep2;
+
+	ssScorep1 << scorep1;
+	ssScorep2 << scorep2;
+
+	//label of score of players
+	sf::Text lblscorep2;
+	sf::Text lblscorep1;
+	
+	textInit(lblscorep1, scorefont, ssScorep1, 1);
+	textInit(lblscorep2, scorefont, ssScorep2, 2);
+	
+
+
+	//Win lose
+	//losing/wining message 
+	//lw_font 
+	Font lw_font;
+	lw_font.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf");
+	//p1 winning message 
+	Text pWin;
+	textInit(pWin, lw_font,'W');
+	//in losing/wining bools 
+	bool p1win_detector = 0;
+	bool p2win_detector = 0;
+	
+
+	/// Game Components /// 
+	//searchGameComp
 
 	// Pads
 	PAD pad1;
@@ -140,47 +195,40 @@ int main(void)
 	ball.circle.setPosition(400, 300);
 	ball.circle.setOrigin(ballRadius, ballRadius);
 
-
-
+	//Powerups
 	// Declaration of powersups and setting their textures and radii
 	pUp longate;
 	pUp freeze;
 	pUp slow;
 	pUp invis;
-	initialize_powerups(longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr);
+	pUp reverse;
+	initialize_powerups(reverse,longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr);
 
 
+	///Leaderboard ///
+	//searchLeaderboard
 
-	//font of score 
-	sf::Font scorefont;
-	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
+	//////////Player Info and Leaderboard///////////
+	Text playerText;
+	Text messagePlayerText;
 
-	// score of player 1  // 3dad score 1 
-	float scorep1 = 0;
-	std::ostringstream ssScorep1;
-	ssScorep1 << scorep1;
-	sf::Text lblscorep1;
-	lblscorep1.setCharacterSize(30);
-	lblscorep1.setPosition(290, 5);
-	lblscorep1.setFont(scorefont);
-	lblscorep1.setCharacterSize(50);
-	lblscorep1.setFillColor(sf::Color::White);
-	lblscorep1.setString(ssScorep1.str());
+	textInit(playerText, messagePlayerText, font);
+
+	string playerName;
+	string playerUser1;
+
+	bool getPlayerName = false;
+	bool leader = false;
 
 
-	float scorep2 = 0;
-	std::ostringstream ssScorep2;
-	ssScorep2 << scorep2;
-	//label of score of player 2 
-	sf::Text lblscorep2;
-	lblscorep2.setCharacterSize(30);
-	lblscorep2.setPosition(440, 5);
-	lblscorep2.setFont(scorefont);
-	lblscorep2.setCharacterSize(50);
-	lblscorep2.setFillColor(sf::Color::White);
-	lblscorep2.setString(ssScorep1.str());
+	//Themes
+	//searchTheme
+	char c = 'f'; //indicate theme
+	Texture backgT; //background
+	RectangleShape backg;
+	backg.setSize(Vector2f(800.0, 600.0));
 
-
+	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c);
 
 
 	// States
@@ -188,67 +236,6 @@ int main(void)
 	// Keyboard buttons  
 	bool W = false, S = false;
 	bool Up = false, Down = false;
-
-
-	// main menu 
-	Menu menu(window.getSize().x, window.getSize().y);
-	bool men = true;
-	///// switch fo switching up and down /////
-	bool switcher = true;
-	//lvl of volume in game 
-	Optionmenu Level_of_volume(window.getSize().x, window.getSize().y);
-	//theme changer/////////
-    Optionmenu change_the_theme(window.getSize().x, window.getSize().y);
-
-	//pause menu
-	bool pause = false;
-	pauseMenu pMenu(window.getSize().x, window.getSize().y);
-
-
-	//losing/wining message 
-	//lw_font 
-	Font lw_font;
-	lw_font.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf");
-	//p1 winning message 
-	Text p1win;
-	p1win.setCharacterSize(100);
-	p1win.setPosition(GAMEWIDTH / 2 - 125, GAMEHEIGHT / 2 - 100);
-	p1win.setFillColor(sf::Color::White);
-	p1win.setString("p1..Wins");
-	p1win.setFont(lw_font);
-	//p2 wining message 
-	Text p2win;
-	p2win.setCharacterSize(100);
-	p2win.setPosition(GAMEWIDTH / 2 - 125, GAMEHEIGHT / 2 - 100);
-	p2win.setFillColor(sf::Color::White);
-	p2win.setString("p2..Wins");
-	p2win.setFont(lw_font);
-	//in losing/wining bools 
-	bool p1win_detector = 0;
-	bool p2win_detector = 0;
-
-	//////////Player Info and Leaderboard///////////
-	sf::Text playerText;
-	bool getPlayerName = false;
-	string playerName;
-	string playerUser1;
-	playerText.setFont(font);
-	playerText.setCharacterSize(40);
-	playerText.setPosition(200.f, 425.f);
-	playerText.setFillColor(Color::White);
-	sf::Text messagePlayerText;
-	messagePlayerText.setFont(font);
-	messagePlayerText.setCharacterSize(40);
-	messagePlayerText.setPosition(100.f, 100.f);
-	messagePlayerText.setFillColor(Color::White);
-	messagePlayerText.setString("Please enter thy name!");
-	bool leader = false;
-
-
-	////theme test
-	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c);
-
-
 
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
@@ -259,8 +246,10 @@ int main(void)
 	{
 
 		// EVENTS
+		//searchEvents
 		while (window.pollEvent(event))
 		{
+			//Close game
 			if (event.type == Event::Closed || isPressed(Keyboard::Escape))
 			{
 				play = false;
@@ -268,291 +257,76 @@ int main(void)
 				return 0;
 			}
 
-			//pause menu events
+			//Menus
+			//searchMenus
+			//searchSound
+
+			//Pause Menu Events/Sound
 			if (pause)
 			{
 				if (event.type == Event::KeyReleased)
 				{
-					switch (event.key.code)
-					{
-						case Keyboard::Up:
-							pMenu.moveUp();
-							whenreturn_detector.play();
-							break;
-
-						case Keyboard::Down:
-							pMenu.moveDown();
-							whenreturn_detector.play();
-							break;
-
-						case Keyboard::Return:
-							switch (pMenu.getPresseditem())
-							{
-								//resume
-							case 0:
-								if (pause)
-								{
-									pause = false;
-									whenpressed_detector.play();
-									break;
-								}
-								//open option menu
-							case 1:
-								opt = true;
-								pause = false;
-								whenpressed_detector.play();
-								break;
-								//exit
-							case 2:
-								whenpressed_detector.play();
-								getPlayerName = false;
-								play = false;
-								pause = false;
-								men = true;
-								if (musicSwitch)
-								{
-									background.stop();
-									theme.play();
-
-								}
-								break;
-							}
-					
-						break;
-					}
-					break;
-					
+					//function contains switch statment
+					pauseEvents(event, pMenu, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch); 
 				}
 			}
 	
-
-			/////volume changer ///////
-			////volume change event //////////
+			//Options Menu Events/Sound
 			if (opt) {
-				
+				//Event
 				if (event.type == Event::KeyReleased) {
-					switch (event.key.code)
+					//Navigation
+					if (event.key.code == Keyboard::Return)
 					{
-					case Keyboard::Right:
-						if (switcher)
-							Level_of_volume.MoveRight();
-						else
-							change_the_theme.MoveRight();
-						break;
+						///volume changer /// 
 
-					case Keyboard::Left:
-						if (switcher)
-							Level_of_volume.MoveLeft();
-						else
-							change_the_theme.MoveLeft();
-					
-						break;
-				
-					case Keyboard::Up:
-						Level_of_volume.MoveUp();
-						change_the_theme.MoveUp();
-						switcher = true;
-						break;
-
-					case Keyboard::Down:
-						Level_of_volume.MoveDown();
-						change_the_theme.MoveDown();
-						switcher = false;
-						break;
-					case sf::Keyboard::Return:
-
-						///volume changer /////////
 						if (switcher)	/// this for switching up and down 
 						{
-							switch (Level_of_volume.GetVolumechange())
-							{
-							case 0:
-								theme.setVolume(0);
-								background.setVolume(0);
-
-								break;
-							case 1:
-								theme.setVolume(25);
-								background.setVolume(25);
-
-								break;
-
-							case 2:
-								theme.setVolume(50);
-								background.setVolume(50);
-								break;
-
-							case 3:
-								theme.setVolume(75);
-								background.setVolume(75);
-
-								break;
-
-							case 4:
-								theme.setVolume(100);
-								background.setVolume(100);
-								break;
-							}
+							//function contains switch statment
+							volChange(Level_of_volume, theme, background);
 
 						}
 
 						// theme changer
-						
+
 						else
 						{
-							switch (change_the_theme.GetThemechange())
-							{
-							case 0:
-
-								set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'h');
-								c = 'h';
-								break;
-							case 1:
-								set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
-								c = 'i';
-								break;
-
-							case 2:
-								set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f');
-								c = 'f';
-								break;
-
-							}
-
+							//function contains switch statment
+							themeChange(change_the_theme, pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr);
 						}
-
-						break;
 					}
-                     break;
+					else
+					{
+						//function contains switch statment
+						menuNav(event, switcher, Level_of_volume, change_the_theme);
+					}
 				}
 			}
-
+			
+			//Main Menu Events/Sound
 			if (men) {
 
-				
+				//Event
 				if (event.type == Event::KeyReleased) {
-					switch (event.key.code)
-					{
-					case Keyboard::Up:
-						menu.MoveUp();
-						break;
-
-					case Keyboard::Down:
-						menu.MoveDown();
-						break;
-
-					case sf::Keyboard::Return:
-						//main menu orders....
-						switch (menu.GetPresseditem())
-						{
-						case 0:
-							if (!play)
-							{
-								if (musicSwitch)
-								{
-									theme.pause();
-									background.play();
-								}
-								getPlayerName = true;
-								play = false;
-								men = false;
-								whenpressed_detector.play();
-								MODE = 'a';
-
-							}
-							break;
-						case 1:
-
-							if (!opt) {
-								opt = true;
-								men = false;
-								whenpressed_detector.play();
-
-							}
-							break;
-
-						case 2:
-							if (!leader)
-							{
-								leader = true;
-								men = false;
-								whenpressed_detector.play();
-							}
-							break;
-
-						case 3:
-							whenpressed_detector.play();
-							play = true;
-							if (musicSwitch)
-							{
-								theme.pause();
-								background.play();
-							}
-							MODE = 't';
-							break;
-
-						case 4:
-							whenpressed_detector.play();
-							window.close();
-							break;
-						}
-						break;
-					}
+					//Navigation
+					//function contains switch statment
+					mainmenuEvents(menu, play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
 					break;
 				}
 
 		
 			}
+
+			//Name input
 			if (getPlayerName)
 			{
-				if (event.type == sf::Event::TextEntered)
-				{
-					if (event.text.unicode == '\b')
-					{
-						if (!playerName.empty())
-						{
-							playerName.erase(playerName.size() - 1);
-							playerText.setString(playerName);
-						}
-					}
-					else
-					{
-						playerName += event.text.unicode;
-						playerText.setString(playerName);
-					}
-				}
-				else if (event.key.code == sf::Keyboard::Return)
-				{
-					addPlayers(playerName);
-					getPlayerName = false;
-					playerText.setString("");
-					play = true;
-				}
+				nameInput(event, playerName, getPlayerName, playerText, play);
 			}
+
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
 			if (isPressed(Keyboard::BackSpace) && !getPlayerName)
 			{
-				leader = false;
-				opt = false;
-				getPlayerName = false;
-				if (!play)
-				{
-					men = true;
-					if (!themePlaying)
-					{
-						background.stop();
-						theme.play();
-						themePlaying = true;
-					}
-				}
-				else
-					pause = true;
-
-				p1win_detector = 0;
-				p2win_detector = 0;
-				
-				//when you press return sound......
-				whenreturn_detector.play();
+				menuReturn(leader, opt, getPlayerName, play, men, themePlaying, background, theme, pause, p1win_detector, p2win_detector, whenpressed_detector);
 			}
 
 			//pause
@@ -562,8 +336,11 @@ int main(void)
 		}
 
 
-		// LOGIC
+		/// LOGIC ///
+		
 
+		//Movement
+		//searchGameComp
 		// pad1 Movement
 		if (isPressed(Keyboard::W))
 			W = true;
@@ -586,7 +363,9 @@ int main(void)
 		else
 			Down = false;
 
-		/////reset the game after close /////////////////////
+		/////reset the game after close /////
+
+		//Menu
 		if (men)
 		{
 			if (!playerName.empty())
@@ -595,6 +374,9 @@ int main(void)
 				playerText.setString("");
 			}
 		}
+
+		//Reset Components
+		//searchGameComp 
 		if (!play)
 		{
 			RandomPos(ball);
@@ -602,23 +384,34 @@ int main(void)
 			pad2.ResetPad(2);
 
 			////reseting power ups /////////////
-			longate.isSpawned = 0; longate.isActive == 1;
-			freeze.isSpawned = 0;  freeze.isActive == 1;
-			slow.isSpawned = 0;    slow.isActive == 1;
-			invis.isActive = 0;    invis.isActive == 1;			
+			longate.isSpawned = 0; longate.isActive = 0;
+			freeze.isSpawned = 0;  freeze.isActive = 0;
+			slow.isSpawned = 0;    slow.isActive = 0;
+			invis.isSpawned = 0;    invis.isActive = 0;
+			//reverse.isSpawned = 0;    reverse.isActive = 0;
 		}
 
+		//Game Mechanics
+		//searchGameMechanics (Movement - Sound / Collision - Powerups)
+		//searchSound
 		if (play && !pause && !opt)
 		{
-
-
+			//Movement
 			// Pad1 Movement
 			//depends on the mode
 			Modes(pad1, ball, MODE, pad1.isFrozen, pad1.isSlow, W, S);
 
 
 			// Pad2 Movement
-			pad2.velocity = pad2.Get_Movement(Down, Up);
+			if (pad2.isReverse)
+			{
+				pad2.velocity = pad2.Get_Movement(Up, Down);
+			}
+			else
+			{
+				pad2.velocity = pad2.Get_Movement(Down, Up);
+			}
+			
 			pad2.rect.move(0, pad2.velocity);
 			pad2.boundcheck();
 			
@@ -626,6 +419,7 @@ int main(void)
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
 			
+			//Sound / Collisions
 			// Ball hit wall sound
 			if (boundcheck_ball(ball))
 			{
@@ -645,18 +439,17 @@ int main(void)
 			}
 
 
-			// PowerUPS
-
+			// PowerUP
 			// Spawn
-			SpawnPowerups(longate, freeze, slow, invis, MODE);
+			SpawnPowerups(reverse, longate, freeze, slow, invis, MODE);
 
 			// Activate
-			isTakenPowerup(longate, freeze, slow, invis, ball, pad1, pad2, sfxSwitch);
+			isTakenPowerup(reverse, longate, freeze, slow, invis, ball, pad1, pad2, sfxSwitch);
 
 			// Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
-			DeactivatePowerups(longate, freeze, slow, invis, pad1, pad2);
+			DeactivatePowerups(reverse, longate, freeze, slow, invis, pad1, pad2);
 
-
+			
 			// Check collisions between the ball and the screen with x axis // score of player 1
 				/*
 						USE THE BALL RADIUS DON'T USE OTHER VALUES
@@ -723,7 +516,7 @@ int main(void)
 		}
 
 		// RENDERING
-
+		//searchRender
 		window.clear(Color::Black);
 
 		if (getPlayerName)
@@ -732,10 +525,10 @@ int main(void)
 			window.draw(playerText);
 		}
 
-		 if (play)
-		 {
+		if (play)
+		{
 			 DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2);
-			 DrawPowerups(window, longate, freeze, slow, invis);
+			 DrawPowerups(window, longate, freeze, slow, invis, reverse);
 			 men = false;
 
 			//rendering pause window(draw pause window if option window is not opened)
@@ -749,31 +542,33 @@ int main(void)
 				change_the_theme.drawtheme(window);
 			}
 		}
-
-
 		else 
 		{
-			//rendering p1 winning message 
+			//rendering winning message 
+			//p1 win
 			if (p1win_detector) {
-
-				window.draw(p1win);
+				pWin.setString("p1..Win");
+				window.draw(pWin);
 				window.draw(option);
+				
 			}
-
-			//rendering p2 winning message 
+			//p2 win
 			if (p2win_detector) {
-
-				window.draw(p2win);
+				pWin.setString("p2..Win");
+				window.draw(pWin);
 				window.draw(option);
 			}
+			
 
 			//render option window 
+			//searchMenus
 			if (opt) {
 				window.draw(option);
 				men = false;
 				Level_of_volume.drawvolume(window);
 				change_the_theme.drawtheme(window);
 			}
+
 			// Rendering main menu 
 			if (men) {
 				menu.Draw(window);

@@ -4,6 +4,7 @@
 #include<iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <sstream>
 
 using namespace std;
 using namespace sf;
@@ -47,6 +48,8 @@ struct PAD
 
 	bool isSlow = 0;
 
+	bool isReverse = 0;
+
 	// Resets all variable pad attributes
 	// Take a a pad's number (1 or 2) to set each pad's position correctly
 	void ResetPad(int pad_number)
@@ -72,6 +75,7 @@ struct PAD
 		isInvis = 0;
 		isSlow = 0;
 		isFrozen = 0;
+		isReverse = 0;
 	}
 
 	// Takes states of buttons and returns a key representing how the pad should move
@@ -241,7 +245,7 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 		//First 1/4
 		else if (
 			// top
-			ball.circle.getPosition().y > shape.getPosition().y - shape.getSize().y / 2
+			ball.circle.getPosition().y > shape.getPosition().y - (shape.getSize().y / 2 + 10)
 			&&
 			// bottom
 			ball.circle.getPosition().y <= shape.getPosition().y - shape.getSize().y / 4
@@ -298,7 +302,7 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y >= shape.getPosition().y + shape.getSize().y / 4
 			&&
 			// bottom
-			ball.circle.getPosition().y <= shape.getPosition().y + shape.getSize().y / 2
+			ball.circle.getPosition().y <= shape.getPosition().y + (shape.getSize().y / 2 + 10)
 			)
 		{
 			
@@ -474,14 +478,17 @@ void isColliding(BALL& ball, RectangleShape& shape)
 int ai_move(PAD& pad, BALL& ball)
 {
 	//ball going towards pad       ball above pad
-	if (ball.xVelocity < 0 && pad.rect.getPosition().y - ball.circle.getPosition().y >= 10)
+	float diff = pad.rect.getPosition().y - ball.circle.getPosition().y;
+	if (ball.xVelocity < 0 && diff >= -10 && diff <= 10)
+	{
+		return 0;
+	}
+	if (ball.xVelocity < 0 && diff > 10)
 	{
 		return -1; //move it up
-		
-
 	}
 	//ball going towards pad       ball below pad
-	else if (ball.xVelocity < 0 && pad.rect.getPosition().y - ball.circle.getPosition().y < 10)
+	else if (ball.xVelocity < 0 && diff < 10)
 	{
 		return 1; //move it down
 	}
@@ -654,6 +661,4 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 	window.draw(lblscorep2);
 
 }
-
-
 
