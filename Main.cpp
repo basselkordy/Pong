@@ -8,8 +8,6 @@
 #include <sstream>
 #include "menus options.h"
 
-
-
 using namespace sf;
 using namespace std;
 
@@ -127,11 +125,7 @@ int main(void)
 	///// switch fo switching up and down /////
 	bool switcher = true;
 
-	//lvl of volume in game 
-	Optionmenu Level_of_volume(window.getSize().x, window.getSize().y);
-
-	//theme changer/////////
-	Optionmenu change_the_theme(window.getSize().x, window.getSize().y);
+	
 
 	//Pause Menu
 	bool pause = false;
@@ -268,39 +262,16 @@ int main(void)
 				{
 					//function contains switch statment
 					pauseEvents(event, pMenu, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch); 
+					break;
 				}
 			}
-	
+			
 			//Options Menu Events/Sound
-			if (opt) {
-				//Event
-				if (event.type == Event::KeyReleased) {
-					//Navigation
-					if (event.key.code == Keyboard::Return)
-					{
-						///volume changer /// 
-
-						if (switcher)	/// this for switching up and down 
-						{
-							//function contains switch statment
-							volChange(Level_of_volume, theme, background);
-
-						}
-
-						// theme changer
-
-						else
-						{
-							//function contains switch statment
-							themeChange(change_the_theme, pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr);
-						}
-					}
-					else
-					{
-						//function contains switch statment
-						menuNav(event, switcher, Level_of_volume, change_the_theme);
-					}
-				}
+			if (opt) 
+			{
+				pos_Mouse = Mouse::getPosition(window);
+				VolumeChanger(window);
+				theme.setVolume(VolumeValue);
 			}
 			
 			//Main Menu Events/Sound
@@ -334,11 +305,10 @@ int main(void)
 				pause = true;
 			}
 		}
-
+		
 
 		/// LOGIC ///
 		
-
 		//Movement
 		//searchGameComp
 		// pad1 Movement
@@ -537,9 +507,9 @@ int main(void)
 
 			if (opt) {
 				window.draw(option);
+				DrawOptionMenu(window);
 				men = false;
-				Level_of_volume.drawvolume(window);
-				change_the_theme.drawtheme(window);
+				
 			}
 		}
 		else 
@@ -564,9 +534,9 @@ int main(void)
 			//searchMenus
 			if (opt) {
 				window.draw(option);
+				DrawOptionMenu(window);
 				men = false;
-				Level_of_volume.drawvolume(window);
-				change_the_theme.drawtheme(window);
+				
 			}
 
 			// Rendering main menu 
@@ -579,6 +549,22 @@ int main(void)
 				viewLeaderboard(window);
 			}
 
+		}
+
+		if (opt)
+		{
+			SelectTheme(hell_theme, 0);
+			SelectTheme(forest_theme, 1);
+			SelectTheme(ice_theme, 2);
+			// To See which of the themes is choosen
+			for (int x = 0; x < 3; x++)
+			{
+				if (Steps[x] == PADDING && isChoosen && !done)
+				{
+					themeChange(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr,x);
+				}
+			}
+			
 		}
 
 		window.display();

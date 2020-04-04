@@ -27,3 +27,9 @@ Bassel, 26 / 3
     - created a new function, "isTakenPowerup", activates powerups if they're took
     - created a new function, "SpawnPowerups", handles spawing powerups
     - created a new function, "DeactivatePowerups", handles powerup deactivation
+
+-----------------------------------------------------------------------
+Badr 4/4
+
+- added the new option menu
+- made all the needed functions in one header file

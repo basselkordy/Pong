@@ -1,62 +1,25 @@
 #pragma once
-#include "Optionmenu.h"
 
-//vol switch
-
-void volChange(Optionmenu& Level_of_volume, Music& theme, Sound& background)
+void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
+	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr,int index)
 {
-	switch (Level_of_volume.GetVolumechange())
+	switch (index)
 	{
 	case 0:
-		theme.setVolume(0);
-		background.setVolume(0);
-
-		break;
-	case 1:
-		theme.setVolume(25);
-		background.setVolume(25);
-
-		break;
-
-	case 2:
-		theme.setVolume(50);
-		background.setVolume(50);
-		break;
-
-	case 3:
-		theme.setVolume(75);
-		background.setVolume(75);
-
-		break;
-
-	case 4:
-		theme.setVolume(100);
-		background.setVolume(100);
-		break;
-	}
-}
-
-void themeChange(Optionmenu& change_the_theme, PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
-	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr)
-{
-	switch (change_the_theme.GetThemechange())
-	{
-	case 0:
-
 		set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'h');
 		c = 'h';
 		break;
-	case 1:
-		set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
-		c = 'i';
-		break;
-
-	case 2:
-		set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f');
-		c = 'f';
-		break;
-
+		case 1:
+			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f');
+			c = 'f';
+			break;
+		case 2:
+			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
+			c = 'i';
+			break;
+	
 	}
+	done = true;
 }
 
 void pauseEvents(Event& event, pauseMenu& pMenu, Sound& whenreturn_detector, Sound& whenpressed_detector, Sound& background, Music& theme, bool& pause, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& musicSwitch)
@@ -112,38 +75,7 @@ void pauseEvents(Event& event, pauseMenu& pMenu, Sound& whenreturn_detector, Sou
 }
 
 
-void menuNav(Event& event,bool& switcher,Optionmenu& Level_of_volume,Optionmenu& change_the_theme)
-{
-	switch (event.key.code)
-	{
-	case Keyboard::Right:
-		if (switcher)
-			Level_of_volume.MoveRight();
-		else
-			change_the_theme.MoveRight();
-		break;
 
-	case Keyboard::Left:
-		if (switcher)
-			Level_of_volume.MoveLeft();
-		else
-			change_the_theme.MoveLeft();
-
-		break;
-
-	case Keyboard::Up:
-		Level_of_volume.MoveUp();
-		change_the_theme.MoveUp();
-		switcher = true;
-		break;
-
-	case Keyboard::Down:
-		Level_of_volume.MoveDown();
-		change_the_theme.MoveDown();
-		switcher = false;
-		break;
-	}
-}
 
 void mainmenuEvents(Menu& menu,bool& play,bool& musicSwitch,Music& theme,Sound& background,bool& getPlayerName,bool& men,Sound& whenpressed_detector,char& MODE,bool& opt,bool& leader,RenderWindow& window)
 {
