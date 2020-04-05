@@ -4,7 +4,7 @@
 // to Control the height that theme goes to
 #define PADDING 15.f
 #define VOLRADIUS 20.f
-
+char c = 'f'; //indicate theme
 // Size of The Themes
 Vector2f Theme_size(200,200);
 
@@ -20,7 +20,7 @@ Vector2i pos_Mouse;
 	RectangleShape bar;
 	// Volume Value bar
 	RectangleShape VolumeValueBar;
-	
+
 
 // Themes
 	// Hell Theme
@@ -35,6 +35,9 @@ Vector2i pos_Mouse;
 	RectangleShape ice_theme;
 	Texture tex_ice;
 	Vector2f pos_ice(590, 200);
+
+
+	vector<RectangleShape> themes = { hell_theme,forest_theme,ice_theme };
 
 	// variables
 
@@ -51,24 +54,54 @@ Vector2i pos_Mouse;
 	bool IsLoaded = true;
 
 	// to hold the theme which the player choose
-	bool isChoosen = false;
+	bool isChoosen[3] = {};
 
 	//  to make sure that we only call theme change one time after choosing one
 	bool  done = false;
+
+	int cnt = 0;
+
 /*
 		FUNCTIONS
 */
 // Checks if the Mouse is in the shape Bounds
 bool IsMouseIn(RectangleShape& Body)
 {
+	
 	if
-		((pos_Mouse.x >= Body.getPosition().x - Theme_size.x / 2.f && pos_Mouse.x <= Body.getPosition().x +Theme_size.x / 2.f)
+		((pos_Mouse.x >= Body.getPosition().x - Body.getSize().x / 2.f && pos_Mouse.x <= Body.getPosition().x +Body.getSize().x / 2.f)
 			&&
-			(pos_Mouse.y >= Body.getPosition().y - Theme_size.y / 2.f && pos_Mouse.y <= Body.getPosition().y + Theme_size.y / 2.f))
+			(pos_Mouse.y >= Body.getPosition().y - Body.getSize().y / 2.f && pos_Mouse.y <= Body.getPosition().y + Body.getSize().y / 2.f))
 		return true;
 	else
 		return false;
 }
+
+// submit the theme selection
+void SubmitTheme()
+{
+
+	themes[0] = hell_theme;
+	themes[1] = forest_theme;
+	themes[2] = ice_theme;
+
+	for (int i = 0; i < themes.size(); i++)
+	{
+		if (IsMouseIn(themes[i]) && Steps[i] == PADDING && Mouse::isButtonPressed(Mouse::Left))
+		{
+			isChoosen[i] = true;
+			for (int x = 0; x < themes.size(); x++)
+			{
+				if (x != i)
+					isChoosen[x] = false;
+			}
+			done = false;
+			
+		}
+
+	}
+}
+
 // To Select the Theme after the left Mouse button is is Pressed
 void SelectTheme(RectangleShape& theme,int index)
 {
@@ -76,26 +109,17 @@ void SelectTheme(RectangleShape& theme,int index)
 	/*
 		PROTOTYPE
 	*/
-	if (onHold[index] && Mouse::isButtonPressed(Mouse::Left) && Steps[index] == PADDING && IsMouseIn(theme))
-	{
-		isChoosen = true;
-		done = false;
-	}
-	else if (onHold[index] && Mouse::isButtonPressed(Mouse::Right) && IsMouseIn(theme))
-	{
-		isChoosen = false;
-	}
-	
+	if (IsMouseIn(theme))
+		onHold[index] = true;
+	else
+		onHold[index] = false;
 
 	// Checks if any theme is choosen in order not to choose or modify the position of the others
-	if (!isChoosen)
+	if (!isChoosen[index])
 	{
-		if (IsMouseIn(theme))
-			onHold[index] = true;
-		else
-			onHold[index] = false;
 
-	
+
+
 		if (onHold[index])
 		{
 			if (Steps[index] < PADDING)
@@ -136,7 +160,7 @@ void SelectTheme(RectangleShape& theme,int index)
 			pos_ice = theme.getPosition();
 			break;
 		}
-		
+
 
 	}
 
@@ -177,7 +201,7 @@ void DrawOptionMenu(RenderWindow& window)
 		ice_theme.setOrigin(Theme_size / 2.f);
 		IsLoaded= false;
 	}
-	
+
 	///// To update the Position of the vol_changer
 	vol_changer.setPosition(pos_volumeChanger);
 	///// To update the Position of the Themes
@@ -187,11 +211,16 @@ void DrawOptionMenu(RenderWindow& window)
 
 	diff = VolumeValue * 6;
 	VolumeValueBar.setSize(Vector2f(diff, bar.getSize().y));
+
+
+
+
+
 	///// The Rendering part
-	
 
 
-	
+
+
 	window.clear();
 	window.draw(hell_theme);
 	window.draw(ice_theme);
@@ -199,13 +228,13 @@ void DrawOptionMenu(RenderWindow& window)
 	window.draw(bar);
 	window.draw(VolumeValueBar);
 	window.draw(vol_changer);
-	
+
 
 }
 // To Take The Mouse Input With The Volume Bar
 void VolumeChanger(RenderWindow& window)
 {
-
+	pos_Mouse = Mouse::getPosition(window);
 	if (
 		pos_Mouse.y >= vol_changer.getPosition().y - VOLRADIUS - 20
 		&&
@@ -214,7 +243,7 @@ void VolumeChanger(RenderWindow& window)
 		pos_Mouse.x >= vol_changer.getPosition().x - VOLRADIUS - 20
 		&&
 		pos_Mouse.x <= vol_changer.getPosition().x + VOLRADIUS + 20
-		&& 
+		&&
 		Mouse::isButtonPressed(Mouse::Left)
 		)
 	{
@@ -236,13 +265,21 @@ void VolumeChanger(RenderWindow& window)
 		}
 		VolumeValue = (vol_changer.getPosition().x - (bar.getPosition().x - bar.getSize().x / 2.f));
 		VolumeValue /= 6;
-		
-		printf("%f\n", VolumeValue);
-		
 		pos_volumeChanger = vol_changer.getPosition();
-		
-			//printf("%f\n", diff);
 		window.draw(vol_changer);
+	}
+}
 
+// To Change volume by clicking on any empty space in the volume bar
+void ChangeVolumebyClick(RenderWindow& window)
+{
+	pos_Mouse = Mouse::getPosition(window);
+	if (IsMouseIn(bar) && Mouse::isButtonPressed(Mouse::Left))
+	{
+		vol_changer.setPosition(pos_Mouse.x, vol_changer.getPosition().y);
+		VolumeValue = (vol_changer.getPosition().x - (bar.getPosition().x - bar.getSize().x / 2.f));
+		VolumeValue /= 6;
+		pos_volumeChanger = vol_changer.getPosition();
+		window.draw(vol_changer);
 	}
 }

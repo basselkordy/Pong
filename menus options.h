@@ -17,7 +17,7 @@ void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleSha
 			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
 			c = 'i';
 			break;
-	
+
 	}
 	done = true;
 }
@@ -279,4 +279,3 @@ void textInit(Text& win, Font& font, char c)
 	win.setFillColor(sf::Color::White);
 	win.setFont(font);
 }
-

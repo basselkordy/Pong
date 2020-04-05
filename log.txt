@@ -1,8 +1,10 @@
-perry2/perry1
-Winner: perry2
-Sun Apr  5 19:43:28 2020
+ayman/badr
+Winner: ayman
+Mon Apr  6 00:11:30 2020
 
-lol2/lol1
-Winner: lol2
-Sun Apr  5 19:44:04 2020
+
+ayman Vs badr
+Winner: ayman
+Mon Apr  6 00:13:16 2020
+
 

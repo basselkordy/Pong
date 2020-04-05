@@ -23,11 +23,11 @@ int main(void)
 	//searchSound
 
 	// Set to true/false to activate or mute
-	
+
 	bool musicSwitch = true;
 	bool sfxSwitch = true;
 
-	//sounds of main menu 
+	//sounds of main menu
 
 	// Theme music
 	Music theme;
@@ -92,7 +92,7 @@ int main(void)
 	// Main Window
 	//searchMainWindow
 
-	// Create the main window 
+	// Create the main window
 	RenderWindow window(VideoMode(GAMEWIDTH, GAMEHEIGHT), "Pong");
 
 	// Limit FPS to 60
@@ -106,15 +106,15 @@ int main(void)
 	//searchMenus
 
 	//Options
-	//option selection 
+	//option selection
 	bool opt = false;
 
-	//option font 
+	//option font
 	Font font;
 	if (!font.loadFromFile("resources/fonts/Pacifico.ttf"))
 		return EXIT_FAILURE;
 
-	//option message 
+	//option message
 	Text option;
 	textInit(option,font);
 
@@ -126,7 +126,7 @@ int main(void)
 	///// switch fo switching up and down /////
 	bool switcher = true;
 
-	
+
 
 	//Pause Menu
 	bool pause = false;
@@ -134,11 +134,11 @@ int main(void)
 
 	//Scores / Win lose
 	//Score
-	//font of score 
+	//font of score
 	sf::Font scorefont;
 	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
 
-	// score of players 
+	// score of players
 	float scorep1 = 0;
 	float scorep2 = 0;
 
@@ -151,26 +151,26 @@ int main(void)
 	//label of score of players
 	sf::Text lblscorep2;
 	sf::Text lblscorep1;
-	
+
 	textInit(lblscorep1, scorefont, ssScorep1, 1);
 	textInit(lblscorep2, scorefont, ssScorep2, 2);
-	
+
 
 
 	//Win lose
-	//losing/wining message 
-	//lw_font 
+	//losing/wining message
+	//lw_font
 	Font lw_font;
 	lw_font.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf");
-	//p1 winning message 
+	//p1 winning message
 	Text pWin;
 	textInit(pWin, lw_font,'W');
-	//in losing/wining bools 
+	//in losing/wining bools
 	bool p1win_detector = 0;
 	bool p2win_detector = 0;
-	
 
-	/// Game Components /// 
+
+	/// Game Components ///
 	//searchGameComp
 
 	// Pads
@@ -209,7 +209,7 @@ int main(void)
 
 	string playerName1;
 	string playerName2;
-	
+
 	bool getPlayerName = false;
 	bool leader = false;
 	bool savePlayer1 = false;
@@ -223,18 +223,18 @@ int main(void)
 	RectangleShape backg;
 	backg.setSize(Vector2f(800.0, 600.0));
 
-	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c);
+   set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c);
 
 
 	// States
 
-	// Keyboard buttons  
+	// Keyboard buttons
 	bool W = false, S = false;
 	bool Up = false, Down = false;
 
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
-	
+
 
 
 	while (window.isOpen())
@@ -251,6 +251,8 @@ int main(void)
 				window.close();
 				return 0;
 			}
+			ChangeVolumebyClick(window);
+			SubmitTheme();
 
 			//Menus
 			//searchMenus
@@ -262,19 +264,19 @@ int main(void)
 				if (event.type == Event::KeyReleased)
 				{
 					//function contains switch statment
-					pauseEvents(event, pMenu, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch); 
+					pauseEvents(event, pMenu, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch);
 					break;
 				}
 			}
-			
+
 			//Options Menu Events/Sound
-			if (opt) 
+			if (opt)
 			{
-				pos_Mouse = Mouse::getPosition(window);
+				
 				VolumeChanger(window);
 				theme.setVolume(VolumeValue);
 			}
-			
+
 			//Main Menu Events/Sound
 			if (men) {
 
@@ -286,7 +288,7 @@ int main(void)
 					break;
 				}
 
-		
+
 			}
 
 			//Name input
@@ -327,9 +329,9 @@ int main(void)
 			}
 
 			//pause
-	
+
 		}
-		
+
 
 		/// LOGIC ///
 		//Handling player naming
@@ -393,7 +395,7 @@ int main(void)
 		}
 
 		//Reset Components
-		//searchGameComp 
+		//searchGameComp
 		if (!play)
 		{
 			RandomPos(ball);
@@ -428,14 +430,14 @@ int main(void)
 			{
 				pad2.velocity = pad2.Get_Movement(Down, Up);
 			}
-			
+
 			pad2.rect.move(0, pad2.velocity);
 			pad2.boundcheck();
-			
+
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
-			
+
 			//Sound / Collisions
 			// Ball hit wall sound
 			if (boundcheck_ball(ball))
@@ -466,7 +468,7 @@ int main(void)
 			// Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
 			DeactivatePowerups(reverse, longate, freeze, slow, invis, pad1, pad2);
 
-			
+
 			// Check collisions between the ball and the screen with x axis // score of player 1
 				/*
 						USE THE BALL RADIUS DON'T USE OTHER VALUES
@@ -520,7 +522,7 @@ int main(void)
 			themePlaying = false;
 		}
 
-		// reset the score of p1 and p2 
+		// reset the score of p1 and p2
 		if (!play) {
 			scorep1 = 0;
 			ssScorep1.str("");
@@ -558,19 +560,19 @@ int main(void)
 				window.draw(option);
 				DrawOptionMenu(window);
 				men = false;
-				
+
 			}
 		}
-		else 
+		else
 		{
-			//rendering winning message 
+			//rendering winning message
 			//p1 win
 			if (p1win_detector) {
 				pWin.setString(playerName1 + " wins");
 				cout << playerName1 << endl;
 				window.draw(pWin);
 				window.draw(option);
-				
+
 			}
 			//p2 win
 			if (p2win_detector) {
@@ -579,18 +581,18 @@ int main(void)
 				window.draw(pWin);
 				window.draw(option);
 			}
-			
 
-			//render option window 
+
+			//render option window
 			//searchMenus
 			if (opt) {
 				window.draw(option);
 				DrawOptionMenu(window);
 				men = false;
-				
+
 			}
 
-			// Rendering main menu 
+			// Rendering main menu
 			if (men) {
 				menu.Draw(window);
 
@@ -610,12 +612,12 @@ int main(void)
 			// To See which of the themes is choosen
 			for (int x = 0; x < 3; x++)
 			{
-				if (Steps[x] == PADDING && isChoosen && !done)
+				if (Steps[x] == PADDING && isChoosen[x] && !done)
 				{
 					themeChange(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr,x);
 				}
 			}
-			
+
 		}
 
 		window.display();

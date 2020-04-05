@@ -41,3 +41,10 @@ Perry 5/4
 - prohibted the user from adding spaces into their name
 - added two booleans to check whether the user is saving name 1 or name 2 (savePlayer1, savePlayer2)
 - created a new function, "addToLog" in log.h which takes two inputs as follows: addToLog(Name of winner, name of loser)
+
+-----------------------------------------------------------------------
+Badr 6/4
+
+- modified the early VolumeChanger function
+- added new function for volume input
+
