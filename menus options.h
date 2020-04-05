@@ -105,7 +105,7 @@ void mainmenuEvents(Menu& menu,bool& play,bool& musicSwitch,Music& theme,Sound& 
 				play = false;
 				men = false;
 				whenpressed_detector.play();
-				MODE = 'a';
+				MODE = '2';
 
 			}
 			break;
@@ -173,8 +173,11 @@ void menuReturn(bool& leader, bool& opt, bool& getPlayerName, bool& play, bool& 
 	whenreturn_detector.play();
 }
 
-void nameInput(Event& event, string& playerName, bool& getPlayerName, Text& playerText, bool& play)
+void nameInput(Event& event, string& playerName, bool& getPlayerName, Text& playerText, bool& play, int playNum, bool& save)
 {
+
+
+	////////////////////////////////////////////////////////////
 	if (event.type == sf::Event::TextEntered)
 	{
 		if (event.text.unicode == '\b')
@@ -185,18 +188,26 @@ void nameInput(Event& event, string& playerName, bool& getPlayerName, Text& play
 				playerText.setString(playerName);
 			}
 		}
-		else
+		else if (event.text.unicode == '\r')
+		{
+			//DO NOTHING
+		}
+		else if (!(event.text.unicode == ' ' || playerName.size() > 10))
 		{
 			playerName += event.text.unicode;
 			playerText.setString(playerName);
 		}
 	}
-	else if (event.key.code == sf::Keyboard::Return)
+	else if (event.key.code == sf::Keyboard::Return && playerName.size() > 0)
 	{
 		addPlayers(playerName);
-		getPlayerName = false;
 		playerText.setString("");
-		play = true;
+		save = true;
+		if (playNum == 2)
+		{
+			getPlayerName = false;
+			play = true;
+		}
 	}
 }
 
@@ -237,7 +248,7 @@ void textInit(Text& option, Font& font)
 }
 
 //Initializes the player name and prompt message
-void textInit(Text& playerText, Text& messagePlayerText, Font& font)
+void textInit(Text& playerText, Text& messagePlayerText, Font& font, int playerNum)
 {
 	playerText.setFont(font);
 	playerText.setCharacterSize(40);
@@ -248,7 +259,14 @@ void textInit(Text& playerText, Text& messagePlayerText, Font& font)
 	messagePlayerText.setCharacterSize(40);
 	messagePlayerText.setPosition(100.f, 100.f);
 	messagePlayerText.setFillColor(Color::White);
-	messagePlayerText.setString("Please enter thy name!");
+	if (playerNum == 1)
+	{
+		messagePlayerText.setString("Please enter name of player 1!");
+	}
+	else if (playerNum == 2)
+	{
+		messagePlayerText.setString("Please enter name of player 2!");
+	}
 
 }
 

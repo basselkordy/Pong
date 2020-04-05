@@ -7,6 +7,7 @@
 #include "powerups.h"
 #include <sstream>
 #include "menus options.h"
+#include "log.h"
 
 using namespace sf;
 using namespace std;
@@ -206,13 +207,13 @@ int main(void)
 	Text playerText;
 	Text messagePlayerText;
 
-	textInit(playerText, messagePlayerText, font);
-
-	string playerName;
-	string playerUser1;
-
+	string playerName1;
+	string playerName2;
+	
 	bool getPlayerName = false;
 	bool leader = false;
+	bool savePlayer1 = false;
+	bool savePlayer2 = false;
 
 
 	//Themes
@@ -291,7 +292,32 @@ int main(void)
 			//Name input
 			if (getPlayerName)
 			{
-				nameInput(event, playerName, getPlayerName, playerText, play);
+				if (MODE == 'a')
+				{
+					if (!savePlayer1)
+					{
+						playerName1 = "AI";
+						playerText.setString(playerName1);
+						savePlayer1 = true;
+					}
+					else if (!savePlayer2)
+					{
+						nameInput(event, playerName2, getPlayerName, playerText, play, 2, savePlayer2);
+					}
+				}
+				else if (MODE == '2')
+				{
+					cout << savePlayer1 << savePlayer2 << endl;
+					if (!savePlayer1)
+					{
+						nameInput(event, playerName1, getPlayerName, playerText, play, 1, savePlayer1);
+					}
+					else if (!savePlayer2)
+					{
+						nameInput(event, playerName2, getPlayerName, playerText, play, 2, savePlayer2);
+						cout << playerName1 << playerName2 << endl;
+					}
+				}
 			}
 
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
@@ -301,14 +327,28 @@ int main(void)
 			}
 
 			//pause
-			if (isPressed(Keyboard::P)) {
-				pause = true;
-			}
+	
 		}
 		
 
 		/// LOGIC ///
-		
+		//Handling player naming
+		if (!savePlayer1)
+		{
+			textInit(playerText, messagePlayerText, font, 1);
+		}
+		else if (!savePlayer2)
+		{
+			if (MODE == 'a')
+			{
+				textInit(playerText, messagePlayerText, font, 1);
+			}
+			else
+			{
+				textInit(playerText, messagePlayerText, font, 2);
+			}
+		}
+
 		//Movement
 		//searchGameComp
 		// pad1 Movement
@@ -338,9 +378,16 @@ int main(void)
 		//Menu
 		if (men)
 		{
-			if (!playerName.empty())
+			savePlayer1 = false;
+			savePlayer2 = false;
+			if (!playerName1.empty())
 			{
-				playerName.erase();
+				playerName1.erase();
+				playerText.setString("");
+			}
+			if (!playerName2.empty())
+			{
+				playerName2.erase();
 				playerText.setString("");
 			}
 		}
@@ -455,18 +502,20 @@ int main(void)
 		}
 
 		//Determing the end point of game
-		if (scorep1 == 10)
+		if (scorep1 == 1)
 		{
-			p2win_detector = 1;
+			p1win_detector = 1;
+			gameOver(playerName1);
+			addToLog(playerName1, playerName2);
 			play = false;
 			themePlaying = false;
 
 		}
-		else if (scorep2 == 10)
+		else if (scorep2 == 1)
 		{
-			p1win_detector = 1;
-			gameOver(playerName);
-			playerName.clear();
+			p2win_detector = 1;
+			gameOver(playerName2);
+			addToLog(playerName2, playerName1);
 			play = false;
 			themePlaying = false;
 		}
@@ -517,14 +566,16 @@ int main(void)
 			//rendering winning message 
 			//p1 win
 			if (p1win_detector) {
-				pWin.setString("p1..Win");
+				pWin.setString(playerName1 + " wins");
+				cout << playerName1 << endl;
 				window.draw(pWin);
 				window.draw(option);
 				
 			}
 			//p2 win
 			if (p2win_detector) {
-				pWin.setString("p2..Win");
+				pWin.setString(playerName2 + " wins");
+				cout << playerName2 << endl;
 				window.draw(pWin);
 				window.draw(option);
 			}
