@@ -33,3 +33,11 @@ Badr 4/4
 
 - added the new option menu
 - made all the needed functions in one header file
+-----------------------------------------------------------------------
+Perry 5/4
+
+- added character limit to username
+- added getPlayerName to both users in two player mode
+- prohibted the user from adding spaces into their name
+- added two booleans to check whether the user is saving name 1 or name 2 (savePlayer1, savePlayer2)
+- created a new function, "addToLog" in log.h which takes two inputs as follows: addToLog(Name of winner, name of loser)
