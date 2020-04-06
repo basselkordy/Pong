@@ -59,7 +59,9 @@ Vector2i pos_Mouse;
 	//  to make sure that we only call theme change one time after choosing one
 	bool  done = false;
 
-	int cnt = 0;
+	int place = 0;
+
+
 
 /*
 		FUNCTIONS
@@ -87,9 +89,20 @@ void SubmitTheme()
 
 	for (int i = 0; i < themes.size(); i++)
 	{
+		if (Keyboard::isKeyPressed(Keyboard::Return) && Steps[place] == PADDING)
+		{
+			isChoosen[place] = true;
+			for (int x = 0; x < themes.size(); x++)
+			{
+				if (x != place)
+					isChoosen[x] = false;
+			}
+			done = false;
+		}
 		if (IsMouseIn(themes[i]) && Steps[i] == PADDING && Mouse::isButtonPressed(Mouse::Left))
 		{
 			isChoosen[i] = true;
+			place = i;
 			for (int x = 0; x < themes.size(); x++)
 			{
 				if (x != i)
@@ -103,65 +116,70 @@ void SubmitTheme()
 }
 
 // To Select the Theme after the left Mouse button is is Pressed
-void SelectTheme(RectangleShape& theme,int index)
+void SelectTheme()
 {
-	// Check if you pressed the theme while holding it
-	/*
-		PROTOTYPE
-	*/
-	if (IsMouseIn(theme))
-		onHold[index] = true;
-	else
-		onHold[index] = false;
-
-	// Checks if any theme is choosen in order not to choose or modify the position of the others
-	if (!isChoosen[index])
+	themes[0] = hell_theme;
+	themes[1] = forest_theme;
+	themes[2] = ice_theme;
+	for (int i = 0; i < 3; i++)
 	{
+		if (IsMouseIn(themes[i]))
+			onHold[i] = true;
+		else
+			onHold[i] = false;
 
+		onHold[place] = true;
 
-
-		if (onHold[index])
+		// Checks if any theme is choosen in order not to choose or modify the position of the others
+		if (!isChoosen[i])
 		{
-			if (Steps[index] < PADDING)
+
+
+
+			if (onHold[i])
 			{
-				theme.setPosition(theme.getPosition().x, theme.getPosition().y - 1.f);
-				Steps[index]++;
+				if (Steps[i] < PADDING)
+				{
+					themes[i].setPosition(themes[i].getPosition().x, themes[i].getPosition().y - 1.f);
+					Steps[i]++;
+				}
+			}
+			else
+			{
+				if (Steps[i] > 0)
+				{
+					themes[i].setPosition(themes[i].getPosition().x, themes[i].getPosition().y + 1.f);
+					Steps[i]--;
+				}
+			}
+			// make an outline when the theme is ready to be choosen
+			if (Steps[i] == PADDING)
+			{
+				themes[i].setOutlineThickness(1);
+				themes[i].setOutlineColor(Color::White);
+			}
+			else
+			{
+				themes[i].setOutlineThickness(0);
+			}
+
+			// to store last position of modified theme for the drawing func
+			switch (i)
+			{
+			case 0:
+				pos_hell = themes[i].getPosition();
+				hell_theme = themes[i];
+				break;
+			case 1:
+				pos_forest = themes[i].getPosition();
+				forest_theme = themes[i];
+				break;
+			case 2:
+				pos_ice = themes[i].getPosition();
+			    ice_theme = themes[i];
+				break;
 			}
 		}
-		else
-		{
-			if (Steps[index] > 0)
-			{
-				theme.setPosition(theme.getPosition().x, theme.getPosition().y + 1.f);
-				Steps[index]--;
-			}
-		}
-		// make an outline when the theme is ready to be choosen
-		if (Steps[index] == PADDING)
-		{
-			theme.setOutlineThickness(1);
-			theme.setOutlineColor(Color::White);
-		}
-		else
-		{
-			theme.setOutlineThickness(0);
-		}
-
-		// to store last position of modified theme for the drawing func
-		switch (index)
-		{
-		case 0:
-			pos_hell = theme.getPosition();
-			break;
-		case 1:
-			pos_forest = theme.getPosition();
-			break;
-		case 2:
-			pos_ice = theme.getPosition();
-			break;
-		}
-
-
 	}
 
 }

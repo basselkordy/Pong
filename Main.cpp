@@ -218,7 +218,7 @@ int main(void)
 
 	//Themes
 	//searchTheme
-	char c = 'f'; //indicate theme
+	char c = 'h'; //indicate theme
 	Texture backgT; //background
 	RectangleShape backg;
 	backg.setSize(Vector2f(800.0, 600.0));
@@ -251,8 +251,28 @@ int main(void)
 				window.close();
 				return 0;
 			}
-			ChangeVolumebyClick(window);
-			SubmitTheme();
+			if (opt)
+			{
+				if (Keyboard::isKeyPressed(Keyboard::Right))
+				{
+					place++;
+					place %= 3;
+					cout << place << '\n';
+				}
+				if (Keyboard::isKeyPressed(Keyboard::Left))
+				{
+					if (!place)
+						place = 3;
+					place--;
+					cout << place << '\n';
+				}
+				ChangeVolumebyClick(window);
+				SubmitTheme();
+			}
+			
+			
+			
+			
 
 			//Menus
 			//searchMenus
@@ -606,9 +626,7 @@ int main(void)
 
 		if (opt)
 		{
-			SelectTheme(hell_theme, 0);
-			SelectTheme(forest_theme, 1);
-			SelectTheme(ice_theme, 2);
+			SelectTheme();
 			// To See which of the themes is choosen
 			for (int x = 0; x < 3; x++)
 			{
