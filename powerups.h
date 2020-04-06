@@ -1,8 +1,7 @@
-
 //struct containing powerup attributes
 struct pUp
 {
-	CircleShape circle; //pUp shape
+	RectangleShape rect; //pUp shape
 	Texture texture; // pUp texture
 	Clock clock; //clock decleration to work a timer later for how long the powerup stays
 	bool isSpawned = false; // Bool to check if the pUP on the screen aka "spawned"
@@ -73,28 +72,32 @@ void elongate(PAD& pad1, PAD& pad2, bool active, char c)
 }
 
 // Takes references to all powerups and sets their textures, radii and sounds
-void initialize_powerups(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
-						SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr)
+void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
+	SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr)
 {
 	////longate
-	longate.circle.setFillColor(Color::Red); //pUp color
-	longate.circle.setRadius(10); //pUp size
+	longate.texture.loadFromFile("resources/PowerUps/Elongate.png");
+	longate.rect.setTexture(&longate.texture);
+	longate.rect.setSize(Vector2f(50.f, 50.f)); //pUp size
 	longate.sound.setBuffer(lngbfr);
 
 
 	////freeze 
-	freeze.circle.setFillColor(Color::Blue); //pUp color
-	freeze.circle.setRadius(10); //pUp size	
+	freeze.texture.loadFromFile("resources/PowerUps/Freeze.png");
+	freeze.rect.setTexture(&freeze.texture);
+	freeze.rect.setSize(Vector2f(50.f, 50.f)); //pUp size
 	freeze.sound.setBuffer(frzbfr);
 
 	////slow
-	slow.circle.setFillColor(Color::Green); //pUp color
-	slow.circle.setRadius(10); //pUp size
+	slow.texture.loadFromFile("resources/PowerUps/Slow.png");
+	slow.rect.setTexture(&slow.texture);
+	slow.rect.setSize(Vector2f(50.f, 50.f)); //pUp size
 	slow.sound.setBuffer(slowbfr);
 
 	////Invisibility
-	invis.circle.setFillColor(Color::Magenta); //pUp color
-	invis.circle.setRadius(10); //pUp size
+	invis.texture.loadFromFile("resources/PowerUps/Invisible.png");
+	invis.rect.setTexture(&invis.texture);
+	invis.rect.setSize(Vector2f(45.5f, 56.8f)); //pUp size
 	invis.sound.setBuffer(invsbfr);
 
 	//Reverse
@@ -110,22 +113,22 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 	//elongate
 	if (longate.isSpawned == true)
 	{
-		window.draw(longate.circle);
+		window.draw(longate.rect);
 	}
 	//freeze
 	if (freeze.isSpawned == true)
 	{
-		window.draw(freeze.circle);
+		window.draw(freeze.rect);
 	}
 	//slow
 	if (slow.isSpawned == true)
 	{
-		window.draw(slow.circle);
+		window.draw(slow.rect);
 	}
 	//invis
 	if (invis.isSpawned == true)
 	{
-		window.draw(invis.circle);
+		window.draw(invis.rect);
 	}
 	//Reverse
 	/*if (reverse.isSpawned == true)
@@ -139,11 +142,11 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 
 //check for collision with ball and pUp and only do so if it's already spawned on screen
 // and activates powerups if they are taken 
-void isTakenPowerup(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invis, BALL ball, PAD& pad1, PAD& pad2, bool sfxSwitch)
+void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, BALL ball, PAD& pad1, PAD& pad2, bool sfxSwitch)
 {
 
 	//elongate
-	if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.circle.getGlobalBounds()))
+	if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.rect.getGlobalBounds()))
 	{
 		if (sfxSwitch)
 		{
@@ -166,7 +169,7 @@ void isTakenPowerup(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 	}
 
 	//Freeze
-	if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.circle.getGlobalBounds()))
+	if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.rect.getGlobalBounds()))
 	{
 		if (sfxSwitch)
 		{
@@ -192,7 +195,7 @@ void isTakenPowerup(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 	}
 
 	//Slow
-	if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.circle.getGlobalBounds()))
+	if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.rect.getGlobalBounds()))
 	{
 		if (sfxSwitch)
 		{
@@ -218,7 +221,7 @@ void isTakenPowerup(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 	}
 
 	//Invis 
-	if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.circle.getGlobalBounds()))
+	if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.rect.getGlobalBounds()))
 	{
 		if (sfxSwitch)
 		{
@@ -270,30 +273,30 @@ void isTakenPowerup(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 
 // spawns only if no player has the pUp ,
 //it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-void SpawnPowerups(pUp& reverse,pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE)
+void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE)
 {
 
 	if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
 	{
-		longate.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
+		longate.rect.setPosition(rand() % 600, rand() % 400); //random position for spawn
 		longate.isSpawned = 1; //change spawned state
 	}
 
 	if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
 	{
-		freeze.circle.setPosition(rand() % 600, rand() % 400); //random position for spawn
+		freeze.rect.setPosition(rand() % 600, rand() % 400); //random position for spawn
 		freeze.isSpawned = 1; //change spawned state
 	}
 
 	if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE != 't')
 	{
-		slow.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+		slow.rect.setPosition(rand() % 500, rand() % 300); //random position for spawn
 		slow.isSpawned = 1; //change spawned state
 	}
 
 	if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
 	{
-		invis.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
+		invis.rect.setPosition(rand() % 500, rand() % 300); //random position for spawn
 		invis.isSpawned = 1; //change spawned state
 	}
 	/*if (reverse.isActive == false && reverse.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
@@ -368,7 +371,7 @@ void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp&
 
 		invis.isActive = 0; //pUp is no longer active
 	}
-	
+
 	//Reverse
 	/*if (reverse.isActive == true && reverse.clock.getElapsedTime() > seconds(1))
 	{
