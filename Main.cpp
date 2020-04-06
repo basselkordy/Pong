@@ -1,9 +1,7 @@
 // Header containing custom functions, includes, structs definitons, and the Event object
 #include "functions.h"
 #include "leaderboard.h"
-#include "Menu.h"
-#include "Optionmenu.h"
-#include "pauseMenu.h"
+#include "Menus.h"
 #include "powerups.h"
 #include <sstream>
 #include "menus options.h"
@@ -120,7 +118,9 @@ int main(void)
 
 
 	//Main Menu
-	Menu menu(window.getSize().x, window.getSize().y);
+	MENU mainMenu;
+	Text menuItems[5];
+	setMainMenu(mainMenu, menuItems, GAMEWIDTH, GAMEHEIGHT);
 	bool men = true;
 
 	///// switch fo switching up and down /////
@@ -130,7 +130,10 @@ int main(void)
 
 	//Pause Menu
 	bool pause = false;
-	pauseMenu pMenu(window.getSize().x, window.getSize().y);
+	MENU pMenu;
+	Text pauseItems[3];
+	setPauseMenu(pMenu, pauseItems, GAMEWIDTH, GAMEHEIGHT);
+
 
 	//Scores / Win lose
 	//Score
@@ -264,7 +267,7 @@ int main(void)
 				if (event.type == Event::KeyReleased)
 				{
 					//function contains switch statment
-					pauseEvents(event, pMenu, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch);
+					pauseEvents(event, pMenu, pauseItems, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch);
 					break;
 				}
 			}
@@ -284,7 +287,7 @@ int main(void)
 				if (event.type == Event::KeyReleased) {
 					//Navigation
 					//function contains switch statment
-					mainmenuEvents(menu, play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
+					mainmenuEvents(mainMenu, menuItems, play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
 					break;
 				}
 
@@ -553,8 +556,8 @@ int main(void)
 			 men = false;
 
 			//rendering pause window(draw pause window if option window is not opened)
-			if (pause && !opt)
-				pMenu.DRAW(window);
+			 if (pause && !opt)
+				 drawMenu(window, pauseItems, 3);
 
 			if (opt) {
 				window.draw(option);
@@ -594,7 +597,7 @@ int main(void)
 
 			// Rendering main menu
 			if (men) {
-				menu.Draw(window);
+				drawMenu(window, menuItems, 5);
 
 			}
 			if (leader)
