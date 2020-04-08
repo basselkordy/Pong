@@ -465,129 +465,28 @@ void moveDown(MENU& menu, Text text[], int noOfItems)
 
 }
 
-//////////////////////////// using mouse to navigate in main menu / (logic can be modified later )//////
-void mouse_navigator_mainmenu(MENU& menu, Text text[], Window& window)
+//////////////////////////// using mouse to navigate in menus ////////////////////////////////////
+void mouse_navigator(MENU& menu, Text text[], double noIndex , Window& window)
 {
-   /////////////// detection of position of text on y-axis ////////////////////
-	int tex_0y = text[0].getPosition().y;
-	int tex_1y = text[1].getPosition().y;
-	int tex_2y = text[2].getPosition().y;
-	int tex_3y = text[3].getPosition().y;
-	int tex_4y = text[4].getPosition().y;
-	/////////////// detection of position of text on x-axis ////////////////////
-	int tex_0x = text[0].getPosition().x;
-	int tex_1x = text[1].getPosition().x;
-	int tex_2x = text[2].getPosition().x;
-	int tex_3x = text[3].getPosition().x;
-	int tex_4x = text[4].getPosition().x;
+ 
 	/////////////// detection of position of mouse ////////////////////
 	pos_Mouse = Mouse::getPosition(window);
+	/////equation to detect the index+1 //////////////
+	int texy = (pos_Mouse.y * (noIndex));
 /*                                                                               
              ...... index changer ................    
                                                                                  */
-
-	if ((pos_Mouse.y >= tex_0y - 30 && pos_Mouse.y <= tex_0y + 30) && (pos_Mouse.x >= tex_0x - 10 && pos_Mouse.x <= tex_0x + 50)) {
+	if ((pos_Mouse.y >= 90 && pos_Mouse.y <= 510) && (pos_Mouse.x >= 300 && pos_Mouse.x <= 500)) {
 		text[menu.selectedItemIndex].setFillColor(Color::White);
 		text[menu.selectedItemIndex].setCharacterSize(30);
 		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 0;
+		menu.selectedItemIndex = texy-1;
 		text[menu.selectedItemIndex].setFont(menu.font2);
 		text[menu.selectedItemIndex].setFillColor(Color::Red);
 		text[menu.selectedItemIndex].setCharacterSize(40);
 		menu.switching.play();
 	}
-	if ((pos_Mouse.y >= tex_1y - 30 && pos_Mouse.y <= tex_1y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 1;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-	}
-	if ((pos_Mouse.y >= tex_2y - 30 && pos_Mouse.y <= tex_2y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 2;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-	}
-	if ((pos_Mouse.y >= tex_3y - 30 && pos_Mouse.y <= tex_3y + 30) && (pos_Mouse.x >= tex_3x - 10 && pos_Mouse.x <= tex_3x + 50)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 3;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-	}
-	if ((pos_Mouse.y >= tex_4y - 30 && pos_Mouse.y <= tex_4y + 30) && (pos_Mouse.x >= tex_4x - 10 && pos_Mouse.x <= tex_4x + 50)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 4;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-	}
-
+	
 }
-/////////////////////////// using mouse to navigate in pause menu /(logic can be modified later )//////
-void mouse_navigator_pausemenu(MENU& menu, Text text[], Window& window)
-{
-	/////////////// detection of position of text on y-axis ////////////////////
-	int tex_0y = text[0].getPosition().y;
-	int tex_1y = text[1].getPosition().y;
-	int tex_2y = text[2].getPosition().y;
 
-	/////////////// detection of position of text on x-axis ////////////////////
-	int tex_0x = text[0].getPosition().x;
-	int tex_1x = text[1].getPosition().x;
-	int tex_2x = text[2].getPosition().x;
-
-	/////////////// detection of position of mouse ////////////////////
-	pos_Mouse = Mouse::getPosition(window);
-	/*
-			 ...... index changer ................
-																				 */
-	if ((pos_Mouse.y >= tex_0y - 30 && pos_Mouse.y <= tex_0y + 30) && (pos_Mouse.x >= tex_0x - 50 && pos_Mouse.x <= tex_0x + 100)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 0;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-
-	}
-	if ((pos_Mouse.y >= tex_1y - 30 && pos_Mouse.y <= tex_1y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 1;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-
-	}
-	if ((pos_Mouse.y >= tex_2y - 30 && pos_Mouse.y <= tex_2y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = 2;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
-		menu.switching.play();
-	}
-
-}
 

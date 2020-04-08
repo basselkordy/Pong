@@ -285,7 +285,7 @@ int main(void)
 			if (pause)
 			{
 				/////// to navigate in pause menu 
-				mouse_navigator_pausemenu(pMenu, pauseItems, window);
+				mouse_navigator(pMenu, pauseItems,0.006666667, window);
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
 				{
 					//function contains switch statment
@@ -305,7 +305,7 @@ int main(void)
 			//Main Menu Events/Sound
 			if (men) {
 				//// to navigate in main menu   
-				mouse_navigator_mainmenu(mainMenu, menuItems, window);
+				mouse_navigator(mainMenu, menuItems,0.01, window);
 				//Event
 				cout << pos_Mouse.y - pos_Mouse.x << endl;
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
