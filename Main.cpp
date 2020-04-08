@@ -285,7 +285,7 @@ int main(void)
 			if (pause)
 			{
 				/////// to navigate in pause menu 
-				mouse_navigator(pMenu, pauseItems,0.006666667, window);
+				mouse_navigator(pMenu, pauseItems,0.0067, window);
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
 				{
 					//function contains switch statment
