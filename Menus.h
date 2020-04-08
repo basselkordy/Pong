@@ -431,6 +431,7 @@ void moveUp(MENU& menu, int noOfItems, Text text[])
 		text[menu.selectedItemIndex].setFont(menu.font2);
 		text[menu.selectedItemIndex].setFillColor(Color::Red);
 		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
 	}
 }
 
@@ -459,133 +460,134 @@ void moveDown(MENU& menu, Text text[], int noOfItems)
 		text[menu.selectedItemIndex].setFont(menu.font2);
 		text[menu.selectedItemIndex].setFillColor(Color::Red);
 		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
 	}
 
 }
 
-//////////////EVENTS/////////////
-//Pause Menu Events
-void pauseEvents(Event& event, MENU& pauseMenu, Text pauseItems[], Sound& whenreturn_detector, Sound& whenpressed_detector, Sound& background, Music& theme, bool& pause, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& musicSwitch)
+//////////////////////////// using mouse to navigate in main menu / (logic can be modified later )//////
+void mouse_navigator_mainmenu(MENU& menu, Text text[], Window& window)
 {
-	switch (event.key.code)
-	{
-	case Keyboard::Up:
-		moveUp(pauseMenu, 3, pauseItems);
-		whenreturn_detector.play();
-		break;
+   /////////////// detection of position of text on y-axis ////////////////////
+	int tex_0y = text[0].getPosition().y;
+	int tex_1y = text[1].getPosition().y;
+	int tex_2y = text[2].getPosition().y;
+	int tex_3y = text[3].getPosition().y;
+	int tex_4y = text[4].getPosition().y;
+	/////////////// detection of position of text on x-axis ////////////////////
+	int tex_0x = text[0].getPosition().x;
+	int tex_1x = text[1].getPosition().x;
+	int tex_2x = text[2].getPosition().x;
+	int tex_3x = text[3].getPosition().x;
+	int tex_4x = text[4].getPosition().x;
+	/////////////// detection of position of mouse ////////////////////
+	pos_Mouse = Mouse::getPosition(window);
+/*                                                                               
+             ...... index changer ................    
+                                                                                 */
 
-	case Keyboard::Down:
-		moveDown(pauseMenu, pauseItems, 3);
-		whenreturn_detector.play();
-		break;
-
-	case Keyboard::Return:
-		switch (pauseMenu.selectedItemIndex)
-		{
-			//resume
-		case 0:
-			if (pause)
-			{
-				pause = false;
-				whenpressed_detector.play();
-				break;
-			}
-			//open option menu
-		case 1:
-			opt = true;
-			pause = false;
-			whenpressed_detector.play();
-			break;
-			//exit
-		case 2:
-			whenpressed_detector.play();
-			getPlayerName = false;
-			play = false;
-			pause = false;
-			men = true;
-			if (musicSwitch)
-			{
-				background.stop();
-				theme.play();
-
-			}
-			break;
-		}
-
-		break;
+	if ((pos_Mouse.y >= tex_0y - 30 && pos_Mouse.y <= tex_0y + 30) && (pos_Mouse.x >= tex_0x - 10 && pos_Mouse.x <= tex_0x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 0;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
+	}
+	if ((pos_Mouse.y >= tex_1y - 30 && pos_Mouse.y <= tex_1y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 1;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
+	}
+	if ((pos_Mouse.y >= tex_2y - 30 && pos_Mouse.y <= tex_2y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 2;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
+	}
+	if ((pos_Mouse.y >= tex_3y - 30 && pos_Mouse.y <= tex_3y + 30) && (pos_Mouse.x >= tex_3x - 10 && pos_Mouse.x <= tex_3x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 3;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
+	}
+	if ((pos_Mouse.y >= tex_4y - 30 && pos_Mouse.y <= tex_4y + 30) && (pos_Mouse.x >= tex_4x - 10 && pos_Mouse.x <= tex_4x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 4;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
 	}
 
 }
-
-//Main Menu Events
-
-void mainmenuEvents(MENU& mainMenu, Text mainItems[], bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
+/////////////////////////// using mouse to navigate in pause menu /(logic can be modified later )//////
+void mouse_navigator_pausemenu(MENU& menu, Text text[], Window& window)
 {
-	switch (event.key.code)
-	{
-	case Keyboard::Up:
-		moveUp(mainMenu, 5, mainItems);
-		break;
+	/////////////// detection of position of text on y-axis ////////////////////
+	int tex_0y = text[0].getPosition().y;
+	int tex_1y = text[1].getPosition().y;
+	int tex_2y = text[2].getPosition().y;
 
-	case Keyboard::Down:
-		moveDown(mainMenu, mainItems, 5);
-		break;
+	/////////////// detection of position of text on x-axis ////////////////////
+	int tex_0x = text[0].getPosition().x;
+	int tex_1x = text[1].getPosition().x;
+	int tex_2x = text[2].getPosition().x;
 
-	case sf::Keyboard::Return:
-		//main menu orders....
-		switch (mainMenu.selectedItemIndex)
-		{
-		case 0:
-			if (!play)
-			{
-				if (musicSwitch)
-				{
-					theme.pause();
-					background.play();
-				}
-				getPlayerName = true;
-				play = false;
-				men = false;
-				whenpressed_detector.play();
-				MODE = 'a';
+	/////////////// detection of position of mouse ////////////////////
+	pos_Mouse = Mouse::getPosition(window);
+	/*
+			 ...... index changer ................
+																				 */
+	if ((pos_Mouse.y >= tex_0y - 30 && pos_Mouse.y <= tex_0y + 30) && (pos_Mouse.x >= tex_0x - 50 && pos_Mouse.x <= tex_0x + 100)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 0;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
 
-			}
-			break;
-		case 1:
-
-			if (!opt) {
-				opt = true;
-				men = false;
-				whenpressed_detector.play();
-
-			}
-			break;
-
-		case 2:
-			if (!leader)
-			{
-				leader = true;
-				men = false;
-				whenpressed_detector.play();
-			}
-			break;
-
-		case 3:
-			whenpressed_detector.play();
-			play = true;
-			if (musicSwitch)
-			{
-				theme.pause();
-				background.play();
-			}
-			MODE = 't';
-			break;
-
-		case 4:
-			whenpressed_detector.play();
-			window.close();
-			break;
-		}
-		break;
 	}
+	if ((pos_Mouse.y >= tex_1y - 30 && pos_Mouse.y <= tex_1y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 1;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
+
+	}
+	if ((pos_Mouse.y >= tex_2y - 30 && pos_Mouse.y <= tex_2y + 30) && (pos_Mouse.x >= tex_1x - 10 && pos_Mouse.x <= tex_1x + 50)) {
+		text[menu.selectedItemIndex].setFillColor(Color::White);
+		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setFont(menu.font);
+		menu.selectedItemIndex = 2;
+		text[menu.selectedItemIndex].setFont(menu.font2);
+		text[menu.selectedItemIndex].setFillColor(Color::Red);
+		text[menu.selectedItemIndex].setCharacterSize(40);
+		menu.switching.play();
+	}
+
 }
+

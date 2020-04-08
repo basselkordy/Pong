@@ -154,3 +154,219 @@ void textInit(Text& win, Font& font, char c)
 	win.setFillColor(sf::Color::White);
 	win.setFont(font);
 }
+
+//Pause Menu Events
+void pauseEvents(Event& event, MENU& pauseMenu, Text pauseItems[], Sound& whenreturn_detector, Sound& whenpressed_detector, Sound& background, Music& theme, bool& pause, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& musicSwitch)
+{
+	switch (event.key.code)
+	{
+	case Keyboard::Up:
+		moveUp(pauseMenu, 3, pauseItems);
+		whenreturn_detector.play();
+		break;
+
+	case Keyboard::Down:
+		moveDown(pauseMenu, pauseItems, 3);
+		whenreturn_detector.play();
+		break;
+
+	case Keyboard::Return:
+		switch (pauseMenu.selectedItemIndex)
+		{
+			//resume
+		case 0:
+			if (pause)
+			{
+				pause = false;
+				whenpressed_detector.play();
+				break;
+			}
+			//open option menu
+		case 1:
+			opt = true;
+			pause = false;
+			whenpressed_detector.play();
+			break;
+			//exit
+		case 2:
+			whenpressed_detector.play();
+			getPlayerName = false;
+			play = false;
+			pause = false;
+			men = true;
+			if (musicSwitch)
+			{
+				background.stop();
+				theme.play();
+
+			}
+			break;
+		}
+		break;
+
+	case Mouse::Left:
+		switch (pauseMenu.selectedItemIndex)
+		{
+			//resume
+		case 0:
+			if (pause)
+			{
+				pause = false;
+				whenpressed_detector.play();
+				break;
+			}
+			//open option menu
+		case 1:
+			opt = true;
+			pause = false;
+			whenpressed_detector.play();
+			break;
+			//exit
+		case 2:
+			whenpressed_detector.play();
+			getPlayerName = false;
+			play = false;
+			pause = false;
+			men = true;
+			if (musicSwitch)
+			{
+				background.stop();
+				theme.play();
+
+			}
+			break;
+		}
+		break;
+	}
+
+}
+
+//Main Menu Events
+
+void mainmenuEvents(MENU& mainMenu, Text mainItems[], bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
+{
+	switch (event.key.code)
+	{
+	case Keyboard::Up:
+		moveUp(mainMenu, 5, mainItems);
+		break;
+
+	case Keyboard::Down:
+		moveDown(mainMenu, mainItems, 5);
+		break;
+
+	case Keyboard::Return:
+		//main menu orders....
+		switch (mainMenu.selectedItemIndex)
+		{
+		case 0:
+			if (!play)
+			{
+				if (musicSwitch)
+				{
+					theme.pause();
+					background.play();
+				}
+				getPlayerName = true;
+				play = false;
+				men = false;
+				whenpressed_detector.play();
+				MODE = '2';
+			}
+			break;
+		case 1:
+
+			if (!opt) {
+				opt = true;
+				men = false;
+				whenpressed_detector.play();
+
+			}
+			break;
+
+		case 2:
+			if (!leader)
+			{
+				leader = true;
+				men = false;
+				whenpressed_detector.play();
+			}
+			break;
+
+		case 3:
+			whenpressed_detector.play();
+			play = true;
+			if (musicSwitch)
+			{
+				theme.pause();
+				background.play();
+			}
+			MODE = 't';
+			break;
+
+		case 4:
+			whenpressed_detector.play();
+			window.close();
+			break;
+		}
+		break;
+
+	case Mouse::Left:
+		switch (mainMenu.selectedItemIndex)
+		{
+		case 0:
+			if (!play)
+			{
+				if (musicSwitch)
+				{
+					theme.pause();
+					background.play();
+				}
+				getPlayerName = true;
+				play = false;
+				men = false;
+				whenpressed_detector.play();
+				MODE = '2';
+			}
+			break;
+		case 1:
+
+			if (!opt) {
+				opt = true;
+				men = false;
+				whenpressed_detector.play();
+
+			}
+			break;
+
+		case 2:
+			if (!leader)
+			{
+				leader = true;
+				men = false;
+				whenpressed_detector.play();
+			}
+			break;
+
+		case 3:
+			whenpressed_detector.play();
+			play = true;
+			if (musicSwitch)
+			{
+				theme.pause();
+				background.play();
+			}
+			MODE = 't';
+			break;
+
+		case 4:
+			whenpressed_detector.play();
+			window.close();
+			break;
+		}
+		break;
+	}
+
+
+
+}

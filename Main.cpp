@@ -284,7 +284,9 @@ int main(void)
 			//Pause Menu Events/Sound
 			if (pause)
 			{
-				if (event.type == Event::KeyReleased)
+				/////// to navigate in pause menu 
+				mouse_navigator_pausemenu(pMenu, pauseItems, window);
+				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
 				{
 					//function contains switch statment
 					pauseEvents(event, pMenu, pauseItems, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch);
@@ -302,9 +304,11 @@ int main(void)
 
 			//Main Menu Events/Sound
 			if (men) {
-
+				//// to navigate in main menu   
+				mouse_navigator_mainmenu(mainMenu, menuItems, window);
 				//Event
-				if (event.type == Event::KeyReleased) {
+				cout << pos_Mouse.y - pos_Mouse.x << endl;
+				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
 					//Navigation
 					//function contains switch statment
 					mainmenuEvents(mainMenu, menuItems, play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
@@ -580,9 +584,9 @@ int main(void)
 				 drawMenu(window, pauseItems, 3);
 
 			if (opt) {
-				window.draw(option);
 				DrawOptionMenu(window);
 				men = false;
+				window.draw(option);
 
 			}
 		}
@@ -609,9 +613,9 @@ int main(void)
 			//render option window
 			//searchMenus
 			if (opt) {
-				window.draw(option);
 				DrawOptionMenu(window);
 				men = false;
+				window.draw(option);
 
 			}
 

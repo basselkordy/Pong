@@ -48,3 +48,10 @@ Badr 6/4
 - modified the early VolumeChanger function
 - added new function for volume input
 
+------------------------------------------------------------------------
+Bavlly 7/4 
+
+- added mouse navigator function to navigate on menus (main menu / pause menu)
+- added text in option menu 
+
+
