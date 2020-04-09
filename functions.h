@@ -1,5 +1,5 @@
 // Headers
-//NEW
+
 #include <stdlib.h>
 #include<iostream>
 #include <SFML/Graphics.hpp>
@@ -65,9 +65,9 @@ struct PAD
 
 		// Set the position
 		if (pad_number == 2)
-			rect.setPosition(GAMEWIDTH - width -  /*the needed distance*/ 30, 350);
+			rect.setPosition(GAMEWIDTH - width -  /*the needed distance*/ 30, 300);
 		else
-			rect.setPosition(width + /*the needed distance*/ 30, 400);
+			rect.setPosition(width + /*the needed distance*/ 30, 300);
 
 		// This is done to return the pad's fill color back to normal if the game exits while it isn't
 		rect.setFillColor(Color::White);
@@ -148,11 +148,27 @@ bool isPressed(Keyboard::Key x)
 
 
 // takes a reference to a BALL, positions it in a random position in the middle
-void RandomPos(BALL& ball)
+void RandomPos(BALL& ball,int mapnum,RectangleShape obstacle)
 {
+	int x, random = rand() % 2;
 	
-	//spawn at centre
-	int x = 400;
+	//Prevent spawn at center due to pressence of an obstacle
+	if (mapnum == 2)
+	{
+		//spawn right of obstacle
+		if (random)
+		{
+			x = 400 + obstacle.getSize().x / 2 + ball.circle.getRadius() + 20;
+		}
+		//spawn left of obstacle
+		else
+		{
+			x = 400 - obstacle.getSize().x / 2 - ball.circle.getRadius() - 20;
+		}
+	}
+	//spawn at center
+	else 
+		x = 400;
 	
 	int y = 300;
 
@@ -160,10 +176,22 @@ void RandomPos(BALL& ball)
 	ball.xVelocity = 6 + rand() % 2;
 	ball.yVelocity = 8 - ball.xVelocity;
 	// Random direction
-	if (rand() % 2 == 0)
-		ball.xVelocity *= -1;
-	if (rand() % 2 == 0)
-		ball.yVelocity *= -1;
+	if (mapnum == 2)
+	{
+		//prevent ball from going towards obstacle if it's spawned at the left
+		if (x < 400)
+		{
+			ball.xVelocity *= -1;
+		}
+	}
+	else
+	{
+		if (rand() % 2 == 0)
+			ball.xVelocity *= -1;
+		if (rand() % 2 == 0)
+			ball.yVelocity *= -1;
+
+	}
 
 	ball.circle.setPosition(x,y);
 }
@@ -175,19 +203,19 @@ void RandomPos(BALL& ball)
 // and brings it back to a random position in the middle when out of horizontal bounds
 
 // changed return type to int to get a return key represeting what sound should be played 
-int boundcheck_ball(BALL& ball)
+int boundcheck_ball(BALL& ball,int mapnum,RectangleShape obstacle)
 {
 	// horizonal bounding
 	if (ball.circle.getPosition().x + ballRadius < 0)
 	{
 		// left pad lost
-		RandomPos(ball);
+		RandomPos(ball,mapnum,obstacle);
 		return 1; // Score sound should be plated
 	}
 	if (ball.circle.getPosition().x - ballRadius > GAMEWIDTH)
 	{
 		// right pad lost
-		RandomPos(ball);
+		RandomPos(ball, mapnum, obstacle);
 		return 1;
 	}
 
@@ -213,7 +241,7 @@ int boundcheck_ball(BALL& ball)
 */
 
 // Collision form the left (for the Right pad only) >>|
-bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
+bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 {
 	bool return_value = false;
 	if (
@@ -237,9 +265,9 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 
 		//Dynamic Collison
 
-		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 20) //if the ball hits near the mid it reflects in straight line
+		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 10) //if the ball hits near the mid it reflects in straight line
 		{
-			ball.xVelocity = 10;
+			ball.xVelocity = 12;
 			ball.yVelocity = 0;
 		}
 		//First 1/4
@@ -252,8 +280,26 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 			)
 		{
 
-
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -8;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 8;
+				}
+				else
+				{
+					if (rand() % 2 == 0)
+						ball.yVelocity = -8;
+					else
+						ball.yVelocity = 8;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 8;
 
@@ -270,9 +316,27 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y < shape.getPosition().y
 			)
 		{
-
-			
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement 
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -6;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 6;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -6;
+					else
+						ball.yVelocity = 6;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 6;
 			}
@@ -288,8 +352,27 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4
 			)
 		{
-
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -6;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 6;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -6;
+					else
+						ball.yVelocity = 6;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 6;
 			}
@@ -305,8 +388,27 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y <= shape.getPosition().y + (shape.getSize().y / 2 + 10)
 			)
 		{
-			
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -8;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 8;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -8;
+					else
+						ball.yVelocity = 8;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 8;
 			}
@@ -323,8 +425,37 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 	
 	return return_value;
 }
+
+//general collision overload
+bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
+{
+	bool return_value = false;
+	if (
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().x + ballRadius > shape.getPosition().x - shape.getSize().x / 2
+		&&
+		// to check that the ball is at right side of the shape's orgin
+		ball.circle.getPosition().x + ballRadius < shape.getPosition().x
+		&&
+		// to apply collision when only the ball or some of it is touching the left side of the shape
+		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		&&
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		)
+	{
+		return_value = true;
+		// to make the ball bounce back after the collision
+		ball.circle.setPosition(shape.getPosition().x - ballRadius - shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
+
+		ball.xVelocity *= -1;
+	}
+
+	return return_value;
+}
+
+
 // Collision form the Right (for the left pad only) |<<
-bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
+bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down, char MODE)
 {
 	bool return_value = false;
 	if (
@@ -347,10 +478,29 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 		//shape.setOrigin(0, 0);
 
 		//Comments available at left collision
-		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 20)
+		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 10)
 		{
-			ball.xVelocity = 12;
-			ball.yVelocity = 0;
+			if (MODE == 'a')
+			{
+				ball.yVelocity = 0;
+				//ball doesn't keep reflecting straight
+				if (rand() % 2 == 0)
+				{
+					if (rand() % 2 == 0)
+						ball.yVelocity = 2;
+					else
+						ball.yVelocity = -2;
+
+				}
+				ball.xVelocity = 12 - abs(ball.yVelocity);
+
+			}
+			else
+			{
+				ball.xVelocity = 12;
+				ball.yVelocity = 0;
+			}
+			
 		}
 		//First 1/4
 		else if (
@@ -361,9 +511,27 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y <= shape.getPosition().y - shape.getSize().y / 4
 			)
 		{
-
-			
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -8;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 8;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -8;
+					else
+						ball.yVelocity = 8;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 8;
 
@@ -381,9 +549,27 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 			)
 		{
 			
-
-			
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -6;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 6;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -6;
+					else
+						ball.yVelocity = 6;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 6;
 			}
@@ -399,9 +585,27 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y < shape.getPosition().y + shape.getSize().y / 4
 			)
 		{
-			
-			
-			if (ball.yVelocity > 0)
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -6;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 6;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -6;
+					else
+						ball.yVelocity = 6;
+				}
+			}
+			else if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 6;
 			}
@@ -417,8 +621,26 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 			ball.circle.getPosition().y <= shape.getPosition().y + shape.getSize().y / 2
 			)
 		{
-			
-			
+			//if ball is coming straight the direction of reflection depends on  movement
+			if (ball.yVelocity == 0)
+			{
+				if (up)
+				{
+					ball.yVelocity = -8;
+				}
+				else if (down)
+				{
+					ball.yVelocity = 8;
+				}
+				else
+				{
+					//if not moving reflects to a random direction
+					if (rand() % 2 == 0)
+						ball.yVelocity = -8;
+					else
+						ball.yVelocity = 8;
+				}
+			}
 			if (ball.yVelocity > 0)
 			{
 				ball.yVelocity = 8;
@@ -434,61 +656,102 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 
 }
 
+//general collision overload
+bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
+{
+	bool return_value = false;
+	if (
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
+		&&
+		// to check that the ball is at left side of the shape's orgin
+		ball.circle.getPosition().x - ballRadius > shape.getPosition().x
+		&&
+		// to apply collision when only the ball or some of it is touching the left side of the shape
+		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		&&
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		)
+	{
+		return_value = true;
+		// to make the ball bounce back after the collision
+		ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
+
+		ball.xVelocity *= -1;
+	}
+
+	return return_value;
+
+}
+
 
 
 
 
 // A general Collision detection (Disabled for now) to be used with other objects
-void isColliding(BALL& ball, RectangleShape& shape)
+bool isColliding(BALL& ball, RectangleShape& shape)
 {
-	// this collison is disabled for the pads//
-	//
+	 //this collison is disabled for the pads//
+	bool return_value = false;
 	// From top
-	//if (
-	//	ball.circle.getPosition().y + ballRadius > shape.getPosition().y - shape.getSize().y / 2
-	//	&&
-	//	ball.circle.getPosition().y + ballRadius < shape.getPosition().y
-	//	&&
-	//	ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
-	//	&&
-	//	ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2
-	//	)
-	//{
-	//	ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
-	//	ball.yVelocity *= -1;
-	//}
-	//// From Bottom
-	//if (
-	//	ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
-	//	&&
-	//	ball.circle.getPosition().y - ballRadius > shape.getPosition().y
-	//	&&
-	//	ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
-	//	&&
-	//	ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2
-	//	)
-	//{
-	//	ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
-	//	ball.yVelocity *= -1;
-	//}
-	//
+	if (
+		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		&&
+		ball.circle.getPosition().y + ballRadius < shape.getPosition().y
+		&&
+		ball.circle.getPosition().x + ballRadius <= shape.getPosition().x + shape.getSize().x / 2
+		&&
+		ball.circle.getPosition().x - ballRadius >= shape.getPosition().x - shape.getSize().x / 2
+		)
+	{
+		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
+		cout << "TOP" << endl;
+		ball.yVelocity *= -1;
+		return_value = true;
+	}
+	// From Bottom
+	if (
+		ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
+		&&
+		ball.circle.getPosition().y - ballRadius > shape.getPosition().y
+		&&
+		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
+		&&
+		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2
+		)
+	{
+		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
+		cout << "BOT" << endl;
+		ball.yVelocity *= -1;
+		return_value = true;
+	}
+	
+	return return_value;
 }
 
 // the function checks wether the ball is below or above the pad and moves the pad accordingly
 int ai_move(PAD& pad, BALL& ball)
-{
-	//ball going towards pad       ball above pad
+{	
+	
+	
+	int error = 10;
+	if (rand() % 10000 > 9995) //chance for changing error (prevents shaky movement)
+	{
+		error = rand() % 100;
+	}
 	float diff = pad.rect.getPosition().y - ball.circle.getPosition().y;
-	if (ball.xVelocity < 0 && diff >= -10 && diff <= 10)
+
+	//ball going towards pad       ball above pad
+	if (ball.xVelocity < 0 && diff >= -error && diff <= error)
 	{
 		return 0;
 	}
-	if (ball.xVelocity < 0 && diff > 10)
+	if (ball.xVelocity < 0 && diff > error)
 	{
 		return -1; //move it up
 	}
 	//ball going towards pad       ball below pad
-	else if (ball.xVelocity < 0 && diff < 10)
+	else if (ball.xVelocity < 0 && diff < error )
 	{
 		return 1; //move it down
 	}
@@ -592,14 +855,15 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 	{
 		if (!froze) //it can only take input if not frozen
 		{
-
+			
+			
 			if (slow) //changing speed depending if slowed or not
 			{
 				pad.velocity = ai_move(pad, ball) * 4;
 			}
 			else
 				pad.velocity = ai_move(pad, ball) * 10;
-			pad.length = 125.0f;
+			
 			pad.rect.move(0, pad.velocity);
 			pad.boundcheck();
 			
@@ -616,6 +880,10 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 			if (slow) //changing speed depending if slowed or not
 			{
 				pad.velocity = pad.Get_Movement(S, W);
+			}
+			else if (pad.isReverse)
+			{
+				pad.velocity = pad.Get_Movement(W, S);
 			}
 			else
 				pad.velocity = pad.Get_Movement(S, W);
@@ -639,7 +907,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 }
 
 // Takes references to everything drawn in game and handles their drawing conditions
-void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, BALL& ball, Text& lblscorep1, Text& lblscorep2)
+void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
 {
 
 	// Background
@@ -654,6 +922,18 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 	if (!pad2.isInvis)
 		window.draw(pad2.rect);
 
+	//Draw map components
+	if (mapnum == 1)
+	{
+		window.draw(obsTop);
+		window.draw(obsBot);
+	}
+	else if (mapnum == 2)
+	{
+		window.draw(obsTop);
+
+
+	}
 	//draw score of player 1 
 	window.draw(lblscorep1);
 
@@ -662,3 +942,91 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 
 }
 
+//Maps
+
+//Takes reference to map components and handles their initilization 
+void set_map(RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+{
+	if (mapnum == 1)
+	{
+		obsTop.setSize(Vector2f(200, 150));
+		obsTop.setOrigin(Vector2f(obsTop.getSize().x / 2, obsTop.getSize().y / 2));
+		obsTop.setPosition(Vector2f(400, (obsTop.getSize().y / 2)));
+		obsTop.setFillColor(Color::Red);
+		
+
+		obsBot.setSize(Vector2f(200, 150));
+		obsBot.setOrigin(Vector2f(obsBot.getSize().x / 2, obsBot.getSize().y / 2));
+		obsBot.setPosition(Vector2f(400, (600 - obsBot.getSize().y / 2)));
+		obsBot.setFillColor(Color::Yellow);
+		
+	}
+	else if (mapnum == 2)
+	{
+		obsTop.setSize(Vector2f(50, 150));
+		obsTop.setOrigin(Vector2f(obsTop.getSize().x / 2, obsTop.getSize().y / 2));
+		obsTop.setPosition(Vector2f(400, 300));
+		obsTop.setFillColor(Color::Red);
+	}
+}
+
+//Takes reference to map components and handels their collisions
+void map_collision(BALL& ball, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+{
+	if (mapnum == 1)
+	{
+		//BOTTOM OBSTACLE
+		if ((ball.circle.getPosition().y + ball.circle.getRadius()) >= (obsBot.getPosition().y - (obsBot.getSize().y / 2) )) //Ball collided with bottom obstacle
+		{
+			//Ball collided with the top of the bottom obstacle
+			if (ball.circle.getPosition().x >= (obsBot.getPosition().x - (obsBot.getSize().x / 2)) && ball.circle.getPosition().x <= (obsBot.getPosition().x + (obsBot.getSize().x / 2)))
+			{
+				
+				ball.yVelocity *= -1;
+			}
+			//ball collided with it's side
+			else
+			{
+				isCollidingFromLeft(ball, obsBot);
+				isCollidingFromRight(ball, obsBot);
+
+			}
+		}
+
+		//TOP OBSTACLE
+		if ((ball.circle.getPosition().y - ball.circle.getRadius()) <= (obsTop.getPosition().y + (obsTop.getSize().y / 2))) //Ball collided with top obstacle
+		{
+			//Ball collided with the bottom of the toop obstacle
+			if (ball.circle.getPosition().x >= (obsTop.getPosition().x - (obsTop.getSize().x / 2)) && ball.circle.getPosition().x <= (obsTop.getPosition().x + (obsTop.getSize().x / 2)))
+			{
+				
+				ball.yVelocity *= -1;
+			}
+			//ball collided with it's side
+			else
+			{
+				isCollidingFromLeft(ball, obsTop);
+				isCollidingFromRight(ball, obsTop);
+
+			}
+		}
+		
+		
+		
+	
+	}
+	else if (mapnum == 2)
+	{
+		//ball beside obstacle
+		if (ball.circle.getPosition().y > obsTop.getPosition().y - obsTop.getSize().y / 2 && ball.circle.getPosition().y < obsTop.getPosition().y + obsTop.getSize().y /2 ) 
+		{
+			isCollidingFromLeft(ball, obsTop);
+			isCollidingFromRight(ball, obsTop);
+		}
+		else
+		{
+			isColliding(ball, obsTop);
+		}
+		
+	}
+}

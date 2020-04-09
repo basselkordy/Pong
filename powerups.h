@@ -78,31 +78,31 @@ void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp
 	////longate
 	longate.texture.loadFromFile("resources/PowerUps/Elongate.png");
 	longate.rect.setTexture(&longate.texture);
-	longate.rect.setSize(Vector2f(50.f, 50.f)); //pUp size
+	longate.rect.setSize(Vector2f(30.f, 30.f)); //pUp size
 	longate.sound.setBuffer(lngbfr);
 
 
 	////freeze 
 	freeze.texture.loadFromFile("resources/PowerUps/Freeze.png");
 	freeze.rect.setTexture(&freeze.texture);
-	freeze.rect.setSize(Vector2f(50.f, 50.f)); //pUp size
+	freeze.rect.setSize(Vector2f(30.f, 30.f)); //pUp size
 	freeze.sound.setBuffer(frzbfr);
 
 	////slow
 	slow.texture.loadFromFile("resources/PowerUps/Slow.png");
 	slow.rect.setTexture(&slow.texture);
-	slow.rect.setSize(Vector2f(50.f, 50.f)); //pUp size
+	slow.rect.setSize(Vector2f(30.f, 30.f)); //pUp size
 	slow.sound.setBuffer(slowbfr);
 
 	////Invisibility
 	invis.texture.loadFromFile("resources/PowerUps/Invisible.png");
 	invis.rect.setTexture(&invis.texture);
-	invis.rect.setSize(Vector2f(45.5f, 56.8f)); //pUp size
+	invis.rect.setSize(Vector2f(30.0f, 30.0f)); //pUp size
 	invis.sound.setBuffer(invsbfr);
 
 	//Reverse
-	/*invis.circle.setFillColor(Color::Black); //pUp color
-	invis.circle.setRadius(10);*/
+	reverse.rect.setFillColor(Color::Black); //pUp color
+	reverse.rect.setSize(Vector2f(30.0f, 30.0f));
 }
 
 
@@ -131,10 +131,10 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 		window.draw(invis.rect);
 	}
 	//Reverse
-	/*if (reverse.isSpawned == true)
+	if (reverse.isSpawned == true)
 	{
-		window.draw(reverse.circle);
-	}*/
+		window.draw(reverse.rect);
+	}
 
 }
 
@@ -146,7 +146,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 {
 
 	//elongate
-	if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.rect.getGlobalBounds()))
+	if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
 	{
 		if (sfxSwitch)
 		{
@@ -169,7 +169,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 	}
 
 	//Freeze
-	if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.rect.getGlobalBounds()))
+	if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
 	{
 		if (sfxSwitch)
 		{
@@ -195,7 +195,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 	}
 
 	//Slow
-	if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.rect.getGlobalBounds()))
+	if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
 	{
 		if (sfxSwitch)
 		{
@@ -221,7 +221,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 	}
 
 	//Invis 
-	if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.rect.getGlobalBounds()))
+	if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
 	{
 		if (sfxSwitch)
 		{
@@ -244,7 +244,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 
 		}
 	}
-	/*if (reverse.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(reverse.circle.getGlobalBounds()))
+	if (reverse.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(reverse.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
 	{
 		if (sfxSwitch)
 		{
@@ -264,46 +264,131 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 		//if player2 is the one who took the pUP
 		else
 		{
-			pad1.isReverse = 1; //make p2 longer
+			pad1.isReverse = 1; //make p1 reversed
 			pad1.rect.setFillColor(Color::Black);
 		}
-	}*/
+	}
 }
 
 
 // spawns only if no player has the pUp ,
 //it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE)
+void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE,int mapNum,RectangleShape obsTop)
 {
-
-	if (longate.isActive == false && longate.isSpawned == false && rand() % 100 > 96 && MODE != 't')
+	if (mapNum == 0)
 	{
-		longate.rect.setPosition(rand() % 600, rand() % 400); //random position for spawn
-		longate.isSpawned = 1; //change spawned state
+
+		if (longate.isActive == false && longate.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			longate.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+			longate.isSpawned = 1; //change spawned state
+		}
+
+		if (freeze.isActive == false && freeze.isSpawned == false && rand() % 10000 > 9995 && MODE != 't')
+		{
+			freeze.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+			freeze.isSpawned = 1; //change spawned state
+		}
+
+		if (slow.isActive == false && slow.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			slow.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+			slow.isSpawned = 1; //change spawned state
+		}
+
+		if (invis.isActive == false && invis.isSpawned == false && rand() % 10000 > 9996 && MODE != 't')
+		{
+			invis.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+			invis.isSpawned = 1; //change spawned state
+		}
+		if (reverse.isActive == false && reverse.isSpawned == false && rand() % 10000 > 9994 && MODE == '2')
+		{
+			reverse.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+			reverse.isSpawned = 1; //change spawned state
+		}
+	}
+	else if (mapNum == 1)
+	{
+		if (longate.isActive == false && longate.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			longate.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
+			longate.isSpawned = 1; //change spawned state
+		}
+
+		if (freeze.isActive == false && freeze.isSpawned == false && rand() % 10000 > 9995 && MODE != 't')
+		{
+			freeze.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
+			freeze.isSpawned = 1; //change spawned state
+		}
+
+		if (slow.isActive == false && slow.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			slow.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
+			slow.isSpawned = 1; //change spawned state
+		}
+
+		if (invis.isActive == false && invis.isSpawned == false && rand() % 10000 > 9996 && MODE != 't')
+		{
+			invis.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
+			invis.isSpawned = 1; //change spawned state
+		}
+
+		if (reverse.isActive == false && reverse.isSpawned == false && rand() % 10000 > 9994 && MODE == '2')
+		{
+			reverse.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
+			reverse.isSpawned = 1; //change spawned state
+		}
+	}
+	else if (mapNum == 2)
+	{
+		if (longate.isActive == false && longate.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			if (!longate.rect.getGlobalBounds().intersects(obsTop.getGlobalBounds()))
+			{
+				longate.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+				longate.isSpawned = 1; //change spawned state
+			}
+			
+		}
+
+		if (freeze.isActive == false && freeze.isSpawned == false && rand() % 10000 > 9995 && MODE != 't')
+		{
+			if (!freeze.rect.getGlobalBounds().intersects(obsTop.getGlobalBounds()))
+			{
+				freeze.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+				freeze.isSpawned = 1; //change spawned state
+			}
+		}
+
+		if (slow.isActive == false && slow.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			if (!slow.rect.getGlobalBounds().intersects(obsTop.getGlobalBounds()))
+			{
+				slow.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+				slow.isSpawned = 1; //change spawned state
+			}
+		}
+
+		if (invis.isActive == false && invis.isSpawned == false && rand() % 10000 > 9996 && MODE != 't')
+		{
+			if (!invis.rect.getGlobalBounds().intersects(obsTop.getGlobalBounds()))
+			{
+				invis.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+				invis.isSpawned = 1; //change spawned state
+			}
+		}
+
+		if (reverse.isActive == false && reverse.isSpawned == false && rand() % 10000 > 9994 && MODE == '2')
+		{
+			if (!reverse.rect.getGlobalBounds().intersects(obsTop.getGlobalBounds()))
+			{
+				reverse.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+				reverse.isSpawned = 1; //change spawned state
+			}
+			
+		}
 	}
 
-	if (freeze.isActive == false && freeze.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
-	{
-		freeze.rect.setPosition(rand() % 600, rand() % 400); //random position for spawn
-		freeze.isSpawned = 1; //change spawned state
-	}
-
-	if (slow.isActive == false && slow.isSpawned == false && rand() % 1000 > 900 && MODE != 't')
-	{
-		slow.rect.setPosition(rand() % 500, rand() % 300); //random position for spawn
-		slow.isSpawned = 1; //change spawned state
-	}
-
-	if (invis.isActive == false && invis.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
-	{
-		invis.rect.setPosition(rand() % 500, rand() % 300); //random position for spawn
-		invis.isSpawned = 1; //change spawned state
-	}
-	/*if (reverse.isActive == false && reverse.isSpawned == false && rand() % 1000 > 998 && MODE != 't')
-	{
-		reverse.circle.setPosition(rand() % 500, rand() % 300); //random position for spawn
-		reverse.isSpawned = 1; //change spawned state
-	}*/
 
 }
 
@@ -373,21 +458,22 @@ void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp&
 	}
 
 	//Reverse
-	/*if (reverse.isActive == true && reverse.clock.getElapsedTime() > seconds(1))
+	if (reverse.isActive == true && reverse.clock.getElapsedTime() > seconds(5))
 	{
 
 		if (pad1.isReverse) //if the player that has the pUp is p1  (logic could be changed later)
 		{
 			pad1.isReverse = 0;
+			pad2.rect.setFillColor(Color::White);
 
 		}
 		else  //if the player that has the pUp is p2  (logic could be changed later)
 		{
 			pad2.isReverse = 0;
-
+			pad2.rect.setFillColor(Color::White);
 		}
 
 		reverse.isActive = 0; //pUp is no longer active
-	}*/
+	}
 
 }

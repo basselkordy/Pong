@@ -29,6 +29,37 @@ Bassel, 26 / 3
     - created a new function, "DeactivatePowerups", handles powerup deactivation
 
 -----------------------------------------------------------------------
+
+Ayman , 4 / 3
+
+-Cleaning Main.cpp (no new functionality)
+	• created a new header "menu options" that contains multiple functions handeling the switch statments of menus events
+		-volChange
+		-themeChange
+		-pauseEvents
+		-menuNav  (navigating options menu)
+		-mainmenuEvents
+		-menuReturn
+		-nameInput
+	• added new function also to menu options.h "textinit" which handels all texts initializations (the function has different overloads so pay attention to passed arguments)
+	• added multiple search keywords to ease navigating the main (if they are not precise enough add more)
+		-Keywords :
+			• searchSound
+			• searchMenus
+			• searchGameComp (game components : ball ,pad ,etc..)
+			• searchGameMechanics (collision , reset ,etc..)
+			• searchLeaderboard
+			• searchRender
+-Bug fixes
+	• ai_move :
+		- smoothed the movement of ai controlled pad and prevented it  from unnecessary movement when already the ball in range
+	• dynamic collision :
+		- fixed the bug where the ball would return as a straight line when colliding with the very top or very bottom of the pad
+-new
+	•Powerup :
+		-Prepaired for a new powerup "Reverse" that switches the input of the opponent if taken (you press up you go down)
+		however the powerup is not functional yet
+-----------------------------------------------------------------------
 Badr 4/4
 
 - added the new option menu
@@ -49,9 +80,36 @@ Badr 6/4
 - added new function for volume input
 
 ------------------------------------------------------------------------
-Bavlly 7/4 
+-Bavlly 7/4 
+ 
+-- added mouse navigator function to navigate on menus (main menu / pause menu)
+-- added text in option menu 
 
-- added mouse navigator function to navigate on menus (main menu / pause menu)
-- added text in option menu 
+-------------------------------------------------------------------------
+Ayman 9/4
 
+-Added :
+	-Maps :
+		• mapNum controls which map is running (0 : none - 1 : two obstacles - 2 : one obstacle
+		•set_Map : handles initializing of maps depending on mapNum
+		•map_collision : handles collision with map components
+		•Edited other functions to work with new maps
+	-PowerUps :
+		-"Reverse" powerUp (available at 2 players mood only) : reverses movement direction
+		-Modified spawn positions depending on maps to prevent spawning on obstacles
+		-Modified spawn rates 
+		-Modified sizes 
+	-Added slight pause (0.25 sec) on scoring and reset pads position 
 
+-Edited :
+	-RandomPos : added arguments ,changed spawn conditions of ball to prevent ball from spawning inside obstacle for map 2
+	-boundcheck : added arguments for RandomPos
+	- isColliding from left/right : 
+		•added arguments, added an overload for general use without Dynamic Collision (to be used for obstacles)
+		• Edited dynamic collision :
+			-touching the ball when it's moving straight changes it's direction depending on which direction you were moving
+			-Ai dynamic collision : ai eventually reflects the ball with an angle even if it hits it at the center
+			-Decreased middle area for the ball to reflect straight
+	-ai_move : added error to the movement of ai 
+	-DrawGame , DrawPowerUps : added arguments for maps drawing
+	
