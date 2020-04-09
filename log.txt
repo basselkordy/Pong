@@ -8,33 +8,153 @@ Winner: ayman
 Mon Apr  6 00:13:16 2020
 
 
-ayman Vs badr
-Winner: ayman
-Tue Apr  7 01:03:48 2020
-
-
-ayman Vs badr
-Winner: ayman
-Tue Apr  7 01:04:15 2020
-
-
-badr Vs ayman
-Winner: badr
-Tue Apr  7 01:04:35 2020
-
-
-AI Vs badr
+AI Vs ayna
 Winner: AI
-Tue Apr  7 02:27:03 2020
+Mon Apr  6 16:13:17 2020
 
 
-badr Vs AI
-Winner: badr
-Tue Apr  7 02:27:24 2020
+k Vs AI
+Winner: k
+Mon Apr  6 16:13:46 2020
 
 
  Vs 
 Winner: 
-Tue Apr  7 02:27:31 2020
+Mon Apr  6 16:13:52 2020
+
+
+ Vs 
+Winner: 
+Mon Apr  6 16:13:56 2020
+
+
+AI Vs h
+Winner: AI
+Mon Apr  6 18:20:59 2020
+
+
+AI Vs k
+Winner: AI
+Mon Apr  6 18:26:38 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 18:33:12 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 18:35:36 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 18:36:05 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 18:38:35 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 18:55:22 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 18:58:50 2020
+
+
+e Vs e
+Winner: e
+Wed Apr  8 19:15:13 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 19:20:43 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 19:21:35 2020
+
+
+w Vs ww
+Winner: w
+Wed Apr  8 20:51:54 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 20:58:06 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 20:58:34 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 20:58:39 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 20:58:43 2020
+
+
+w Vs w
+Winner: w
+Wed Apr  8 21:00:48 2020
+
+
+y Vs y
+Winner: y
+Thu Apr  9 17:21:09 2020
+
+
+t Vs t
+Winner: t
+Thu Apr  9 17:50:37 2020
+
+
+y Vs y
+Winner: y
+Thu Apr  9 17:57:46 2020
+
+
+w Vs w
+Winner: w
+Thu Apr  9 18:01:44 2020
+
+
+w Vs w
+Winner: w
+Thu Apr  9 18:03:09 2020
+
+
+y Vs y
+Winner: y
+Thu Apr  9 18:28:56 2020
+
+
+y Vs y
+Winner: y
+Thu Apr  9 18:29:22 2020
+
+
+y Vs y
+Winner: y
+Thu Apr  9 20:57:11 2020
+
+
+y Vs y
+Winner: y
+Thu Apr  9 20:57:59 2020
 
 

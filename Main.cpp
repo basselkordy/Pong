@@ -22,8 +22,8 @@ int main(void)
 
 	// Set to true/false to activate or mute
 
-	bool musicSwitch = true;
-	bool sfxSwitch = true;
+	bool musicSwitch = 0;
+	bool sfxSwitch = 0;
 
 	//sounds of main menu
 
@@ -200,7 +200,7 @@ int main(void)
 	pUp slow;
 	pUp invis;
 	pUp reverse;
-	initialize_powerups(reverse,longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr);
+	initialize_powerups(reverse, longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr);
 
 
 	///Leaderboard ///
@@ -221,7 +221,7 @@ int main(void)
 
 	//Themes
 	//searchTheme
-	char c = 'h'; //indicate theme
+	char c = 'f'; //indicate theme
 	Texture backgT; //background
 	RectangleShape backg;
 	backg.setSize(Vector2f(800.0, 600.0));
@@ -234,7 +234,12 @@ int main(void)
 	// Keyboard buttons
 	bool W = false, S = false;
 	bool Up = false, Down = false;
+	
 
+	//Map
+	RectangleShape obstacleTop, obstacleBot;
+	int mapNum = 0; // 0 : default map , 1 : top/bot obstacles , 2 : mid obstacle
+	set_map(obstacleTop, obstacleBot, mapNum);
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
@@ -254,6 +259,7 @@ int main(void)
 				window.close();
 				return 0;
 			}
+
 			if (opt)
 			{
 				if (Keyboard::isKeyPressed(Keyboard::Right))
@@ -272,10 +278,6 @@ int main(void)
 				ChangeVolumebyClick(window);
 				SubmitTheme();
 			}
-			
-			
-			
-			
 
 			//Menus
 			//searchMenus
@@ -285,7 +287,7 @@ int main(void)
 			if (pause)
 			{
 				/////// to navigate in pause menu 
-				mouse_navigator(pMenu, pauseItems,0.0067, window);
+				mouse_navigator(pMenu, pauseItems, 0.0067, window);
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
 				{
 					//function contains switch statment
@@ -297,17 +299,17 @@ int main(void)
 			//Options Menu Events/Sound
 			if (opt)
 			{
-				
+
 				VolumeChanger(window);
 				theme.setVolume(VolumeValue);
 			}
 
+
 			//Main Menu Events/Sound
 			if (men) {
 				//// to navigate in main menu   
-				mouse_navigator(mainMenu, menuItems,0.01, window);
+				mouse_navigator(mainMenu, menuItems, 0.01, window);
 				//Event
-				cout << pos_Mouse.y - pos_Mouse.x << endl;
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
 					//Navigation
 					//function contains switch statment
@@ -336,7 +338,7 @@ int main(void)
 				}
 				else if (MODE == '2')
 				{
-					cout << savePlayer1 << savePlayer2 << endl;
+					//cout << savePlayer1 << savePlayer2 << endl;
 					if (!savePlayer1)
 					{
 						nameInput(event, playerName1, getPlayerName, playerText, play, 1, savePlayer1);
@@ -344,7 +346,7 @@ int main(void)
 					else if (!savePlayer2)
 					{
 						nameInput(event, playerName2, getPlayerName, playerText, play, 2, savePlayer2);
-						cout << playerName1 << playerName2 << endl;
+						//cout << playerName1 << playerName2 << endl;
 					}
 				}
 			}
@@ -425,7 +427,7 @@ int main(void)
 		//searchGameComp
 		if (!play)
 		{
-			RandomPos(ball);
+			RandomPos(ball,mapNum,obstacleTop);
 			pad1.ResetPad(1);
 			pad2.ResetPad(2);
 
@@ -434,7 +436,7 @@ int main(void)
 			freeze.isSpawned = 0;  freeze.isActive = 0;
 			slow.isSpawned = 0;    slow.isActive = 0;
 			invis.isSpawned = 0;    invis.isActive = 0;
-			//reverse.isSpawned = 0;    reverse.isActive = 0;
+			reverse.isSpawned = 0;    reverse.isActive = 0;
 		}
 
 		//Game Mechanics
@@ -467,7 +469,7 @@ int main(void)
 
 			//Sound / Collisions
 			// Ball hit wall sound
-			if (boundcheck_ball(ball))
+			if (boundcheck_ball(ball,mapNum, obstacleTop))
 			{
 				if (sfxSwitch)
 				{
@@ -476,7 +478,7 @@ int main(void)
 			}
 
 			// Ball hit pad sound
-			if (isCollidingFromLeft(ball, pad2.rect) || isCollidingFromRight(ball, pad1.rect))
+			if (isCollidingFromLeft(ball, pad2.rect,Up,Down) || isCollidingFromRight(ball, pad1.rect,W,S,MODE))
 			{
 				if (sfxSwitch)
 				{
@@ -484,10 +486,19 @@ int main(void)
 				}
 			}
 
+			if (mapNum == 1)
+			{
+				map_collision(ball, obstacleTop, obstacleBot, 1);
+			}
+			else if (mapNum == 2)
+			{
+				map_collision(ball, obstacleTop, obstacleBot, 2);
+			}
+
 
 			// PowerUP
 			// Spawn
-			SpawnPowerups(reverse, longate, freeze, slow, invis, MODE);
+			SpawnPowerups(reverse, longate, freeze, slow, invis, MODE, mapNum,obstacleTop);
 
 			// Activate
 			isTakenPowerup(reverse, longate, freeze, slow, invis, ball, pad1, pad2, sfxSwitch);
@@ -500,6 +511,7 @@ int main(void)
 				/*
 						USE THE BALL RADIUS DON'T USE OTHER VALUES
 				*/
+			Clock resetClock;
 			if (ball.circle.getPosition().x - ballRadius < 0.f)
 			{
 				if (sfxSwitch)
@@ -511,7 +523,26 @@ int main(void)
 				ssScorep2 << scorep2;
 				lblscorep2.setString(ssScorep2.str());
 				// handles the bug of counting more than one point
-				RandomPos(ball);
+				
+				
+				RandomPos(ball, mapNum, obstacleTop);
+				pad1.ResetPad(1);
+				pad2.ResetPad(2);
+
+				//add a slight pause when a point is scored 
+				resetClock.restart();
+				while (resetClock.getElapsedTime() < milliseconds(250))
+				{
+					window.clear(Color::Black);
+					DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawPowerups(window, longate, freeze, slow, invis, reverse);
+					window.display();
+					play = false;
+				}
+				play = true;
+
+
+
 			}
 
 
@@ -526,12 +557,29 @@ int main(void)
 				ssScorep1 << scorep1;
 				lblscorep1.setString(ssScorep1.str());
 				// handle the bug of counting more than one point
-				RandomPos(ball);
+				resetClock.restart();
+
+				
+				RandomPos(ball, mapNum, obstacleTop);
+				pad1.ResetPad(1);
+				pad2.ResetPad(2);
+
+				//add a slight pause when a point is scored 
+				resetClock.restart();
+				while (resetClock.getElapsedTime() < milliseconds(250))
+				{
+					window.clear(Color::Black);
+					DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawPowerups(window, longate, freeze, slow, invis, reverse);
+					window.display();
+					play = false;
+				}
+				play = true;
 			}
 		}
 
 		//Determing the end point of game
-		if (scorep1 == 1)
+		if (scorep1 == 10)
 		{
 			p1win_detector = 1;
 			gameOver(playerName1);
@@ -540,7 +588,7 @@ int main(void)
 			themePlaying = false;
 
 		}
-		else if (scorep2 == 1)
+		else if (scorep2 == 10)
 		{
 			p2win_detector = 1;
 			gameOver(playerName2);
@@ -575,7 +623,7 @@ int main(void)
 
 		if (play)
 		{
-			 DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2);
+			 DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
 			 DrawPowerups(window, longate, freeze, slow, invis, reverse);
 			 men = false;
 
@@ -596,7 +644,7 @@ int main(void)
 			//p1 win
 			if (p1win_detector) {
 				pWin.setString(playerName1 + " wins");
-				cout << playerName1 << endl;
+				
 				window.draw(pWin);
 				window.draw(option);
 
@@ -604,7 +652,7 @@ int main(void)
 			//p2 win
 			if (p2win_detector) {
 				pWin.setString(playerName2 + " wins");
-				cout << playerName2 << endl;
+				
 				window.draw(pWin);
 				window.draw(option);
 			}
@@ -613,9 +661,9 @@ int main(void)
 			//render option window
 			//searchMenus
 			if (opt) {
+				window.draw(option);
 				DrawOptionMenu(window);
 				men = false;
-				window.draw(option);
 
 			}
 
