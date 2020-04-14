@@ -23,7 +23,7 @@ int main(void)
 	// Set to true/false to activate or mute
 
 	bool musicSwitch = 0;
-	bool sfxSwitch = 0;
+	bool sfxSwitch = 1;
 
 	//sounds of main menu
 
@@ -84,6 +84,9 @@ int main(void)
 
 	SoundBuffer dspr_bfr;
 	dspr_bfr.loadFromFile("resources/sfx/powerups/dissapear.wav");
+
+	SoundBuffer rvrs_bfr;
+	rvrs_bfr.loadFromFile("resources/sfx/powerups/switch.wav");
 
 
 
@@ -183,6 +186,8 @@ int main(void)
 	PAD pad2;
 	pad2.ResetPad(2);
 
+	PAD pad3, pad4;
+
 	// Ball
 	BALL ball;
 
@@ -200,7 +205,7 @@ int main(void)
 	pUp slow;
 	pUp invis;
 	pUp reverse;
-	initialize_powerups(reverse, longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr);
+	initialize_powerups(reverse, longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr, rvrs_bfr);
 
 
 	///Leaderboard ///
@@ -221,7 +226,7 @@ int main(void)
 
 	//Themes
 	//searchTheme
-	char c = 'f'; //indicate theme
+	char c = 'c'; //indicate theme
 	Texture backgT; //background
 	RectangleShape backg;
 	backg.setSize(Vector2f(800.0, 600.0));
@@ -238,8 +243,11 @@ int main(void)
 
 	//Map
 	RectangleShape obstacleTop, obstacleBot;
-	int mapNum = 0; // 0 : default map , 1 : top/bot obstacles , 2 : mid obstacle
-	set_map(obstacleTop, obstacleBot, mapNum);
+	int mapNum = 3; // 0 : default map , 1 : top/bot obstacles , 2 : mid obstacle, 3 : bot pads
+	set_map(obstacleTop, obstacleBot, pad3, pad4, mapNum);
+
+
+	
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
@@ -265,15 +273,15 @@ int main(void)
 				if (Keyboard::isKeyPressed(Keyboard::Right))
 				{
 					place++;
-					place %= 3;
-					cout << place << '\n';
+					place %= 4;
+					//cout << place << '\n';
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Left))
 				{
 					if (!place)
-						place = 3;
+						place = 4;
 					place--;
-					cout << place << '\n';
+					//cout << place << '\n';
 				}
 				ChangeVolumebyClick(window);
 				SubmitTheme();
@@ -354,7 +362,7 @@ int main(void)
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
 			if (isPressed(Keyboard::BackSpace) && !getPlayerName)
 			{
-				menuReturn(leader, opt, getPlayerName, play, men, themePlaying, background, theme, pause, p1win_detector, p2win_detector, whenpressed_detector);
+				menuReturn(leader, opt, getPlayerName, play, men, themePlaying, background, theme, pause, p1win_detector, p2win_detector, whenpressed_detector, musicSwitch);
 			}
 
 			//pause
@@ -460,12 +468,16 @@ int main(void)
 				pad2.velocity = pad2.Get_Movement(Down, Up);
 			}
 
+
+
 			pad2.rect.move(0, pad2.velocity);
 			pad2.boundcheck();
 
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
+			if (mapNum == 0)
+				ball.gain_velocity();
 
 			//Sound / Collisions
 			// Ball hit wall sound
@@ -485,14 +497,22 @@ int main(void)
 					pad_hit.play();
 				}
 			}
+			
+
+
+
 
 			if (mapNum == 1)
 			{
-				map_collision(ball, obstacleTop, obstacleBot, 1);
+				map_collision(ball, obstacleTop, obstacleBot, pad3, pad4, 1);
 			}
 			else if (mapNum == 2)
 			{
-				map_collision(ball, obstacleTop, obstacleBot, 2);
+				map_collision(ball, obstacleTop, obstacleBot, pad3, pad4, 2);
+			}
+			else if (mapNum == 3)
+			{
+				map_collision(ball, obstacleBot, obstacleTop, pad3, pad4, 3);
 			}
 
 
@@ -514,6 +534,8 @@ int main(void)
 			Clock resetClock;
 			if (ball.circle.getPosition().x - ballRadius < 0.f)
 			{
+				ball.clock.restart();
+				ball.added_velocity = 0;
 				if (sfxSwitch)
 				{
 					score_sound.play();
@@ -534,20 +556,21 @@ int main(void)
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
 					window.clear(Color::Black);
-					DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
 					DrawPowerups(window, longate, freeze, slow, invis, reverse);
 					window.display();
 					play = false;
 				}
 				play = true;
 
-
-
 			}
 
 
 			if (ball.circle.getPosition().x + ballRadius > GAMEWIDTH)
 			{
+				ball.clock.restart();
+				ball.added_velocity = 0;
+
 				if (sfxSwitch)
 				{
 					score_sound.play();
@@ -569,7 +592,7 @@ int main(void)
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
 					window.clear(Color::Black);
-					DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
 					DrawPowerups(window, longate, freeze, slow, invis, reverse);
 					window.display();
 					play = false;
@@ -623,7 +646,7 @@ int main(void)
 
 		if (play)
 		{
-			 DrawGame(window, backg, pad1, pad2, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
+			 DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
 			 DrawPowerups(window, longate, freeze, slow, invis, reverse);
 			 men = false;
 
@@ -683,7 +706,7 @@ int main(void)
 		{
 			SelectTheme();
 			// To See which of the themes is choosen
-			for (int x = 0; x < 3; x++)
+			for (int x = 0; x < 4; x++)
 			{
 				if (Steps[x] == PADDING && isChoosen[x] && !done)
 				{

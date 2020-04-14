@@ -17,13 +17,15 @@ void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleSha
 			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
 			c = 'i';
 			break;
-
+		case 3:
+			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'c');
+			c = 'c';
 	}
 	done = true;
 }
 
 
-void menuReturn(bool& leader, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& themePlaying, Sound& background, Music& theme, bool& pause, bool& p1win_detector, bool& p2win_detector, Sound& whenreturn_detector)
+void menuReturn(bool& leader, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& themePlaying, Sound& background, Music& theme, bool& pause, bool& p1win_detector, bool& p2win_detector, Sound& whenreturn_detector, bool musicSwitch)
 {
 	leader = false;
 	opt = false;
@@ -31,7 +33,7 @@ void menuReturn(bool& leader, bool& opt, bool& getPlayerName, bool& play, bool& 
 	if (!play)
 	{
 		men = true;
-		if (!themePlaying)
+		if (!themePlaying && musicSwitch)
 		{
 			background.stop();
 			theme.play();
@@ -198,7 +200,6 @@ void pauseEvents(Event& event, MENU& pauseMenu, Text pauseItems[], Sound& whenre
 			{
 				background.stop();
 				theme.play();
-
 			}
 			break;
 		}

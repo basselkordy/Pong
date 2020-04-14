@@ -11,7 +11,7 @@ using namespace std;
 #define VOLRADIUS 20.f
 char c = 'f'; //indicate theme
 // Size of The Themes
-Vector2f Theme_size(200,200);
+Vector2f Theme_size(100,100);
 
 // To track The position of the Mouse
 Vector2i pos_Mouse;
@@ -31,18 +31,22 @@ Vector2i pos_Mouse;
 	// Hell Theme
 	RectangleShape hell_theme;
 	Texture tex_hell;
-	Vector2f pos_hell(150, 200);
+	Vector2f pos_hell(100, 200);
 	// Forest Theme
 	RectangleShape forest_theme;
 	Texture tex_forest;
-	Vector2f pos_forest(370, 200);
+	Vector2f pos_forest(300, 200);
 	// Ice Theme
 	RectangleShape ice_theme;
 	Texture tex_ice;
-	Vector2f pos_ice(590, 200);
+	Vector2f pos_ice(500, 200);
+	// Classic Theme
+	RectangleShape classic_theme;
+	Texture tex_classic;
+	Vector2f pos_classic(700, 200);
 
 
-	vector<RectangleShape> themes = { hell_theme,forest_theme,ice_theme };
+	vector<RectangleShape> themes = { hell_theme,forest_theme,ice_theme, classic_theme};
 
 	// variables
 
@@ -50,16 +54,16 @@ Vector2i pos_Mouse;
 	float VolumeValue = 100;
 	float diff;
 	// To Check if the Mouse is over on of the Themes
-	bool onHold[3] = {};
+	bool onHold[4] = {};
 
 	// To move the Themes up and down
-	int Steps[3] = { 1,1,1 };
+	int Steps[4] = { 1,1,1,1 };
 
 	// to load the vfx on time only
 	bool IsLoaded = true;
 
 	// to hold the theme which the player choose
-	bool isChoosen[3] = {};
+	bool isChoosen[4] = {};
 
 	//  to make sure that we only call theme change one time after choosing one
 	bool  done = false;
@@ -89,7 +93,7 @@ void SubmitTheme()
 	themes[0] = hell_theme;
 	themes[1] = forest_theme;
 	themes[2] = ice_theme;
-
+	themes[3] = classic_theme;
 	for (int i = 0; i < themes.size(); i++)
 	{
 		if (Keyboard::isKeyPressed(Keyboard::Return) && Steps[place] == PADDING)
@@ -124,7 +128,8 @@ void SelectTheme()
 	themes[0] = hell_theme;
 	themes[1] = forest_theme;
 	themes[2] = ice_theme;
-	for (int i = 0; i < 3; i++)
+	themes[3] = classic_theme;
+	for (int i = 0; i < 4; i++)
 	{
 		if (IsMouseIn(themes[i]))
 			onHold[i] = true;
@@ -136,9 +141,6 @@ void SelectTheme()
 		// Checks if any theme is choosen in order not to choose or modify the position of the others
 		if (!isChoosen[i])
 		{
-
-
-
 			if (onHold[i])
 			{
 				if (Steps[i] < PADDING)
@@ -181,6 +183,10 @@ void SelectTheme()
 				pos_ice = themes[i].getPosition();
 			    ice_theme = themes[i];
 				break;
+			case 3:
+				pos_classic = themes[i].getPosition();
+				classic_theme = themes[i];
+				break;
 			}
 		}
 	}
@@ -194,10 +200,13 @@ void DrawOptionMenu(RenderWindow& window)
 		tex_hell.loadFromFile("resources/vfx/hell/hellbackg.jpg");
 		tex_ice.loadFromFile("resources/vfx/ice/icebackg.png");
 		tex_forest.loadFromFile("resources/vfx/forest/forestbackg.png");
+		tex_classic.loadFromFile("resources/vfx/classic/to_display_in_menu.png");
+
 		// Setting the Textures
 		hell_theme.setTexture(&tex_hell);
 		forest_theme.setTexture(&tex_forest);
 		ice_theme.setTexture(&tex_ice);
+		classic_theme.setTexture(&tex_classic);
 		// vol_changer Settings
 		vol_changer.setFillColor(Color(232, 90, 4));
 		vol_changer.setRadius(VOLRADIUS);
@@ -215,10 +224,12 @@ void DrawOptionMenu(RenderWindow& window)
 		hell_theme.setSize(Theme_size);
 		forest_theme.setSize(Theme_size);
 		ice_theme.setSize(Theme_size);
+		classic_theme.setSize(Theme_size);
 		///// Setting the Origin
 		hell_theme.setOrigin(Theme_size / 2.f);
 		forest_theme.setOrigin(Theme_size / 2.f);
 		ice_theme.setOrigin(Theme_size / 2.f);
+		classic_theme.setOrigin(Theme_size / 2.f);
 		IsLoaded= false;
 	}
 
@@ -228,7 +239,7 @@ void DrawOptionMenu(RenderWindow& window)
 	hell_theme.setPosition(pos_hell);
 	forest_theme.setPosition(pos_forest);
 	ice_theme.setPosition(pos_ice);
-
+	classic_theme.setPosition(pos_classic);
 	diff = VolumeValue * 6;
 	VolumeValueBar.setSize(Vector2f(diff, bar.getSize().y));
 
@@ -245,6 +256,7 @@ void DrawOptionMenu(RenderWindow& window)
 	window.draw(hell_theme);
 	window.draw(ice_theme);
 	window.draw(forest_theme);
+	window.draw(classic_theme);
 	window.draw(bar);
 	window.draw(VolumeValueBar);
 	window.draw(vol_changer);

@@ -73,7 +73,7 @@ void elongate(PAD& pad1, PAD& pad2, bool active, char c)
 
 // Takes references to all powerups and sets their textures, radii and sounds
 void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
-	SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr)
+	SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr, SoundBuffer& reversebuffer)
 {
 	////longate
 	longate.texture.loadFromFile("resources/PowerUps/Elongate.png");
@@ -101,8 +101,9 @@ void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp
 	invis.sound.setBuffer(invsbfr);
 
 	//Reverse
-	reverse.rect.setFillColor(Color::Black); //pUp color
+	reverse.rect.setFillColor(Color::Yellow); //pUp color
 	reverse.rect.setSize(Vector2f(30.0f, 30.0f));
+	reverse.sound.setBuffer(reversebuffer);
 }
 
 
@@ -146,7 +147,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 {
 
 	//elongate
-	if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
+	if (longate.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(longate.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 + ball.added_velocity || abs(ball.xVelocity) == 12 + ball.added_velocity))
 	{
 		if (sfxSwitch)
 		{
@@ -169,7 +170,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 	}
 
 	//Freeze
-	if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
+	if (freeze.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(freeze.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 + ball.added_velocity || abs(ball.xVelocity) == 12 + ball.added_velocity))
 	{
 		if (sfxSwitch)
 		{
@@ -195,7 +196,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 	}
 
 	//Slow
-	if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
+	if (slow.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(slow.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 + ball.added_velocity|| abs(ball.xVelocity) == 12 + ball.added_velocity))
 	{
 		if (sfxSwitch)
 		{
@@ -221,7 +222,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 	}
 
 	//Invis 
-	if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
+	if (invis.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(invis.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 + ball.added_velocity || abs(ball.xVelocity) == 12 + ball.added_velocity))
 	{
 		if (sfxSwitch)
 		{
@@ -244,7 +245,8 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 
 		}
 	}
-	if (reverse.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(reverse.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 || abs(ball.xVelocity) == 12))
+	// Reverse
+	if (reverse.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(reverse.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 + ball.added_velocity || abs(ball.xVelocity) == 12 + ball.added_velocity))
 	{
 		if (sfxSwitch)
 		{
@@ -258,14 +260,14 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 		if (ball.xVelocity > 0)
 		{
 			pad2.isReverse = 1; //make p2 frozen
-			pad2.rect.setFillColor(Color::Black);
+			pad2.rect.setFillColor(Color::Yellow);
 
 		}
 		//if player2 is the one who took the pUP
 		else
 		{
 			pad1.isReverse = 1; //make p1 reversed
-			pad1.rect.setFillColor(Color::Black);
+			pad1.rect.setFillColor(Color::Yellow);
 		}
 	}
 }
@@ -275,7 +277,7 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 //it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
 void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE,int mapNum,RectangleShape obsTop)
 {
-	if (mapNum == 0)
+	if (mapNum == 0 || mapNum == 3)
 	{
 
 		if (longate.isActive == false && longate.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')

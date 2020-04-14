@@ -1,4 +1,4 @@
-Bassel, 22 / 3
+﻿Bassel, 22 / 3
 
 - added forest theme sound effects
 - fixed bugs with background sounds and theme music
@@ -112,4 +112,31 @@ Ayman 9/4
 			-Decreased middle area for the ball to reflect straight
 	-ai_move : added error to the movement of ai 
 	-DrawGame , DrawPowerUps : added arguments for maps drawing
-	
+
+
+----------------------------------------------------------------------------------------------------
+Bassel, 14/4
+- Added a new function to BALL struct, "gain_velocity()"
+	- if non of the players scored in the last 5 seconds the velocity increases 
+	the proccess repeats until the added velocity reachs its maximum value (16)
+	- added velocity increases as follows: (initially)0 --> 1 --> 2 --> 4 --> 8 --> 16
+	- added velocity is reset to 0 when one of the players score
+	- this feature is only enabled in map 0
+	- can be easily enabled/disabled in Main file (search "Ball Movement")
+
+- Modified isCollidingRight/Left slightly to handle higher velocites
+
+- Added Classic theme
+
+- Added a new map, map 3 (bot pads)
+
+
+-----------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+

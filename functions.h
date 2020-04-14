@@ -66,9 +66,12 @@ struct PAD
 		// Set the position
 		if (pad_number == 2)
 			rect.setPosition(GAMEWIDTH - width -  /*the needed distance*/ 30, 300);
-		else
+		else if (pad_number == 1)
 			rect.setPosition(width + /*the needed distance*/ 30, 300);
-
+		else if (pad_number == 3)
+			rect.setPosition(250, 300);
+		else
+			rect.setPosition(500, 300);
 		// This is done to return the pad's fill color back to normal if the game exits while it isn't
 		rect.setFillColor(Color::White);
 		
@@ -105,19 +108,21 @@ struct PAD
 	}
 	// Takes a reference to a pad, prevents it from getting out of bounds
 	// to set the bounds change the constant PADDINGTOP & PADDINGBOTTOM
-	void boundcheck()
+	bool boundcheck()
 	{
 		if (rect.getPosition().y - length / 2 < PADDINGTOP)
 		{
 			rect.move(0, -velocity);
+			return true;
 		}
 		if (rect.getPosition().y + length / 2 > GAMEHEIGHT - PADDINGBOTTOM)
 		{
 			rect.move(0, -velocity);
+			return true;
 		}
+		return false;
 
 	}
-
 };
 
 
@@ -129,6 +134,27 @@ struct BALL
 	// Set default ball speed
 	int xVelocity = -5,
 		yVelocity = -5;
+
+	// Multiplies by 2 every 5 seconds and resets when one of the players scores
+	int added_velocity = 0;
+	Clock clock;
+	void gain_velocity(void)
+	{
+		Time t = clock.getElapsedTime();
+		// Maximum gained velocity is 16 
+		if (t.asSeconds() >= 5 && added_velocity < 16)
+		{
+			if (added_velocity == 0)
+			{
+				added_velocity++;
+			}
+			else
+			{
+				added_velocity *= 2;
+			}
+			clock.restart();
+		}
+	}
 
 
 };
@@ -255,6 +281,8 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
 		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		||
+		ball.circle.getGlobalBounds().intersects(shape.getGlobalBounds())
 		)
 	{
 		return_value = true;
@@ -267,7 +295,7 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 
 		if (abs(ball.circle.getPosition().y - shape.getPosition().y) < 10) //if the ball hits near the mid it reflects in straight line
 		{
-			ball.xVelocity = 12;
+			ball.xVelocity = 12 + ball.added_velocity;
 			ball.yVelocity = 0;
 		}
 		//First 1/4
@@ -285,27 +313,27 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 			{
 				if (up)
 				{
-					ball.yVelocity = -8;
+					ball.yVelocity = -8 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 8;
+					ball.yVelocity = 8 + ball.added_velocity;
 				}
 				else
 				{
 					if (rand() % 2 == 0)
-						ball.yVelocity = -8;
+						ball.yVelocity = -8 - ball.added_velocity;
 					else
-						ball.yVelocity = 8;
+						ball.yVelocity = 8 + ball.added_velocity;
 				}
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 8;
+				ball.yVelocity = 8 + ball.added_velocity;
 
 			}
 			else
-				ball.yVelocity = -8;
+				ball.yVelocity = -8 - ball.added_velocity;
 		}
 		//Second 1/4
 		else if (
@@ -321,27 +349,27 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 			{
 				if (up)
 				{
-					ball.yVelocity = -6;
+					ball.yVelocity = -6 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 6;
+					ball.yVelocity = 6 + ball.added_velocity;
 				}
 				else
 				{
 					//if not moving reflects to a random direction
 					if (rand() % 2 == 0)
-						ball.yVelocity = -6;
+						ball.yVelocity = -6 - ball.added_velocity;
 					else
-						ball.yVelocity = 6;
+						ball.yVelocity = 6 + ball.added_velocity;
 				}
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 6;
+				ball.yVelocity = 6 + ball.added_velocity;
 			}
 			else
-				ball.yVelocity = -6;
+				ball.yVelocity = -6 - ball.added_velocity;
 		}
 		//Third 1/4
 		else if (
@@ -357,27 +385,27 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 			{
 				if (up)
 				{
-					ball.yVelocity = -6;
+					ball.yVelocity = -6 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 6;
+					ball.yVelocity = 6 + ball.added_velocity;
 				}
 				else
 				{
 					//if not moving reflects to a random direction
 					if (rand() % 2 == 0)
-						ball.yVelocity = -6;
+						ball.yVelocity = -6 - ball.added_velocity;
 					else
-						ball.yVelocity = 6;
+						ball.yVelocity = 6 + ball.added_velocity;
 				}
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 6;
+				ball.yVelocity = 6 + ball.added_velocity;
 			}
 			else
-				ball.yVelocity = -6;
+				ball.yVelocity = -6 - ball.added_velocity;
 		}
 		//Fourth 1/4
 		else if (
@@ -393,32 +421,32 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape,bool up, bool down)
 			{
 				if (up)
 				{
-					ball.yVelocity = -8;
+					ball.yVelocity = -8 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 8;
+					ball.yVelocity = 8 + ball.added_velocity;
 				}
 				else
 				{
 					//if not moving reflects to a random direction
 					if (rand() % 2 == 0)
-						ball.yVelocity = -8;
+						ball.yVelocity = -8 - ball.added_velocity;
 					else
-						ball.yVelocity = 8;
+						ball.yVelocity = 8 + ball.added_velocity;
 				}
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 8;
+				ball.yVelocity = 8 + ball.added_velocity;
 			}
 			else
-				ball.yVelocity = -8;
+				ball.yVelocity = -8 - ball.added_velocity;
 		}
 
 		//relating two V's to a constant
-		if (ball.xVelocity != 12)//if not reflecting straight
-			ball.xVelocity = 15 - abs(ball.yVelocity);
+		if (ball.xVelocity != 12 + ball.added_velocity)//if not reflecting straight
+			ball.xVelocity = 15 + ball.added_velocity - abs(ball.yVelocity);
 
 		ball.xVelocity *= -1;
 	}
@@ -469,6 +497,9 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
 		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		||
+		ball.circle.getGlobalBounds().intersects(shape.getGlobalBounds())
+
 		)
 	{
 		return_value = true;
@@ -492,12 +523,12 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 						ball.yVelocity = -2;
 
 				}
-				ball.xVelocity = 12 - abs(ball.yVelocity);
+				ball.xVelocity = 12 - abs(ball.yVelocity) + ball.added_velocity;
 
 			}
 			else
 			{
-				ball.xVelocity = 12;
+				ball.xVelocity = 12 + ball.added_velocity;
 				ball.yVelocity = 0;
 			}
 			
@@ -516,11 +547,11 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			{
 				if (up)
 				{
-					ball.yVelocity = -8;
+					ball.yVelocity = -8 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 8;
+					ball.yVelocity = 8 + ball.added_velocity;
 				}
 				else
 				{
@@ -533,11 +564,11 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 8;
+				ball.yVelocity = 8 + ball.added_velocity;
 
 			}
 			else
-				ball.yVelocity = -8;
+				ball.yVelocity = -8 - ball.added_velocity;
 		}
 		// Second 1/4
 		else if (
@@ -554,11 +585,11 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			{
 				if (up)
 				{
-					ball.yVelocity = -6;
+					ball.yVelocity = -6 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 6;
+					ball.yVelocity = 6 + ball.added_velocity;
 				}
 				else
 				{
@@ -571,10 +602,10 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 6;
+				ball.yVelocity = 6 + ball.added_velocity;
 			}
 			else
-				ball.yVelocity = -6;
+				ball.yVelocity = -6 - ball.added_velocity;
 		}
 		//Third 1/4
 		else if (
@@ -590,11 +621,11 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			{
 				if (up)
 				{
-					ball.yVelocity = -6;
+					ball.yVelocity = -6 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 6;
+					ball.yVelocity = 6 + ball.added_velocity;
 				}
 				else
 				{
@@ -607,10 +638,10 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			}
 			else if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 6;
+				ball.yVelocity = 6 + ball.added_velocity;
 			}
 			else
-				ball.yVelocity = -6;
+				ball.yVelocity = -6 - ball.added_velocity;
 		}
 		//Fourth 1/4
 		else if (
@@ -626,11 +657,11 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			{
 				if (up)
 				{
-					ball.yVelocity = -8;
+					ball.yVelocity = -8 - ball.added_velocity;
 				}
 				else if (down)
 				{
-					ball.yVelocity = 8;
+					ball.yVelocity = 8 + ball.added_velocity;
 				}
 				else
 				{
@@ -643,13 +674,13 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 			}
 			if (ball.yVelocity > 0)
 			{
-				ball.yVelocity = 8;
+				ball.yVelocity = 8 + ball.added_velocity;
 			}
 			else
-				ball.yVelocity = -8;
+				ball.yVelocity = -8 - ball.added_velocity;
 		}
-		if (ball.xVelocity != 12)
-			ball.xVelocity = 15 - abs(ball.yVelocity);
+		if (ball.xVelocity != 12 + ball.added_velocity)
+			ball.xVelocity = 15 + ball.added_velocity - abs(ball.yVelocity);
 	}
 	
 	return return_value;
@@ -695,13 +726,13 @@ bool isColliding(BALL& ball, RectangleShape& shape)
 	bool return_value = false;
 	// From top
 	if (
-		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		(ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
 		ball.circle.getPosition().y + ballRadius < shape.getPosition().y
 		&&
 		ball.circle.getPosition().x + ballRadius <= shape.getPosition().x + shape.getSize().x / 2
 		&&
-		ball.circle.getPosition().x - ballRadius >= shape.getPosition().x - shape.getSize().x / 2
+		ball.circle.getPosition().x - ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
 		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
@@ -711,13 +742,13 @@ bool isColliding(BALL& ball, RectangleShape& shape)
 	}
 	// From Bottom
 	if (
-		ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
+		(ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
 		&&
 		ball.circle.getPosition().y - ballRadius > shape.getPosition().y
 		&&
 		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
 		&&
-		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2
+		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
 		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
@@ -836,6 +867,25 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 		background.loadFromFile("resources/sfx/forest/background.wav");
 
 	}
+	else if (c == 'c')
+	{
+		backgT.loadFromFile("resources/vfx/classic/classicbackg.png");
+
+		pad1.texture.loadFromFile("resources/vfx/classic/classicpad.png");
+
+
+		pad2.texture.loadFromFile("resources/vfx/classic/classicpad.png");
+
+
+		ball.texture.loadFromFile("resources/vfx/classic/classicball.png");
+
+		
+
+		pad.loadFromFile("resources/sfx/classic/pad.wav");
+		wall.loadFromFile("resources/sfx/classic/wall.wav");
+		score.loadFromFile("resources/sfx/classic/score.wav");
+
+	}
 
 	//Set files
 	backg.setTexture(&backgT);
@@ -907,7 +957,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 }
 
 // Takes references to everything drawn in game and handles their drawing conditions
-void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
 {
 
 	// Background
@@ -931,8 +981,11 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 	else if (mapnum == 2)
 	{
 		window.draw(obsTop);
-
-
+	}
+	else if (mapnum == 3)
+	{
+		window.draw(pad3.rect);
+		window.draw(pad4.rect);
 	}
 	//draw score of player 1 
 	window.draw(lblscorep1);
@@ -945,7 +998,7 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 //Maps
 
 //Takes reference to map components and handles their initilization 
-void set_map(RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad4, int mapnum)
 {
 	if (mapnum == 1)
 	{
@@ -968,10 +1021,17 @@ void set_map(RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
 		obsTop.setPosition(Vector2f(400, 300));
 		obsTop.setFillColor(Color::Red);
 	}
+	else if (mapnum == 3)
+	{
+		pad3.ResetPad(3);
+		pad3.velocity = 5;
+		pad4.ResetPad(4);
+		pad4.velocity = -5;
+	}
 }
 
 //Takes reference to map components and handels their collisions
-void map_collision(BALL& ball, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+void map_collision(BALL& ball, RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad4, int mapnum)
 {
 	if (mapnum == 1)
 	{
@@ -1028,5 +1088,26 @@ void map_collision(BALL& ball, RectangleShape& obsTop, RectangleShape& obsBot, i
 			isColliding(ball, obsTop);
 		}
 		
+	}
+	else if (mapnum == 3)
+	{
+		pad3.rect.move(0, pad3.velocity);
+		if (pad3.boundcheck())
+		{
+			pad3.velocity *= -1;
+		}
+		pad4.rect.move(0, pad4.velocity);
+		if (pad4.boundcheck())
+		{
+			pad4.velocity *= -1;
+		}
+		if (!isCollidingFromLeft(ball, pad3.rect) && !isCollidingFromRight(ball, pad3.rect))
+		{
+			isColliding(ball, pad3.rect);
+		}
+		if (!isCollidingFromLeft(ball, pad4.rect) && !isCollidingFromRight(ball, pad4.rect))
+		{
+			isColliding(ball, pad4.rect);
+		}
 	}
 }
