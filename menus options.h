@@ -158,17 +158,17 @@ void textInit(Text& win, Font& font, char c)
 }
 
 //Pause Menu Events
-void pauseEvents(Event& event, MENU& pauseMenu, Text pauseItems[], Sound& whenreturn_detector, Sound& whenpressed_detector, Sound& background, Music& theme, bool& pause, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& musicSwitch)
+void pauseEvents(Event& event, MENU& pauseMenu, RectangleShape pauseItems[], Sound& whenreturn_detector, Sound& whenpressed_detector, Sound& background, Music& theme, bool& pause, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& musicSwitch)
 {
 	switch (event.key.code)
 	{
 	case Keyboard::Up:
-		moveUp(pauseMenu, 3, pauseItems);
+		moveUp(pauseMenu, 3, pauseItems, 4);
 		whenreturn_detector.play();
 		break;
 
 	case Keyboard::Down:
-		moveDown(pauseMenu, pauseItems, 3);
+		moveDown(pauseMenu, pauseItems, 3, 4);
 		whenreturn_detector.play();
 		break;
 
@@ -244,16 +244,16 @@ void pauseEvents(Event& event, MENU& pauseMenu, Text pauseItems[], Sound& whenre
 
 //Main Menu Events
 
-void mainmenuEvents(MENU& mainMenu, Text mainItems[], bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
+void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
 {
 	switch (event.key.code)
 	{
 	case Keyboard::Up:
-		moveUp(mainMenu, 5, mainItems);
+		moveUp(mainMenu, 6, mainItems,7);
 		break;
 
 	case Keyboard::Down:
-		moveDown(mainMenu, mainItems, 5);
+		moveDown(mainMenu, mainItems, 6,7);
 		break;
 
 	case Keyboard::Return:
@@ -273,6 +273,8 @@ void mainmenuEvents(MENU& mainMenu, Text mainItems[], bool& play, bool& musicSwi
 				men = false;
 				whenpressed_detector.play();
 				MODE = '2';
+				///// this to control drawing your menu ///////////////
+				maps = true;
 			}
 			break;
 		case 1:
@@ -369,5 +371,15 @@ void mainmenuEvents(MENU& mainMenu, Text mainItems[], bool& play, bool& musicSwi
 	}
 
 
+
+}
+///////////////////// to draw your events in here //////////////////////////
+void mapsEvents( bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, Sound& whenpressed_detector, char& MODE, bool& men, RenderWindow& window) {
+	//TODO 
+
+	/// this for depuging stuff //////
+	play = false;
+	getPlayerName = false;
+	men = false;
 
 }

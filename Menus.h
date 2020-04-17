@@ -328,42 +328,51 @@ struct MENU
 	SoundBuffer switchingBuffer;
 };
 
+//////////////main buttons texture ////////////////
+Texture texture_play;
+Texture texture_opt;
+Texture texture_lead;
+Texture texture_train;
+Texture texture_exit;
+///////// pause button texture /////////////
+Texture texture_resume;
+Texture texture_option;
+Texture texture_menu;
+
 //Set Pause Menu Items
-void setPauseMenu(MENU& pauseMenu, Text text[], int width, int height)
+void setPauseMenu(MENU& pauseMenu, RectangleShape text[], int width, int height)
 {
-	if (pauseMenu.switchingBuffer.loadFromFile("resources/sfx/main_menu/switch.wav"));
-	if (!pauseMenu.font.loadFromFile("resources/fonts/Daitengu DEMO.otf") || !pauseMenu.font2.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf")) {
-	}
 	pauseMenu.switching.setBuffer(pauseMenu.switchingBuffer);
 	pauseMenu.font.loadFromFile("resources/fonts/Daitengu DEMO.otf");
 
-	text[0].setFont(pauseMenu.font);
-	text[0].setFillColor(Color::White);
-	text[0].setString("Resume");
+	texture_resume.loadFromFile("resources/menu tex/ResumeButton.png");
+	text[0].setSize(Vector2f(100.0f, 50.0f));
+	text[0].setTexture(&texture_resume);
+	text[0].setFillColor(sf::Color::White);
 	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 1));
 
-	text[1].setFont(pauseMenu.font);
-	text[1].setFillColor(Color::White);
-	text[1].setString("Option");
+	texture_option.loadFromFile("resources/menu tex/OptionButton.png");
+	text[1].setSize(Vector2f(100.0f, 50.0f));
+	text[1].setTexture(&texture_option);
+	text[1].setFillColor(sf::Color::White);
 	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 2));
 
-	text[2].setFont(pauseMenu.font);
-	text[2].setFillColor(Color::White);
-	text[2].setString("Menu");
-	text[2].setPosition(Vector2f((width / 2) - 50, height / (3 + 1) * 3));
+	texture_menu.loadFromFile("resources/menu tex/ExitButton.png");
+	text[2].setSize(Vector2f(100.0f, 50.0f));
+	text[2].setTexture(&texture_menu);
+	text[2].setFillColor(sf::Color::White);
+	text[2].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 3));
 
 	pauseMenu.selectedItemIndex = 0;
 
-	if (pauseMenu.selectedItemIndex == 0)
-	{
-		text[0].setFont(pauseMenu.font2);
-		text[0].setCharacterSize(40);
-		text[0].setFillColor(sf::Color::Red);
+	if (pauseMenu.selectedItemIndex == 0) {
+		text[0].setSize(Vector2f(150, 75));
+		text[0].setPosition(sf::Vector2f((width / 2) - 80, height / (3 + 1) * (0.75)));
 	}
 }
 
 //Set Main Menu Items
-void setMainMenu(MENU& mainMenu, Text text[], int width, int height)
+void setMainMenu(MENU& mainMenu, RectangleShape text[], int width, int height)
 {
 	//sound of switching
 	mainMenu.switchingBuffer.loadFromFile("resources/sfx/main_menu/switch.wav");
@@ -372,44 +381,47 @@ void setMainMenu(MENU& mainMenu, Text text[], int width, int height)
 	//font properties
 	if (!mainMenu.font.loadFromFile("resources/fonts/Daitengu DEMO.otf") || !mainMenu.font2.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf")) {
 	}
-	text[0].setFont(mainMenu.font);
+	texture_play.loadFromFile("resources/menu tex/PlayButton.png");
+	text[0].setSize(Vector2f(100.0f, 50.0f));
+	text[0].setTexture(&texture_play);
 	text[0].setFillColor(sf::Color::White);
-	text[0].setString("Play");
-	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (5 + 1) * 1));
+	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 1));
 
-
-	text[1].setFont(mainMenu.font);
+	texture_opt.loadFromFile("resources/menu tex/OptionButton.png");
+	text[1].setSize(Vector2f(100.0f, 50.0f));
+	text[1].setTexture(&texture_opt);
 	text[1].setFillColor(sf::Color::White);
-	text[1].setString("Options");
-	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (5 + 1) * 2));
+	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 2));
 
-	text[2].setFont(mainMenu.font);
+	texture_lead.loadFromFile("resources/menu tex/LeadButton.png");
+	text[2].setSize(Vector2f(100.0f, 50.0f));
+	text[2].setTexture(&texture_lead);
 	text[2].setFillColor(sf::Color::White);
-	text[2].setString("LeaderBoard");
-	text[2].setPosition(sf::Vector2f((width / 2) - 75, height / (5 + 1) * 3));
+	text[2].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 3));
 
-	text[3].setFont(mainMenu.font);
+	texture_train.loadFromFile("resources/menu tex/TrainingButton.png");
+	text[3].setSize(Vector2f(100.0f, 50.0f));
+	text[3].setTexture(&texture_train);
 	text[3].setFillColor(sf::Color::White);
-	text[3].setString("Training");
-	text[3].setPosition(sf::Vector2f((width / 2) - 60, height / (5 + 1) * 4));
+	text[3].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 4));
 
-	text[4].setFont(mainMenu.font);
+	texture_exit.loadFromFile("resources/menu tex/ExitButton.png");
+	text[4].setSize(Vector2f(100.0f, 50.0f));
+	text[4].setTexture(&texture_exit);
 	text[4].setFillColor(sf::Color::White);
-	text[4].setString("Exit");
-	text[4].setPosition(sf::Vector2f((width / 2) - 35, height / (5 + 1) * 5));
+	text[4].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 5));
 
 	mainMenu.selectedItemIndex = 0;
 
-	//when opening the game
+	////when opening the game
 	if (mainMenu.selectedItemIndex == 0) {
-		text[0].setFont(mainMenu.font2);
-		text[0].setCharacterSize(40);
-		text[0].setFillColor(sf::Color::Red);
+		text[0].setSize(Vector2f(150, 75));
+		text[0].setPosition(sf::Vector2f((width / 2) - 80, height / (6 + 1) * (0.75)));
 	}
 }
 
 //Menu Drawing
-void drawMenu(RenderWindow & menuWindow, Text text[], int noOfItems)
+void drawMenu(RenderWindow& menuWindow, RectangleShape text[], int noOfItems)
 {
 	for (int i = 0; i < noOfItems; i++)
 	{
@@ -417,88 +429,79 @@ void drawMenu(RenderWindow & menuWindow, Text text[], int noOfItems)
 	}
 }
 
-void moveUp(MENU& menu, int noOfItems, Text text[])
+void moveUp(MENU& menu, int noOfItems, RectangleShape text[], int no)
 {
 	//if the selected item is after the the first item
 	if (menu.selectedItemIndex - 1 >= 0)
 	{
-		text[menu.selectedItemIndex].setFont(menu.font);
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
 		menu.selectedItemIndex--;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
+		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
 		menu.switching.play();
-
 	}
 
 	//if the selected item is the first item and the user moves up select the last item
 	else if (menu.selectedItemIndex - 1 < 0)
 	{
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
 		menu.selectedItemIndex = noOfItems - 1;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
+		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
 		menu.switching.play();
 	}
 }
 
-void moveDown(MENU& menu, Text text[], int noOfItems)
+void moveDown(MENU& menu, RectangleShape text[], int noOfItems, int no)
 {
 	//if the selected item is before the the last item
 	if (menu.selectedItemIndex + 1 < noOfItems)
 	{
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
 		menu.selectedItemIndex++;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
+		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.80)));
 		menu.switching.play();
 	}
 
 	//if the selected item is the last item and the user moves down select the first item
 	else if (menu.selectedItemIndex + 1 >= noOfItems)
 	{
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
 		menu.selectedItemIndex = 0;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
+		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.80)));
 		menu.switching.play();
 	}
 
 }
 
 //////////////////////////// using mouse to navigate in menus ////////////////////////////////////
-void mouse_navigator(MENU& menu, Text text[], double noIndex , Window& window)
+void mouse_navigator(MENU& menu, RectangleShape text[], double noIndex, Window& window, int no)
 {
- 
+
 	/////////////// detection of position of mouse ////////////////////
 	pos_Mouse = Mouse::getPosition(window);
 	/////equation to detect the index+1 //////////////
 	int texy = (pos_Mouse.y * (noIndex));
-/*                                                                               
-             ...... index changer ................    
-                                                                                 */
+	/*
+				 ...... index changer ................
+																					 */
 	if ((pos_Mouse.y >= 90 && pos_Mouse.y <= 510) && (pos_Mouse.x >= 300 && pos_Mouse.x <= 500)) {
-		text[menu.selectedItemIndex].setFillColor(Color::White);
-		text[menu.selectedItemIndex].setCharacterSize(30);
-		text[menu.selectedItemIndex].setFont(menu.font);
-		menu.selectedItemIndex = texy-1;
-		text[menu.selectedItemIndex].setFont(menu.font2);
-		text[menu.selectedItemIndex].setFillColor(Color::Red);
-		text[menu.selectedItemIndex].setCharacterSize(40);
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
+		menu.selectedItemIndex = texy - 1;
+		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
 		menu.switching.play();
 	}
-	
 }
+
+
+
 
 

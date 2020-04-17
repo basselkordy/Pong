@@ -106,6 +106,23 @@ int main(void)
 	/// Menus ///
 	//searchMenus
 
+	///////////// main menu background ////////////////
+	Texture menu_back;
+	menu_back.loadFromFile("resources/Menu Background.png");
+
+	RectangleShape menub;
+	menub.setSize(Vector2f(800, 600));
+	menub.setTexture(&menu_back);
+
+	Texture menu_back2;
+	menu_back2.loadFromFile("resources/Menu.png");
+
+	RectangleShape menu2;
+	menu2.setSize(Vector2f(800, 600));
+	menu2.setTexture(&menu_back2);
+	Clock time;
+	////////////////////////////////////////////////////
+
 	//Options
 	//option selection
 	bool opt = false;
@@ -122,19 +139,21 @@ int main(void)
 
 	//Main Menu
 	MENU mainMenu;
-	Text menuItems[5];
+	RectangleShape menuItems[5];
 	setMainMenu(mainMenu, menuItems, GAMEWIDTH, GAMEHEIGHT);
 	bool men = true;
 
 	///// switch fo switching up and down /////
 	bool switcher = true;
 
+	//////////// bool asked by badr /////////////
+	bool maps = false;
 
 
 	//Pause Menu
 	bool pause = false;
 	MENU pMenu;
-	Text pauseItems[3];
+	RectangleShape pauseItems[3];
 	setPauseMenu(pMenu, pauseItems, GAMEWIDTH, GAMEHEIGHT);
 
 
@@ -295,7 +314,7 @@ int main(void)
 			if (pause)
 			{
 				/////// to navigate in pause menu 
-				mouse_navigator(pMenu, pauseItems, 0.0067, window);
+				mouse_navigator(pMenu, pauseItems, 0.0083, window, 4);
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
 				{
 					//function contains switch statment
@@ -307,21 +326,25 @@ int main(void)
 			//Options Menu Events/Sound
 			if (opt)
 			{
-
 				VolumeChanger(window);
 				theme.setVolume(VolumeValue);
 			}
 
+			///// maps Events ////////////
+			if (maps) {
+				/// here you will but the events function and other related functions "badr"  as the following wa as you like brdo ////////
+				mapsEvents(maps, play, musicSwitch, theme, background, getPlayerName, whenpressed_detector, MODE,men, window);
+			}
 
 			//Main Menu Events/Sound
 			if (men) {
 				//// to navigate in main menu   
-				mouse_navigator(mainMenu, menuItems, 0.01, window);
+				mouse_navigator(mainMenu, menuItems, 0.0116, window, 7);
 				//Event
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
 					//Navigation
 					//function contains switch statment
-					mainmenuEvents(mainMenu, menuItems, play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
+					mainmenuEvents(mainMenu, menuItems,maps,play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
 					break;
 				}
 
@@ -663,6 +686,25 @@ int main(void)
 		}
 		else
 		{
+            ////////////// condition for maps ////////////
+			if (maps) {
+				//TODO 
+				window.clear();
+			}
+			////////// menu background texture ///////////////////
+			if (time.getElapsedTime().asSeconds() > 0) {
+				window.draw(menub);
+				seconds(2);
+
+			}
+			if (time.getElapsedTime().asSeconds() > 3) {
+				time.restart();
+			}
+
+			if (time.getElapsedTime().asSeconds() > 1) {
+				window.draw(menu2);
+
+			}
 			//rendering winning message
 			//p1 win
 			if (p1win_detector) {

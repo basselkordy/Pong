@@ -131,8 +131,17 @@ Bassel, 14/4
 - Added a new map, map 3 (bot pads)
 
 
------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+Bavlly , 17/4 
 
+-Added new texture fo menus buttons (as Rectangle shapes)
+
+-Added path for maps (Badr's menu)... look at lines :
+    - (150,334,672)--> in main menu
+    - (276,377)--> menus option 
+-Added texture for menu background
+
+------------------------------------------------------------------------------------------------ 
 
 
 
