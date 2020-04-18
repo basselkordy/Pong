@@ -143,6 +143,12 @@ int main(void)
 	setMainMenu(mainMenu, menuItems, GAMEWIDTH, GAMEHEIGHT);
 	bool men = true;
 
+	// modes 
+	MENU modes_s;
+	RectangleShape modesItems[2];
+	modes_display(modes_s, modesItems, GAMEWIDTH, GAMEHEIGHT);
+	bool mode_is = false ;
+
 	///// switch fo switching up and down /////
 	bool switcher = true;
 
@@ -200,10 +206,10 @@ int main(void)
 
 	// Pads
 	PAD pad1;
-	pad1.ResetPad(1);
+	pad1.ResetPad(1,MODE);
 
 	PAD pad2;
-	pad2.ResetPad(2);
+	pad2.ResetPad(2,MODE);
 
 	PAD pad3, pad4;
 
@@ -346,6 +352,16 @@ int main(void)
 					for (int i = 0; i < 4; i++)
 						setState(maps_rect[i], false, i);
 				}
+				if (Keyboard::isKeyPressed(Keyboard::Return)) {
+					getPlayerName = true;
+					maps = false;
+				}
+				
+			}
+			if (mode_is) {
+				if (event.type == Event::KeyReleased) {
+					modesEvents(modes_s, modesItems, play, musicSwitch, theme, background, whenpressed_detector, MODE, window);
+				}
 			}
 
 			//Main Menu Events/Sound
@@ -356,7 +372,7 @@ int main(void)
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
 					//Navigation
 					//function contains switch statment
-					mainmenuEvents(mainMenu, menuItems,maps,play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
+					mainmenuEvents(mainMenu, menuItems, mode_is,maps,play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
 					break;
 				}
 
@@ -480,8 +496,8 @@ int main(void)
 		if (!play)
 		{
 			RandomPos(ball,mapNum,obstacleTop);
-			pad1.ResetPad(1);
-			pad2.ResetPad(2);
+			pad1.ResetPad(1,MODE);
+			pad2.ResetPad(2,MODE);
 
 			////reseting power ups /////////////
 			longate.isSpawned = 0; longate.isActive = 0;
@@ -592,8 +608,8 @@ int main(void)
 
 
 				RandomPos(ball, mapNum, obstacleTop);
-				pad1.ResetPad(1);
-				pad2.ResetPad(2);
+				pad1.ResetPad(1,MODE);
+				pad2.ResetPad(2,MODE);
 
 				//add a slight pause when a point is scored
 				resetClock.restart();
@@ -628,8 +644,8 @@ int main(void)
 
 
 				RandomPos(ball, mapNum, obstacleTop);
-				pad1.ResetPad(1);
-				pad2.ResetPad(2);
+				pad1.ResetPad(1,MODE);
+				pad2.ResetPad(2,MODE);
 
 				//add a slight pause when a point is scored
 				resetClock.restart();
@@ -679,11 +695,7 @@ int main(void)
 		// RENDERING
 		//searchRender
 		window.clear(Color::Black);
-		if (getPlayerName)
-		{
-			window.draw(messagePlayerText);
-			window.draw(playerText);
-		}
+		
 		if (play)
 		{
 			 DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
@@ -704,26 +716,34 @@ int main(void)
 		else
 		{
 			////////// menu background texture ///////////////////
-			if (time.getElapsedTime().asSeconds() > 0) {
+			if (time.getElapsedTime().asSeconds() > 0 ) {
 				window.draw(menub);
 				seconds(2);
 
 			}
-			if (time.getElapsedTime().asSeconds() > 3) {
+			if (time.getElapsedTime().asSeconds() > 3 ) {
 				time.restart();
 			}
 
-			if (time.getElapsedTime().asSeconds() > 1) {
+			if (time.getElapsedTime().asSeconds() > 1 ) {
 				window.draw(menu2);
 
 			}
+
+
+		if (getPlayerName)
+		{
+			window.draw(messagePlayerText);
+			window.draw(playerText);
+		}
+
 
             ////////////// condition for maps ////////////
 			if (maps) {
 				//TODO
 				DrawMapMenu(window);
 				//window.clear();
-				
+				drawMenu(window, modesItems, 2);
 			}
 			
 			//rendering winning message

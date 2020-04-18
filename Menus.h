@@ -570,12 +570,14 @@ Texture texture_exit;
 Texture texture_resume;
 Texture texture_option;
 Texture texture_menu;
+/////texture for modes ////////
+Texture texture_single;
+Texture texture_multi;
 
 //Set Pause Menu Items
 void setPauseMenu(MENU& pauseMenu, RectangleShape text[], int width, int height)
 {
 	pauseMenu.switching.setBuffer(pauseMenu.switchingBuffer);
-	pauseMenu.font.loadFromFile("resources/fonts/Daitengu DEMO.otf");
 
 	texture_resume.loadFromFile("resources/menu tex/ResumeButton.png");
 	text[0].setSize(Vector2f(100.0f, 50.0f));
@@ -610,9 +612,6 @@ void setMainMenu(MENU& mainMenu, RectangleShape text[], int width, int height)
 	mainMenu.switchingBuffer.loadFromFile("resources/sfx/main_menu/switch.wav");
 	mainMenu.switching.setBuffer(mainMenu.switchingBuffer);
 
-	//font properties
-	if (!mainMenu.font.loadFromFile("resources/fonts/Daitengu DEMO.otf") || !mainMenu.font2.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf")) {
-	}
 	texture_play.loadFromFile("resources/menu tex/PlayButton.png");
 	text[0].setSize(Vector2f(100.0f, 50.0f));
 	text[0].setTexture(&texture_play);
@@ -652,6 +651,34 @@ void setMainMenu(MENU& mainMenu, RectangleShape text[], int width, int height)
 	}
 }
 
+void modes_display(MENU& mode, RectangleShape text[], int width, int height)
+{
+	//sound of switching
+	mode.switchingBuffer.loadFromFile("resources/sfx/main_menu/switch.wav");
+	mode.switching.setBuffer(mode.switchingBuffer);
+
+	
+	texture_single.loadFromFile("resources/menu tex/singleButton.png");
+	text[0].setSize(Vector2f(100.0f, 50.0f));
+	text[0].setTexture(&texture_single);
+	text[0].setFillColor(sf::Color::White);
+	text[0].setPosition(sf::Vector2f((width / (2+1)*1)-50, height -100));
+
+	texture_multi.loadFromFile("resources/menu tex/multiButton.png");
+	text[1].setSize(Vector2f(100.0f, 50.0f));
+	text[1].setTexture(&texture_multi);
+	text[1].setFillColor(sf::Color::White);
+	text[1].setPosition(sf::Vector2f((width / (2+1)*2)-50, height - 100));
+
+	mode.selectedItemIndex = 0;
+
+	////when opening the game
+	if (mode.selectedItemIndex == 0) {
+		text[0].setFillColor(sf::Color::Black);
+		
+	}
+}
+
 //Menu Drawing
 void drawMenu(RenderWindow& menuWindow, RectangleShape text[], int noOfItems)
 {
@@ -687,6 +714,35 @@ void moveDown(MENU& menu, RectangleShape text[], int noOfItems, int no)
 	
 }
 
+void moveleft(MENU& menu, int noOfItems, RectangleShape text[])
+{
+	
+	if (menu.selectedItemIndex - 1 >= 0)
+	{
+
+		text[menu.selectedItemIndex].setFillColor(sf::Color::White);
+		menu.selectedItemIndex--;
+		text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
+	    menu.switching.play();
+		
+	}
+	
+
+}
+
+void moveright(MENU& menu, RectangleShape text[], int noOfItems)
+{
+	if (menu.selectedItemIndex + 1 < noOfItems)
+	{
+		text[menu.selectedItemIndex].setFillColor(sf::Color::White);
+		menu.selectedItemIndex++;
+	    text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
+	    menu.switching.play();
+	}
+
+	
+
+}
 //////////////////////////// using mouse to navigate in menus ////////////////////////////////////
 void mouse_navigator(MENU& menu, RectangleShape text[], double noIndex, Window& window, int no)
 {

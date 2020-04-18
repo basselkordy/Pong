@@ -52,17 +52,17 @@ struct PAD
 
 	// Resets all variable pad attributes
 	// Take a a pad's number (1 or 2) to set each pad's position correctly
-	void ResetPad(int pad_number)
+	void ResetPad(int pad_number, char& mode)
 	{
 		// Set length of pad
 		length = 125;
+		if (mode != 't') {
+			// Create the rectangle shape with given length and width
+			rect.setSize(Vector2f(width, length));
 
-		// Create the rectangle shape with given length and width
-		rect.setSize(Vector2f(width, length));
-
-		// Set the orgin
-		rect.setOrigin(width / 2.f, length / 2.f);
-
+			// Set the orgin
+			rect.setOrigin(width / 2.f, length / 2.f);
+		}
 		// Set the position
 		if (pad_number == 2)
 			rect.setPosition(GAMEWIDTH - width -  /*the needed distance*/ 30, 300);
@@ -948,7 +948,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 	if (c == 't')
 	{
 		pad.length = GAMEHEIGHT;
-		pad.rect.setSize(Vector2f(pad.width, pad.length));
+		pad.rect.setSize(Vector2f(pad.width, GAMEHEIGHT));
 		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
 		pad.rect.setPosition(pad.width + /*the needed distance*/ 30, 300);
 		pad.velocity = pad.Get_Movement(false, false);
@@ -996,7 +996,7 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 }
 
 //Maps
-
+char mode;
 //Takes reference to map components and handles their initilization 
 void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad4, int mapnum)
 {
@@ -1023,9 +1023,9 @@ void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad
 	}
 	else if (mapnum == 3)
 	{
-		pad3.ResetPad(3);
+		pad3.ResetPad(3,mode);
 		pad3.velocity = 5;
-		pad4.ResetPad(4);
+		pad4.ResetPad(4,mode);
 		pad4.velocity = -5;
 	}
 }

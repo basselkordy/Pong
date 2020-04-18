@@ -241,7 +241,7 @@ void pauseEvents(Event& event, MENU& pauseMenu, RectangleShape pauseItems[], Sou
 
 //Main Menu Events
 
-void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
+void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& mode_is,bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
 {
 	switch (event.key.code)
 	{
@@ -265,13 +265,14 @@ void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& maps, bool&
 					theme.pause();
 					background.play();
 				}
-				getPlayerName = true;
+				getPlayerName = false;
 				play = false;
 				men = false;
 				whenpressed_detector.play();
 				MODE = '2';
 				///// this to control drawing your menu ///////////////
 				maps = true;
+				mode_is = true;
 			}
 			break;
 		case 1:
@@ -371,12 +372,33 @@ void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& maps, bool&
 
 }
 ///////////////////// to draw your events in here //////////////////////////
-void mapsEvents( bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, Sound& whenpressed_detector, char& MODE, bool& men, RenderWindow& window) {
-	//TODO 
+void modesEvents(MENU& mode, RectangleShape modesItems[], bool& play, bool& musicSwitch, Music& theme, Sound& background, Sound& whenpressed_detector, char& MODE, RenderWindow& window)
+{
+	switch (event.key.code)
+	{
+	case Keyboard::Left:
+		moveleft(mode, 2, modesItems);
+		break;
 
-	/// this for depuging stuff //////
-	play = false;
-	getPlayerName = false;
-	men = false;
+	case Keyboard::Right:
+		moveright(mode, modesItems, 2);
+		break;
+
+	case Keyboard::Return:
+		//main menu orders....
+		switch (mode.selectedItemIndex)
+		{
+		case 0:
+			MODE = 'a';
+			break;
+		case 1:
+			MODE = '2';
+			break;
+		}
+		break;
+
+	}
+
+
 
 }
