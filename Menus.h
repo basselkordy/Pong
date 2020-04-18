@@ -6,10 +6,13 @@
 using namespace sf;
 using namespace std;
 
+
+//////////////////////////////Option menus//////////////////////////////
+
 // to Control the height that theme goes to
 #define PADDING 15.f
 #define VOLRADIUS 20.f
-char c = 'f'; //indicate theme
+char c = 'c'; //indicate theme
 // Size of The Themes
 Vector2f Theme_size(100,100);
 
@@ -44,8 +47,6 @@ Vector2i pos_Mouse;
 	RectangleShape classic_theme;
 	Texture tex_classic;
 	Vector2f pos_classic(700, 200);
-
-
 	vector<RectangleShape> themes = { hell_theme,forest_theme,ice_theme, classic_theme};
 
 	// variables
@@ -55,20 +56,15 @@ Vector2i pos_Mouse;
 	float diff;
 	// To Check if the Mouse is over on of the Themes
 	bool onHold[4] = {};
-
 	// To move the Themes up and down
 	int Steps[4] = { 1,1,1,1 };
-
 	// to load the vfx on time only
 	bool IsLoaded = true;
-
 	// to hold the theme which the player choose
 	bool isChoosen[4] = {};
-
 	//  to make sure that we only call theme change one time after choosing one
 	bool  done = false;
-
-	int place = 0;
+	int place = 3;
 
 /*
 		FUNCTIONS
@@ -85,7 +81,6 @@ bool IsMouseIn(RectangleShape& Body)
 	else
 		return false;
 }
-
 // submit the theme selection
 void SubmitTheme()
 {
@@ -121,7 +116,6 @@ void SubmitTheme()
 
 	}
 }
-
 // To Select the Theme after the left Mouse button is is Pressed
 void SelectTheme()
 {
@@ -252,7 +246,7 @@ void DrawOptionMenu(RenderWindow& window)
 
 
 
-	window.clear();
+	//window.clear();
 	window.draw(hell_theme);
 	window.draw(ice_theme);
 	window.draw(forest_theme);
@@ -301,7 +295,6 @@ void VolumeChanger(RenderWindow& window)
 		window.draw(vol_changer);
 	}
 }
-
 // To Change volume by clicking on any empty space in the volume bar
 void ChangeVolumebyClick(RenderWindow& window)
 {
@@ -314,6 +307,245 @@ void ChangeVolumebyClick(RenderWindow& window)
 		pos_volumeChanger = vol_changer.getPosition();
 		window.draw(vol_changer);
 	}
+}
+
+/////////////////////////////////// maps menus ///////////////////////////////////
+// for the position of the map
+int mapNum = 1; // 0 : default map , 1 : top/bot obstacles , 2 : mid obstacle, 3 : bot pads
+bool ltr_1[4] = {};
+bool ltr_2[4] = {};
+bool ltr_3[4] = {};
+bool mtl[4] = {};
+bool rtl_1[4] = {};
+bool rtl_2[4] = {};
+bool rtl_3[4] = {};
+bool mtr[4] = {};
+// to load the resources once
+bool isDone = false;
+// positions of the maps
+float poses[3] = {250,400,550};
+// current positions of the maps
+float currentpos_maps[4] ={250,400,550,400};
+// the hidden maps
+int back = 0;
+int backback = 3;
+// for the IsMouseIn function
+int left_map = 0, right_map =2;
+// the init scale for the rects
+double scaleU[4] = { 1,1.75,1,.25 };
+// tex_maps
+Texture tex_maps[4];
+// maps
+RectangleShape maps_rect[4];
+// to set the Trans for the maps
+void setState(RectangleShape& body,bool  dir,int i)
+{
+	if (dir)
+	{
+		if (body.getPosition().x == poses[0])
+		{
+			ltr_1[i] = true;
+		}
+		else if (body.getPosition().x == poses[1])
+		{
+			if (body.getScale().x == 1.75)
+				ltr_2[i] = true;
+			else
+				mtl[i] = true;
+		}
+		else if (body.getPosition().x == poses[2])
+		{
+			ltr_3[i] = true;
+		}
+
+	}
+	else
+	{
+		if (body.getPosition().x == poses[0])
+		{
+			rtl_1[i] = true;
+		}
+		else if (body.getPosition().x == poses[1])
+		{
+			if (body.getScale().x == 1.75)
+				rtl_2[i] = true;
+			else
+				mtr[i] = true;
+		}
+		else if (body.getPosition().x == poses[2])
+		{
+			rtl_3[i] = true;
+		}
+	}
+}
+void Trans(RectangleShape& body,int i)
+{
+
+		if (ltr_1[i])
+		{
+
+			// right to mid
+			body.move(10, 0);
+			// scale 1 --> 1.75
+			if (scaleU[i] < 1.75)
+				scaleU[i] += .05;
+			body.setScale(scaleU[i], scaleU[i]);
+			if (body.getPosition().x >= poses[1])
+			{
+				ltr_1[i] = false;
+				mapNum = i;
+			}
+
+
+		}
+		if (ltr_2[i])
+		{
+			// mid to right
+			body.move(10, 0);
+			// scale 1.75 --> 1
+			if (scaleU[i] > 1)
+				scaleU[i] -= .05;
+			body.setScale(scaleU[i], scaleU[i]);
+			if (body.getPosition().x >= poses[2])
+			{
+				ltr_2[i] = false;
+				right_map = i;
+			}
+
+		}
+		else if (ltr_3[i])
+		{
+			back = i;
+			if (body.getPosition().x > poses[1])
+			{
+				// left to mid
+				body.move(-10, 0);
+				// scale 1 --> .25
+				if (scaleU[i] > .25)
+				scaleU[i] -= .05;
+				body.setScale(scaleU[i], scaleU[i]);
+
+			}
+			if (body.getPosition().x <= poses[1])
+			{
+				ltr_3[i] = false;
+				
+			}
+
+		}
+		if (mtl[i])
+		{
+			backback = i;
+			// mid to left
+			body.move(-10, 0);
+			// scale .25 --> 1
+			if (scaleU[i] < 1)
+				scaleU[i] += .05;
+			body.setScale(scaleU[i], scaleU[i]);
+			if (body.getPosition().x <= poses[0])
+			{
+				mtl[i] = false;
+				left_map = i;
+			}
+
+		}
+
+
+		if (rtl_3[i])
+		{
+			// left to mid
+			body.move(-10, 0);
+			// scale 1--> 1.75
+			if (scaleU[i] < 1.75)
+				scaleU[i] += .05;
+			body.setScale(scaleU[i], scaleU[i]);
+			if (body.getPosition().x <= poses[1])
+			{
+				rtl_3[i] = false;
+				mapNum = i;
+			}
+
+		}
+		else if (rtl_2[i])
+		{
+			// mid to right
+			body.move(-10, 0);
+			// scale 1.75 --> 1
+			if (scaleU[i] > 1)
+				scaleU[i] -= .05;
+			body.setScale(scaleU[i], scaleU[i]);
+			if (body.getPosition().x <= poses[0])
+			{
+				rtl_2[i] = false;
+				left_map = i;
+			}
+
+		}
+		if (rtl_1[i])
+		{
+			back = i;
+			if (body.getPosition().x < poses[1])
+			{
+				// right to mid
+				body.move(10, 0);
+				// scale 1 --> .25
+				if (scaleU[i] > .25)
+				scaleU[i] -= .05;
+				body.setScale(scaleU[i], scaleU[i]);
+			}
+			if (body.getPosition().x >= poses[1])
+			{
+				rtl_1[i] = false;
+
+			}
+
+		}
+		if (mtr[i])
+		{
+			backback = i;
+			// mid to left
+			body.move(10, 0);
+			// scale .25 --> 1
+			if (scaleU[i] < 1)
+				scaleU[i] += .05;
+			body.setScale(scaleU[i], scaleU[i]);
+			if (body.getPosition().x >= poses[2])
+			{
+				mtr[i] = false;
+				right_map = i;
+			}
+		}
+}
+// to draw the map menu
+void DrawMapMenu(RenderWindow& window)
+{
+	if(!isDone)
+	{
+		tex_maps[0].loadFromFile("resources/vfx/maps/_1.jpg");
+		tex_maps[1].loadFromFile("resources/vfx/maps/_2.jpg");
+		tex_maps[2].loadFromFile("resources/vfx/maps/_3.jpg");
+		tex_maps[3].loadFromFile("resources/vfx/maps/_4.jpg");
+
+		for (int i = 0; i < 4; i++)
+		{
+			maps_rect[i].setPosition(currentpos_maps[i], 150);
+			maps_rect[i].setSize(Vector2f(100, 100));
+			maps_rect[i].setOrigin(maps_rect[i].getSize() / 2.f);
+			maps_rect[i].setTexture(&tex_maps[i]);
+			maps_rect[i].setScale(scaleU[i], scaleU[i]);
+		}
+		isDone =true;
+	}
+	//window.clear(Color(150,150,150));
+	window.draw(maps_rect[back]);
+	window.draw(maps_rect[backback]);
+
+	for (int i = 0; i < 4; i++)
+	{
+		if(back != i && backback != i)
+		window.draw(maps_rect[i]);
+	}
+
 }
 
 /////////////////////////MAIN MENU & PAUSE MENU////////////////////////
@@ -431,53 +663,28 @@ void drawMenu(RenderWindow& menuWindow, RectangleShape text[], int noOfItems)
 
 void moveUp(MENU& menu, int noOfItems, RectangleShape text[], int no)
 {
-	//if the selected item is after the the first item
-	if (menu.selectedItemIndex - 1 >= 0)
-	{
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
-		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
-		menu.selectedItemIndex--;
-		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
-		menu.switching.play();
-	}
-
-	//if the selected item is the first item and the user moves up select the last item
-	else if (menu.selectedItemIndex - 1 < 0)
-	{
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
-		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
-		menu.selectedItemIndex = noOfItems - 1;
-		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
-		menu.switching.play();
-	}
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+	text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
+	if (!menu.selectedItemIndex)
+		menu.selectedItemIndex = noOfItems;
+	menu.selectedItemIndex--;
+	text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
+	menu.switching.play();
+	
 }
 
 void moveDown(MENU& menu, RectangleShape text[], int noOfItems, int no)
 {
-	//if the selected item is before the the last item
-	if (menu.selectedItemIndex + 1 < noOfItems)
-	{
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
-		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
-		menu.selectedItemIndex++;
-		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.80)));
-		menu.switching.play();
-	}
-
-	//if the selected item is the last item and the user moves down select the first item
-	else if (menu.selectedItemIndex + 1 >= noOfItems)
-	{
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
-		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
-		menu.selectedItemIndex = 0;
-		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.80)));
-		menu.switching.play();
-	}
-
+	
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+	text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
+	menu.selectedItemIndex++;
+	menu.selectedItemIndex %= noOfItems;
+	text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.80)));
+	menu.switching.play();
+	
 }
 
 //////////////////////////// using mouse to navigate in menus ////////////////////////////////////
@@ -500,8 +707,3 @@ void mouse_navigator(MENU& menu, RectangleShape text[], double noIndex, Window& 
 		menu.switching.play();
 	}
 }
-
-
-
-
-

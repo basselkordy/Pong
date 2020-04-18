@@ -258,15 +258,15 @@ int main(void)
 	// Keyboard buttons
 	bool W = false, S = false;
 	bool Up = false, Down = false;
-	
+
 
 	//Map
 	RectangleShape obstacleTop, obstacleBot;
-	int mapNum = 3; // 0 : default map , 1 : top/bot obstacles , 2 : mid obstacle, 3 : bot pads
+	
 	set_map(obstacleTop, obstacleBot, pad3, pad4, mapNum);
 
 
-	
+
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
@@ -274,7 +274,7 @@ int main(void)
 
 	while (window.isOpen())
 	{
-
+		pos_Mouse = Mouse::getPosition(window);
 		// EVENTS
 		//searchEvents
 		while (window.pollEvent(event))
@@ -297,9 +297,9 @@ int main(void)
 				}
 				if (Keyboard::isKeyPressed(Keyboard::Left))
 				{
-					if (!place)
-						place = 4;
-					place--;
+				if (!place)
+					place = 4;
+				place--;
 					//cout << place << '\n';
 				}
 				ChangeVolumebyClick(window);
@@ -313,7 +313,7 @@ int main(void)
 			//Pause Menu Events/Sound
 			if (pause)
 			{
-				/////// to navigate in pause menu 
+				/////// to navigate in pause menu
 				mouse_navigator(pMenu, pauseItems, 0.0083, window, 4);
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
 				{
@@ -332,13 +332,25 @@ int main(void)
 
 			///// maps Events ////////////
 			if (maps) {
+				
 				/// here you will but the events function and other related functions "badr"  as the following wa as you like brdo ////////
-				mapsEvents(maps, play, musicSwitch, theme, background, getPlayerName, whenpressed_detector, MODE,men, window);
+				if (Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[right_map]))
+				{
+					for (int i = 0; i < 4; i++)
+						setState(maps_rect[i], true, i);
+					
+					
+				}
+				else if (Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[left_map]))
+				{
+					for (int i = 0; i < 4; i++)
+						setState(maps_rect[i], false, i);
+				}
 			}
 
 			//Main Menu Events/Sound
 			if (men) {
-				//// to navigate in main menu   
+				//// to navigate in main menu
 				mouse_navigator(mainMenu, menuItems, 0.0116, window, 7);
 				//Event
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
@@ -385,15 +397,25 @@ int main(void)
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
 			if (isPressed(Keyboard::BackSpace) && !getPlayerName)
 			{
-				menuReturn(leader, opt, getPlayerName, play, men, themePlaying, background, theme, pause, p1win_detector, p2win_detector, whenpressed_detector, musicSwitch);
+				menuReturn(maps,leader, opt, getPlayerName, play, men, themePlaying, background, theme, pause, p1win_detector, p2win_detector, whenpressed_detector, musicSwitch);
 			}
 
 			//pause
 
 		}
-
-
 		/// LOGIC ///
+
+
+		if (maps)
+		{
+
+			for (int i = 0; i < 4; i++)
+			{
+				Trans(maps_rect[i], i);
+			}
+			cout << mapNum <<endl;
+		}
+
 		//Handling player naming
 		if (!savePlayer1)
 		{
@@ -410,7 +432,6 @@ int main(void)
 				textInit(playerText, messagePlayerText, font, 2);
 			}
 		}
-
 		//Movement
 		//searchGameComp
 		// pad1 Movement
@@ -520,7 +541,7 @@ int main(void)
 					pad_hit.play();
 				}
 			}
-			
+
 
 
 
@@ -568,13 +589,13 @@ int main(void)
 				ssScorep2 << scorep2;
 				lblscorep2.setString(ssScorep2.str());
 				// handles the bug of counting more than one point
-				
-				
+
+
 				RandomPos(ball, mapNum, obstacleTop);
 				pad1.ResetPad(1);
 				pad2.ResetPad(2);
 
-				//add a slight pause when a point is scored 
+				//add a slight pause when a point is scored
 				resetClock.restart();
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
@@ -605,12 +626,12 @@ int main(void)
 				// handle the bug of counting more than one point
 				resetClock.restart();
 
-				
+
 				RandomPos(ball, mapNum, obstacleTop);
 				pad1.ResetPad(1);
 				pad2.ResetPad(2);
 
-				//add a slight pause when a point is scored 
+				//add a slight pause when a point is scored
 				resetClock.restart();
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
@@ -642,7 +663,6 @@ int main(void)
 			play = false;
 			themePlaying = false;
 		}
-
 		// reset the score of p1 and p2
 		if (!play) {
 			scorep1 = 0;
@@ -656,17 +676,14 @@ int main(void)
 			ssScorep2 << scorep2;
 			lblscorep2.setString(ssScorep2.str());
 		}
-
 		// RENDERING
 		//searchRender
 		window.clear(Color::Black);
-
 		if (getPlayerName)
 		{
 			window.draw(messagePlayerText);
 			window.draw(playerText);
 		}
-
 		if (play)
 		{
 			 DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
@@ -686,11 +703,6 @@ int main(void)
 		}
 		else
 		{
-            ////////////// condition for maps ////////////
-			if (maps) {
-				//TODO 
-				window.clear();
-			}
 			////////// menu background texture ///////////////////
 			if (time.getElapsedTime().asSeconds() > 0) {
 				window.draw(menub);
@@ -705,11 +717,20 @@ int main(void)
 				window.draw(menu2);
 
 			}
+
+            ////////////// condition for maps ////////////
+			if (maps) {
+				//TODO
+				DrawMapMenu(window);
+				//window.clear();
+				
+			}
+			
 			//rendering winning message
 			//p1 win
 			if (p1win_detector) {
 				pWin.setString(playerName1 + " wins");
-				
+
 				window.draw(pWin);
 				window.draw(option);
 
@@ -717,7 +738,7 @@ int main(void)
 			//p2 win
 			if (p2win_detector) {
 				pWin.setString(playerName2 + " wins");
-				
+
 				window.draw(pWin);
 				window.draw(option);
 			}

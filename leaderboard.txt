@@ -89,3 +89,9 @@ kk 0
 sf 0
 fs 0
 ffrf 0
+\ 0
+sad 0
+csasdasdasd 0
+sa 0
+;f 0
+xz 0

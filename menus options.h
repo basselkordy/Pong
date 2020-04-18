@@ -24,11 +24,11 @@ void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleSha
 	done = true;
 }
 
-
-void menuReturn(bool& leader, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& themePlaying, Sound& background, Music& theme, bool& pause, bool& p1win_detector, bool& p2win_detector, Sound& whenreturn_detector, bool musicSwitch)
+void menuReturn(bool& maps,bool& leader, bool& opt, bool& getPlayerName, bool& play, bool& men, bool& themePlaying, Sound& background, Music& theme, bool& pause, bool& p1win_detector, bool& p2win_detector, Sound& whenreturn_detector, bool musicSwitch)
 {
 	leader = false;
 	opt = false;
+	maps = false;
 	getPlayerName = false;
 	if (!play)
 	{
@@ -87,9 +87,6 @@ void nameInput(Event& event, string& playerName, bool& getPlayerName, Text& play
 		}
 	}
 }
-
-
-
 //textinit function is overloaded 4 times , each one for different type of text intialization
 
 //Initializes the scores texts
@@ -249,11 +246,11 @@ void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& maps, bool&
 	switch (event.key.code)
 	{
 	case Keyboard::Up:
-		moveUp(mainMenu, 6, mainItems,7);
+		moveUp(mainMenu, 5, mainItems,7);
 		break;
 
 	case Keyboard::Down:
-		moveDown(mainMenu, mainItems, 6,7);
+		moveDown(mainMenu, mainItems, 5,7);
 		break;
 
 	case Keyboard::Return:
