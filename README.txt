@@ -1,4 +1,4 @@
-ï»¿Bassel, 22 / 3
+Bassel, 22 / 3
 
 - added forest theme sound effects
 - fixed bugs with background sounds and theme music
@@ -33,7 +33,7 @@ Bassel, 26 / 3
 Ayman , 4 / 3
 
 -Cleaning Main.cpp (no new functionality)
-	â€¢ created a new header "menu options" that contains multiple functions handeling the switch statments of menus events
+	• created a new header "menu options" that contains multiple functions handeling the switch statments of menus events
 		-volChange
 		-themeChange
 		-pauseEvents
@@ -41,22 +41,22 @@ Ayman , 4 / 3
 		-mainmenuEvents
 		-menuReturn
 		-nameInput
-	â€¢ added new function also to menu options.h "textinit" which handels all texts initializations (the function has different overloads so pay attention to passed arguments)
-	â€¢ added multiple search keywords to ease navigating the main (if they are not precise enough add more)
+	• added new function also to menu options.h "textinit" which handels all texts initializations (the function has different overloads so pay attention to passed arguments)
+	• added multiple search keywords to ease navigating the main (if they are not precise enough add more)
 		-Keywords :
-			â€¢ searchSound
-			â€¢ searchMenus
-			â€¢ searchGameComp (game components : ball ,pad ,etc..)
-			â€¢ searchGameMechanics (collision , reset ,etc..)
-			â€¢ searchLeaderboard
-			â€¢ searchRender
+			• searchSound
+			• searchMenus
+			• searchGameComp (game components : ball ,pad ,etc..)
+			• searchGameMechanics (collision , reset ,etc..)
+			• searchLeaderboard
+			• searchRender
 -Bug fixes
-	â€¢ ai_move :
+	• ai_move :
 		- smoothed the movement of ai controlled pad and prevented it  from unnecessary movement when already the ball in range
-	â€¢ dynamic collision :
+	• dynamic collision :
 		- fixed the bug where the ball would return as a straight line when colliding with the very top or very bottom of the pad
 -new
-	â€¢Powerup :
+	•Powerup :
 		-Prepaired for a new powerup "Reverse" that switches the input of the opponent if taken (you press up you go down)
 		however the powerup is not functional yet
 -----------------------------------------------------------------------
@@ -90,10 +90,10 @@ Ayman 9/4
 
 -Added :
 	-Maps :
-		â€¢ mapNum controls which map is running (0 : none - 1 : two obstacles - 2 : one obstacle
-		â€¢set_Map : handles initializing of maps depending on mapNum
-		â€¢map_collision : handles collision with map components
-		â€¢Edited other functions to work with new maps
+		• mapNum controls which map is running (0 : none - 1 : two obstacles - 2 : one obstacle
+		•set_Map : handles initializing of maps depending on mapNum
+		•map_collision : handles collision with map components
+		•Edited other functions to work with new maps
 	-PowerUps :
 		-"Reverse" powerUp (available at 2 players mood only) : reverses movement direction
 		-Modified spawn positions depending on maps to prevent spawning on obstacles
@@ -105,8 +105,8 @@ Ayman 9/4
 	-RandomPos : added arguments ,changed spawn conditions of ball to prevent ball from spawning inside obstacle for map 2
 	-boundcheck : added arguments for RandomPos
 	- isColliding from left/right : 
-		â€¢added arguments, added an overload for general use without Dynamic Collision (to be used for obstacles)
-		â€¢ Edited dynamic collision :
+		•added arguments, added an overload for general use without Dynamic Collision (to be used for obstacles)
+		• Edited dynamic collision :
 			-touching the ball when it's moving straight changes it's direction depending on which direction you were moving
 			-Ai dynamic collision : ai eventually reflects the ball with an angle even if it hits it at the center
 			-Decreased middle area for the ball to reflect straight
@@ -146,6 +146,14 @@ Badr , 18/4
 
 - added the map menu
 
+----------------------------------------------------------------
+Bassel, 26/4
+- added shorten powerup
+- added a new function ,GET_USER_SETTINGS
+	- called at the very beginning of the program, gets whats inside "user_settings.txt" and fills an array with it
+
+- added a new function, SAVE_USER_SETTINGS
+	- called when user close the program and saves whats inside the settings array to user_settings.txt
 
 
 

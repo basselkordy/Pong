@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 using namespace sf;
@@ -1110,4 +1111,30 @@ void map_collision(BALL& ball, RectangleShape& obsTop, RectangleShape& obsBot, P
 			isColliding(ball, pad4.rect);
 		}
 	}
+}
+
+void LOAD_USER_SETTINGS(char SETTINGS[])
+{
+	ifstream Infile;
+	Infile.open("user_settings.txt");
+
+	string s;
+	getline(Infile, s);
+	for (int i = 0; i < 4; i++)
+	{
+		SETTINGS[i] = s[i];
+	}
+}
+
+void SAVE_USER_SETTINGS(char SETTINGS[4])
+{
+	ofstream Outfile;
+	Outfile.open("user_settings.txt");
+	
+	for (int i = 0; i < 4; i++)
+	{
+		Outfile << SETTINGS[i];
+	}
+	Outfile.close();
+
 }

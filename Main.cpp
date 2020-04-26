@@ -10,8 +10,13 @@
 using namespace sf;
 using namespace std;
 
+
+// Elements respectivly: Theme, Map, Mode
+char USER_SETTINGS[3];
+
 int main(void)
 {
+	LOAD_USER_SETTINGS(USER_SETTINGS);	
 	bool themePlaying = true;
 
 	//MODE(t for training, 2 for 2 player , a for ai)
@@ -22,7 +27,7 @@ int main(void)
 
 	// Set to true/false to activate or mute
 
-	bool musicSwitch = 0;
+	bool musicSwitch = 1;
 	bool sfxSwitch = 1;
 
 	//sounds of main menu
@@ -86,9 +91,10 @@ int main(void)
 	dspr_bfr.loadFromFile("resources/sfx/powerups/dissapear.wav");
 
 	SoundBuffer rvrs_bfr;
-	rvrs_bfr.loadFromFile("resources/sfx/powerups/switch.wav");
+	rvrs_bfr.loadFromFile("resources/sfx/powerups/reverse.wav");
 
-
+	SoundBuffer shrt_bfr;
+	shrt_bfr.loadFromFile("resources/sfx/powerups/shorten.wav");
 
 	// Main Window
 	//searchMainWindow
@@ -230,7 +236,8 @@ int main(void)
 	pUp slow;
 	pUp invis;
 	pUp reverse;
-	initialize_powerups(reverse, longate, freeze, slow, invis, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr, rvrs_bfr);
+	pUp shorten;
+	initialize_powerups(reverse, longate, freeze, slow, invis, shorten, Elon_bfr, frz_bfr, slow_bfr, dspr_bfr, rvrs_bfr, shrt_bfr);
 
 
 	///Leaderboard ///
@@ -251,7 +258,7 @@ int main(void)
 
 	//Themes
 	//searchTheme
-	char c = 'c'; //indicate theme
+	char c = USER_SETTINGS[0]; //indicate theme
 	Texture backgT; //background
 	RectangleShape backg;
 	backg.setSize(Vector2f(800.0, 600.0));
@@ -269,7 +276,6 @@ int main(void)
 	//Map
 	RectangleShape obstacleTop, obstacleBot;
 	
-	set_map(obstacleTop, obstacleBot, pad3, pad4, mapNum);
 
 
 
@@ -288,6 +294,7 @@ int main(void)
 			//Close game
 			if (event.type == Event::Closed || isPressed(Keyboard::Escape))
 			{
+				SAVE_USER_SETTINGS(USER_SETTINGS);
 				play = false;
 				window.close();
 				return 0;
@@ -355,6 +362,7 @@ int main(void)
 				if (Keyboard::isKeyPressed(Keyboard::Return)) {
 					getPlayerName = true;
 					maps = false;
+					set_map(obstacleTop, obstacleBot, pad3, pad4, mapNum);
 				}
 				
 			}
@@ -372,10 +380,9 @@ int main(void)
 				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
 					//Navigation
 					//function contains switch statment
-					mainmenuEvents(mainMenu, menuItems, mode_is,maps,play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window);
+					mainmenuEvents(mainMenu, menuItems, mode_is,maps,play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window, USER_SETTINGS);
 					break;
 				}
-
 
 			}
 
@@ -429,6 +436,7 @@ int main(void)
 			{
 				Trans(maps_rect[i], i);
 			}
+			USER_SETTINGS[1] = mapNum;
 			cout << mapNum <<endl;
 		}
 
@@ -536,7 +544,7 @@ int main(void)
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
-			if (mapNum == 0)
+			if (mapNum == 0 || MODE == 't')
 				ball.gain_velocity();
 
 			//Sound / Collisions
@@ -578,13 +586,13 @@ int main(void)
 
 			// PowerUP
 			// Spawn
-			SpawnPowerups(reverse, longate, freeze, slow, invis, MODE, mapNum,obstacleTop);
+			SpawnPowerups(reverse, longate, freeze, slow, invis, shorten, MODE, mapNum,obstacleTop);
 
 			// Activate
-			isTakenPowerup(reverse, longate, freeze, slow, invis, ball, pad1, pad2, sfxSwitch);
+			isTakenPowerup(reverse, longate, freeze, slow, invis, shorten, ball, pad1, pad2, sfxSwitch);
 
 			// Deactivate the effect of pUP after it's time is up by tracing how long it has been activated
-			DeactivatePowerups(reverse, longate, freeze, slow, invis, pad1, pad2);
+			DeactivatePowerups(reverse, longate, freeze, slow, invis, shorten, pad1, pad2);
 
 
 			// Check collisions between the ball and the screen with x axis // score of player 1
@@ -617,7 +625,7 @@ int main(void)
 				{
 					window.clear(Color::Black);
 					DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
-					DrawPowerups(window, longate, freeze, slow, invis, reverse);
+					DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 					window.display();
 					play = false;
 				}
@@ -653,7 +661,7 @@ int main(void)
 				{
 					window.clear(Color::Black);
 					DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
-					DrawPowerups(window, longate, freeze, slow, invis, reverse);
+					DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 					window.display();
 					play = false;
 				}
@@ -699,7 +707,7 @@ int main(void)
 		if (play)
 		{
 			 DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
-			 DrawPowerups(window, longate, freeze, slow, invis, reverse);
+			 DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 			 men = false;
 
 			//rendering pause window(draw pause window if option window is not opened)
@@ -793,7 +801,7 @@ int main(void)
 			{
 				if (Steps[x] == PADDING && isChoosen[x] && !done)
 				{
-					themeChange(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr,x);
+					themeChange(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr,x, USER_SETTINGS);
 				}
 			}
 

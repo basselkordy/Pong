@@ -1,7 +1,7 @@
 #pragma once
 
 void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
-	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr,int index)
+	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr,int index, char USER_SETTINGS[3])
 {
 	switch (index)
 	{
@@ -12,15 +12,19 @@ void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleSha
 		case 1:
 			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f');
 			c = 'f';
+
 			break;
 		case 2:
 			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
 			c = 'i';
+
 			break;
 		case 3:
 			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'c');
 			c = 'c';
+
 	}
+	USER_SETTINGS[0] = c;
 	done = true;
 }
 
@@ -213,6 +217,7 @@ void pauseEvents(Event& event, MENU& pauseMenu, RectangleShape pauseItems[], Sou
 				whenpressed_detector.play();
 				break;
 			}
+
 			//open option menu
 		case 1:
 			opt = true;
@@ -230,7 +235,6 @@ void pauseEvents(Event& event, MENU& pauseMenu, RectangleShape pauseItems[], Sou
 			{
 				background.stop();
 				theme.play();
-
 			}
 			break;
 		}
@@ -241,7 +245,7 @@ void pauseEvents(Event& event, MENU& pauseMenu, RectangleShape pauseItems[], Sou
 
 //Main Menu Events
 
-void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& mode_is,bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window)
+void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& mode_is,bool& maps, bool& play, bool& musicSwitch, Music& theme, Sound& background, bool& getPlayerName, bool& men, Sound& whenpressed_detector, char& MODE, bool& opt, bool& leader, RenderWindow& window, char USER_SETTINGS[3])
 {
 	switch (event.key.code)
 	{
@@ -307,6 +311,7 @@ void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& mode_is,boo
 
 		case 4:
 			whenpressed_detector.play();
+			SAVE_USER_SETTINGS(USER_SETTINGS);
 			window.close();
 			break;
 		}

@@ -1,12 +1,12 @@
 w 19
-d 9
-d 9
+d 10
+d 10
 badr 8
 ayman 8
 y 6
+a 6
 bavlly 5
 laila 5
-a 5
 ali 4
 perry 3
 k 2
@@ -98,3 +98,6 @@ xz 0
 xcvf 0
 fg 0
 fgf 0
+sd 0
+;; 0
+l4 0

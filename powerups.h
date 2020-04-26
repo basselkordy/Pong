@@ -71,31 +71,96 @@ void elongate(PAD& pad1, PAD& pad2, bool active, char c)
 
 }
 
+
+void shortenF(PAD& pad1, PAD& pad2, bool active, char c)
+{
+	if (active)
+	{
+		if (c == '1')
+		{
+			int len = padlengthSTD * 0.5;
+			pad1.rect.setSize(Vector2f(pad1.width, len)); //make p1 shorter
+			pad1.length = len;
+			pad1.rect.setOrigin(pad1.width / 2.f, pad1.length / 2.f);
+		}
+		else
+		{
+			int len = padlengthSTD * 0.5;
+			pad2.rect.setSize(Vector2f(pad2.width, len)); //make p2 shorter
+			pad2.length = len;
+			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+		}
+
+	}
+	else
+	{
+		if (pad1.rect.getSize().y != padlengthSTD) //if the player that has the pUp is p1  (logic could be changed later)
+		{
+			int len = padlengthSTD; //variable for the sake of code readability
+			pad1.rect.setSize(Vector2f(pad1.width, len)); // return size of p1 to normal
+			pad1.length = len;
+			pad1.rect.setOrigin(pad2.width / 2.f, pad1.length / 2.f);
+			if (pad1.rect.getPosition().y + len / 2.f > 600)
+			{
+				pad1.rect.setPosition(pad1.rect.getPosition().x, GAMEHEIGHT - pad1.length / 2.f);
+			}
+			else if (pad1.rect.getPosition().y - len / 2.f < 0)
+			{
+				pad1.rect.setPosition(pad1.rect.getPosition().x, pad1.length / 2.f);
+			}
+
+		}
+		else  //if the player that has the pUp is p2  (logic could be changed later)
+		{
+			int len = padlengthSTD;  //variable for the sake of code readability
+			pad2.rect.setSize(Vector2f(pad2.width, len)); // return size of p1 to normal
+			pad2.length = len;
+			pad2.rect.setOrigin(pad2.width / 2.f, pad2.length / 2.f);
+
+			//if the pad after returning to normal is out of screen return it in
+			if (pad2.rect.getPosition().y + len / 2.f > 600)
+			{
+				pad2.rect.setPosition(pad2.rect.getPosition().x, GAMEHEIGHT - pad2.length / 2.f);
+			}
+			else if (pad2.rect.getPosition().y - len / 2.f < 0)
+			{
+				pad2.rect.setPosition(pad2.rect.getPosition().x, pad2.length / 2.f);
+			}
+
+		}
+	}
+
+}
+
+
+
+
+
 // Takes references to all powerups and sets their textures, radii and sounds
-void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis,
-	SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr, SoundBuffer& reversebuffer)
+void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& shorten,
+	SoundBuffer& lngbfr, SoundBuffer& frzbfr, SoundBuffer& slowbfr, SoundBuffer& invsbfr, SoundBuffer& reversebuffer, SoundBuffer& shrt_bfr)
 {
 	////longate
-	longate.texture.loadFromFile("resources/PowerUps/Elongate.png");
+	longate.texture.loadFromFile("resources/vfx/PowerUps/Elongate.png");
 	longate.rect.setTexture(&longate.texture);
 	longate.rect.setSize(Vector2f(30.f, 30.f)); //pUp size
 	longate.sound.setBuffer(lngbfr);
 
 
 	////freeze 
-	freeze.texture.loadFromFile("resources/PowerUps/Freeze.png");
+	freeze.texture.loadFromFile("resources/vfx/PowerUps/Freeze.png");
 	freeze.rect.setTexture(&freeze.texture);
 	freeze.rect.setSize(Vector2f(30.f, 30.f)); //pUp size
 	freeze.sound.setBuffer(frzbfr);
 
 	////slow
-	slow.texture.loadFromFile("resources/PowerUps/Slow.png");
+	slow.texture.loadFromFile("resources/vfx/PowerUps/Slow.png");
 	slow.rect.setTexture(&slow.texture);
 	slow.rect.setSize(Vector2f(30.f, 30.f)); //pUp size
 	slow.sound.setBuffer(slowbfr);
 
 	////Invisibility
-	invis.texture.loadFromFile("resources/PowerUps/Invisible.png");
+	invis.texture.loadFromFile("resources/vfx/PowerUps/Invisible.png");
 	invis.rect.setTexture(&invis.texture);
 	invis.rect.setSize(Vector2f(30.0f, 30.0f)); //pUp size
 	invis.sound.setBuffer(invsbfr);
@@ -104,11 +169,18 @@ void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp
 	reverse.rect.setFillColor(Color::Yellow); //pUp color
 	reverse.rect.setSize(Vector2f(30.0f, 30.0f));
 	reverse.sound.setBuffer(reversebuffer);
+
+	// Shorten
+	shorten.texture.loadFromFile("resources/vfx/PowerUps/Shorten.png");
+	shorten.rect.setTexture(&shorten.texture);
+	shorten.rect.setSize(Vector2f(30.0f, 30.0f));
+	shorten.sound.setBuffer(shrt_bfr);
+
 }
 
 
 // Draws powerups if they are spawned
-void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& reverse)
+void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& reverse, pUp& shorten)
 {
 
 	//elongate
@@ -136,6 +208,12 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 	{
 		window.draw(reverse.rect);
 	}
+	
+	// Shorten 
+	if (shorten.isSpawned == true)
+	{
+		window.draw(shorten.rect);
+	}
 
 }
 
@@ -143,7 +221,7 @@ void DrawPowerups(RenderWindow& window, pUp& longate, pUp& freeze, pUp& slow, pU
 
 //check for collision with ball and pUp and only do so if it's already spawned on screen
 // and activates powerups if they are taken 
-void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, BALL ball, PAD& pad1, PAD& pad2, bool sfxSwitch)
+void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& shorten, BALL ball, PAD& pad1, PAD& pad2, bool sfxSwitch)
 {
 
 	//elongate
@@ -270,12 +348,40 @@ void isTakenPowerup(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& inv
 			pad1.rect.setFillColor(Color::Yellow);
 		}
 	}
+
+
+	// Shorten
+	if (shorten.isSpawned == 1 && ball.circle.getGlobalBounds().intersects(shorten.rect.getGlobalBounds()) && (abs(ball.xVelocity) + abs(ball.yVelocity) == 15 + ball.added_velocity || abs(ball.xVelocity) == 12 + ball.added_velocity))
+	{
+		if (sfxSwitch)
+		{
+			shorten.sound.play();
+		}
+		shorten.clock.restart(); //reset pUP timer
+		shorten.isSpawned = 0; //prevent multi spawn
+		shorten.isActive = 1;
+
+		//if player1 is the one who took the pUP
+		if (ball.xVelocity > 0)
+		{
+			shortenF(pad1, pad2, true, '2');
+		}
+		//if player2 is the one who took the pUP
+		else
+		{
+			shortenF(pad1, pad2, true, '1');
+		}
+	}
+
+
+
+
 }
 
 
 // spawns only if no player has the pUp ,
 //it's not yet spawned (prevent multi spawn) and depends on a random number generated (controls spawn rate)
-void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, char MODE,int mapNum,RectangleShape obsTop)
+void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& shorten, char MODE,int mapNum,RectangleShape obsTop)
 {
 	if (mapNum == 0 || mapNum == 3)
 	{
@@ -285,6 +391,16 @@ void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 			longate.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
 			longate.isSpawned = 1; //change spawned state
 		}
+
+
+		if (shorten.isActive == false && shorten.isSpawned == false && rand() % 10000 > 93 && MODE != 't')
+		{
+			shorten.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+			shorten.isSpawned = 1; //change spawned state
+		}
+
+
+
 
 		if (freeze.isActive == false && freeze.isSpawned == false && rand() % 10000 > 9995 && MODE != 't')
 		{
@@ -316,6 +432,13 @@ void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 			longate.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
 			longate.isSpawned = 1; //change spawned state
 		}
+
+		if (shorten.isActive == false && shorten.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			shorten.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 200 + (rand() % (GAMEHEIGHT - 400))); //random position for spawn
+			shorten.isSpawned = 1; //change spawned state
+		}
+
 
 		if (freeze.isActive == false && freeze.isSpawned == false && rand() % 10000 > 9995 && MODE != 't')
 		{
@@ -352,6 +475,17 @@ void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 			}
 			
 		}
+
+		if (shorten.isActive == false && shorten.isSpawned == false && rand() % 10000 > 9993 && MODE != 't')
+		{
+			if (!shorten.rect.getGlobalBounds().intersects(obsTop.getGlobalBounds()))
+			{
+				shorten.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
+				shorten.isSpawned = 1; //change spawned state
+			}
+		}
+
+
 
 		if (freeze.isActive == false && freeze.isSpawned == false && rand() % 10000 > 9995 && MODE != 't')
 		{
@@ -395,7 +529,7 @@ void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 }
 
 
-void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, PAD& pad1, PAD& pad2)
+void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invis, pUp& shorten, PAD& pad1, PAD& pad2)
 {
 	//ELONGATE
 	if (longate.isActive == true && longate.clock.getElapsedTime() > seconds(6))
@@ -403,6 +537,15 @@ void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp&
 		elongate(pad1, pad2, false, '1');
 		longate.isActive = 0; //pUp is no longer active
 	}
+
+	// Shorten 
+	if (shorten.isActive == true && shorten.clock.getElapsedTime() > seconds(6))
+	{
+		shortenF(pad1, pad2, false, '1');
+		shorten.isActive = 0;
+	}
+
+
 
 	//FREEZE
 	if (freeze.isActive == true && freeze.clock.getElapsedTime() > seconds(2))
@@ -466,7 +609,7 @@ void DeactivatePowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp&
 		if (pad1.isReverse) //if the player that has the pUp is p1  (logic could be changed later)
 		{
 			pad1.isReverse = 0;
-			pad2.rect.setFillColor(Color::White);
+			pad1.rect.setFillColor(Color::White);
 
 		}
 		else  //if the player that has the pUp is p2  (logic could be changed later)
