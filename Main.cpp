@@ -20,7 +20,7 @@ int main(void)
 	bool themePlaying = true;
 
 	//MODE(t for training, 2 for 2 player , a for ai)
-	char MODE ;
+	char MODE = 'a';
 
 	/// SFX ///
 	//searchSound
@@ -267,7 +267,8 @@ int main(void)
 
 
 	// States
-
+   bool mapKeys = true;
+ 
 	// Keyboard buttons
 	bool W = false, S = false;
 	bool Up = false, Down = false;
@@ -277,8 +278,8 @@ int main(void)
 	RectangleShape obstacleTop, obstacleBot;
 	
 
-
-
+	mapNum = USER_SETTINGS[1];
+	setSelectedMap();
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
@@ -286,6 +287,8 @@ int main(void)
 
 	while (window.isOpen())
 	{
+
+	
 		pos_Mouse = Mouse::getPosition(window);
 		// EVENTS
 		//searchEvents
@@ -326,9 +329,8 @@ int main(void)
 			//Pause Menu Events/Sound
 			if (pause)
 			{
-				/////// to navigate in pause menu
-				mouse_navigator(pMenu, pauseItems, 0.0083, window, 4);
-				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased)
+				
+				if (event.type == Event::KeyReleased)
 				{
 					//function contains switch statment
 					pauseEvents(event, pMenu, pauseItems, whenreturn_detector, whenpressed_detector, background, theme, pause, opt, getPlayerName, play, men, musicSwitch);
@@ -346,15 +348,30 @@ int main(void)
 			///// maps Events ////////////
 			if (maps) {
 				
+
+				if (Keyboard::isKeyPressed(Keyboard::Up) && !mapKeys)
+					mapKeys = true;
+				if (Keyboard::isKeyPressed(Keyboard::Down) && mapKeys)
+					mapKeys = false;
+
+
 				/// here you will but the events function and other related functions "badr"  as the following wa as you like brdo ////////
-				if (Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[right_map]))
+				if (
+					(Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[right_map]))
+					||
+					(Keyboard::isKeyPressed(Keyboard::Right) &&mapKeys)
+					)
 				{
 					for (int i = 0; i < 4; i++)
 						setState(maps_rect[i], true, i);
 					
 					
 				}
-				else if (Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[left_map]))
+				else if (
+					(Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[left_map]))
+					||
+					(Keyboard::isKeyPressed(Keyboard::Left) && mapKeys)
+					)
 				{
 					for (int i = 0; i < 4; i++)
 						setState(maps_rect[i], false, i);
@@ -366,7 +383,7 @@ int main(void)
 				}
 				
 			}
-			if (mode_is) {
+			if (mode_is && !mapKeys) {
 				if (event.type == Event::KeyReleased) {
 					modesEvents(modes_s, modesItems, play, musicSwitch, theme, background, whenpressed_detector, MODE, window);
 				}
@@ -374,10 +391,8 @@ int main(void)
 
 			//Main Menu Events/Sound
 			if (men) {
-				//// to navigate in main menu
-				mouse_navigator(mainMenu, menuItems, 0.0116, window, 7);
 				//Event
-				if (event.type == Event::KeyReleased || event.type == Event::MouseButtonReleased) {
+				if (event.type == Event::KeyReleased) {
 					//Navigation
 					//function contains switch statment
 					mainmenuEvents(mainMenu, menuItems, mode_is,maps,play, musicSwitch, theme, background, getPlayerName, men, whenpressed_detector, MODE, opt, leader, window, USER_SETTINGS);
@@ -429,6 +444,26 @@ int main(void)
 		/// LOGIC ///
 
 
+		
+
+		cout << maps_rect[0].getPosition().x << endl;
+		if (times)
+		{
+			for (int i = 0; i < 4; i++)
+				setState(maps_rect[i], dir, i);
+
+			for (int i = 0; i < 4; i++)
+			{
+				Trans(maps_rect[i], i);
+			}
+			if (finished == 4)
+			{
+				times--;
+				finished = 0;
+			}
+		}
+		
+
 		if (maps)
 		{
 
@@ -437,7 +472,7 @@ int main(void)
 				Trans(maps_rect[i], i);
 			}
 			USER_SETTINGS[1] = mapNum;
-			cout << mapNum <<endl;
+			
 		}
 
 		//Handling player naming
@@ -724,19 +759,10 @@ int main(void)
 		else
 		{
 			////////// menu background texture ///////////////////
-			if (time.getElapsedTime().asSeconds() > 0 ) {
-				window.draw(menub);
-				seconds(2);
-
-			}
-			if (time.getElapsedTime().asSeconds() > 3 ) {
-				time.restart();
-			}
-
-			if (time.getElapsedTime().asSeconds() > 1 ) {
-				window.draw(menu2);
-
-			}
+			
+			window.draw(menub);
+			
+			
 
 
 		if (getPlayerName)

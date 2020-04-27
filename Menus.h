@@ -320,6 +320,7 @@ bool rtl_1[4] = {};
 bool rtl_2[4] = {};
 bool rtl_3[4] = {};
 bool mtr[4] = {};
+int  finished = 0;
 // to load the resources once
 bool isDone = false;
 // positions of the maps
@@ -337,6 +338,26 @@ double scaleU[4] = { 1,1.75,1,.25 };
 Texture tex_maps[4];
 // maps
 RectangleShape maps_rect[4];
+int times = 0;
+bool dir = false;
+void setSelectedMap()
+{
+	if (mapNum == 0)
+	{
+		times = 1;
+		dir = true;
+		back = 0;
+	}
+	else if (mapNum == 2)
+	{
+		times = 1;
+		dir = false;
+	}
+	else if (mapNum == 3)
+	{
+		times = 2;
+	}
+}
 // to set the Trans for the maps
 void setState(RectangleShape& body,bool  dir,int i)
 {
@@ -393,6 +414,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x >= poses[1])
 			{
 				ltr_1[i] = false;
+				finished++;
 				mapNum = i;
 			}
 
@@ -409,6 +431,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x >= poses[2])
 			{
 				ltr_2[i] = false;
+				finished++;
 				right_map = i;
 			}
 
@@ -429,7 +452,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x <= poses[1])
 			{
 				ltr_3[i] = false;
-				
+				finished++;
 			}
 
 		}
@@ -446,6 +469,7 @@ void Trans(RectangleShape& body,int i)
 			{
 				mtl[i] = false;
 				left_map = i;
+				finished++;
 			}
 
 		}
@@ -462,6 +486,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x <= poses[1])
 			{
 				rtl_3[i] = false;
+				finished++;
 				mapNum = i;
 			}
 
@@ -477,6 +502,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x <= poses[0])
 			{
 				rtl_2[i] = false;
+				finished++;
 				left_map = i;
 			}
 
@@ -496,6 +522,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x >= poses[1])
 			{
 				rtl_1[i] = false;
+				finished++;
 
 			}
 
@@ -512,6 +539,7 @@ void Trans(RectangleShape& body,int i)
 			if (body.getPosition().x >= poses[2])
 			{
 				mtr[i] = false;
+				finished++;
 				right_map = i;
 			}
 		}
@@ -533,9 +561,12 @@ void DrawMapMenu(RenderWindow& window)
 			maps_rect[i].setOrigin(maps_rect[i].getSize() / 2.f);
 			maps_rect[i].setTexture(&tex_maps[i]);
 			maps_rect[i].setScale(scaleU[i], scaleU[i]);
+	
 		}
 		isDone =true;
+		
 	}
+	
 	//window.clear(Color(150,150,150));
 	window.draw(maps_rect[back]);
 	window.draw(maps_rect[backback]);
@@ -661,20 +692,20 @@ void modes_display(MENU& mode, RectangleShape text[], int width, int height)
 	texture_single.loadFromFile("resources/menu tex/singleButton.png");
 	text[0].setSize(Vector2f(100.0f, 50.0f));
 	text[0].setTexture(&texture_single);
-	text[0].setFillColor(sf::Color::White);
+	text[0].setFillColor(sf::Color::Black);
 	text[0].setPosition(sf::Vector2f((width / (2+1)*1)-50, height -100));
 
 	texture_multi.loadFromFile("resources/menu tex/multiButton.png");
 	text[1].setSize(Vector2f(100.0f, 50.0f));
 	text[1].setTexture(&texture_multi);
-	text[1].setFillColor(sf::Color::White);
+	text[1].setFillColor(sf::Color::Black);
 	text[1].setPosition(sf::Vector2f((width / (2+1)*2)-50, height - 100));
 
 	mode.selectedItemIndex = 0;
 
 	////when opening the game
 	if (mode.selectedItemIndex == 0) {
-		text[0].setFillColor(sf::Color::Black);
+		text[0].setFillColor(sf::Color::White);
 		
 	}
 }
@@ -720,9 +751,9 @@ void moveleft(MENU& menu, int noOfItems, RectangleShape text[])
 	if (menu.selectedItemIndex - 1 >= 0)
 	{
 
-		text[menu.selectedItemIndex].setFillColor(sf::Color::White);
-		menu.selectedItemIndex--;
 		text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
+		menu.selectedItemIndex--;
+		text[menu.selectedItemIndex].setFillColor(sf::Color::White);
 	    menu.switching.play();
 		
 	}
@@ -734,32 +765,12 @@ void moveright(MENU& menu, RectangleShape text[], int noOfItems)
 {
 	if (menu.selectedItemIndex + 1 < noOfItems)
 	{
-		text[menu.selectedItemIndex].setFillColor(sf::Color::White);
+		text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
 		menu.selectedItemIndex++;
-	    text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
+	    text[menu.selectedItemIndex].setFillColor(sf::Color::White);
 	    menu.switching.play();
 	}
 
 	
 
-}
-//////////////////////////// using mouse to navigate in menus ////////////////////////////////////
-void mouse_navigator(MENU& menu, RectangleShape text[], double noIndex, Window& window, int no)
-{
-
-	/////////////// detection of position of mouse ////////////////////
-	pos_Mouse = Mouse::getPosition(window);
-	/////equation to detect the index+1 //////////////
-	int texy = (pos_Mouse.y * (noIndex));
-	/*
-				 ...... index changer ................
-																					 */
-	if ((pos_Mouse.y >= 90 && pos_Mouse.y <= 510) && (pos_Mouse.x >= 300 && pos_Mouse.x <= 500)) {
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
-		text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
-		menu.selectedItemIndex = texy - 1;
-		text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-		text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
-		menu.switching.play();
-	}
 }

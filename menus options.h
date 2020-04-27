@@ -383,25 +383,13 @@ void modesEvents(MENU& mode, RectangleShape modesItems[], bool& play, bool& musi
 	{
 	case Keyboard::Left:
 		moveleft(mode, 2, modesItems);
+		MODE = 'a';
 		break;
 
 	case Keyboard::Right:
 		moveright(mode, modesItems, 2);
+		MODE = '2';
 		break;
-
-	case Keyboard::Return:
-		//main menu orders....
-		switch (mode.selectedItemIndex)
-		{
-		case 0:
-			MODE = 'a';
-			break;
-		case 1:
-			MODE = '2';
-			break;
-		}
-		break;
-
 	}
 
 
