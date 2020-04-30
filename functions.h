@@ -727,32 +727,39 @@ bool isColliding(BALL& ball, RectangleShape& shape)
 	bool return_value = false;
 	// From top
 	if (
-		(ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		// to apply collision when only the ball or some of it is touching the upper side of the shape
+		ball.circle.getPosition().x +ballRadius  >= shape.getPosition().x - shape.getSize().x/2.f 
 		&&
+		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x/2.f
+		&&
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y /2.f
+		&& 
+		// to check that the ball is at upper side of the shape's orgin
 		ball.circle.getPosition().y + ballRadius < shape.getPosition().y
-		&&
-		ball.circle.getPosition().x + ballRadius <= shape.getPosition().x + shape.getSize().x / 2
-		&&
-		ball.circle.getPosition().x - ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
-		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
+		ball.circle.setPosition(ball.circle.getPosition().x ,shape.getPosition().y - ballRadius - shape.getSize().y / 2 - 0.5f);
 		cout << "TOP" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
 	}
 	// From Bottom
 	if (
-		(ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
+		// to apply collision when only the ball or some of it is touching the down side of the shape
+		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2.f
 		&&
+		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2.f
+		&&
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2.f
+		&&
+		// to check that the ball is at down side of the shape's orgin
 		ball.circle.getPosition().y - ballRadius > shape.getPosition().y
-		&&
-		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
-		&&
-		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
-		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
+		
+		ball.circle.setPosition(ball.circle.getPosition().x, shape.getPosition().y + ballRadius + shape.getSize().y / 2 + 0.5f);
 		cout << "BOT" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;

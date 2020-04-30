@@ -333,23 +333,25 @@ void VolumeChanger(RenderWindow& window)
 		)
 	{
 		if (
-			pos_Mouse.x <= bar.getPosition().x + bar.getSize().x / 2.f
+			pos_Mouse.x <= bar.getPosition().x + bar.getSize().x / 2.f - 50.f
 			&&
-			pos_Mouse.x >= bar.getPosition().x - bar.getSize().x / 2.f
+			pos_Mouse.x >= bar.getPosition().x - bar.getSize().x / 2.f  + 50.f
 			)
 		{
+			
 			vol_changer.setPosition(pos_Mouse.x, vol_changer.getPosition().y);
 		}
-		else if (pos_Mouse.x > bar.getPosition().x + bar.getSize().x / 2.f)
+		else if (pos_Mouse.x > bar.getPosition().x + bar.getSize().x / 2.f - 50.f)
 		{
-			vol_changer.setPosition(bar.getPosition().x + bar.getSize().x / 2.f, vol_changer.getPosition().y);
+			
+			vol_changer.setPosition(bar.getPosition().x + bar.getSize().x / 2.f - 50.f, vol_changer.getPosition().y);
 		}
-		else if (pos_Mouse.x < bar.getPosition().x - bar.getSize().x / 2.f)
+		else if (pos_Mouse.x < bar.getPosition().x - bar.getSize().x / 2.f + 50.f)
 		{
-			vol_changer.setPosition(bar.getPosition().x - bar.getSize().x / 2.f, vol_changer.getPosition().y);
+			vol_changer.setPosition(bar.getPosition().x - bar.getSize().x / 2.f + 50.f, vol_changer.getPosition().y);
 		}
-		VolumeValue = (vol_changer.getPosition().x - (bar.getPosition().x - bar.getSize().x / 2.f));
-		VolumeValue /= 6;
+		VolumeValue = (vol_changer.getPosition().x - (bar.getPosition().x - bar.getSize().x / 2.f + 50.f ));
+		VolumeValue /= 3;
 		pos_volumeChanger = vol_changer.getPosition();
 		window.draw(vol_changer);
 	}
@@ -360,9 +362,21 @@ void ChangeVolumebyClick(RenderWindow& window)
 	pos_Mouse = Mouse::getPosition(window);
 	if (IsMouseIn(bar) && Mouse::isButtonPressed(Mouse::Left))
 	{
-		vol_changer.setPosition(pos_Mouse.x, vol_changer.getPosition().y);
-		VolumeValue = (vol_changer.getPosition().x - (bar.getPosition().x - bar.getSize().x / 2.f));
-		VolumeValue /= 6;
+		if (pos_Mouse.x > bar.getPosition().x + bar.getSize().x / 2.f - 50.f)
+		{
+
+			vol_changer.setPosition(bar.getPosition().x + bar.getSize().x / 2.f - 50.f, vol_changer.getPosition().y);
+		}
+		else if (pos_Mouse.x < bar.getPosition().x - bar.getSize().x / 2.f + 50.f)
+		{
+			vol_changer.setPosition(bar.getPosition().x - bar.getSize().x / 2.f + 50.f, vol_changer.getPosition().y);
+		}
+		else
+		{
+			vol_changer.setPosition(pos_Mouse.x, vol_changer.getPosition().y);
+		}
+		VolumeValue = (vol_changer.getPosition().x - (bar.getPosition().x - bar.getSize().x / 2.f + 50.f));
+		VolumeValue /= 3;
 		pos_volumeChanger = vol_changer.getPosition();
 		window.draw(vol_changer);
 	}
