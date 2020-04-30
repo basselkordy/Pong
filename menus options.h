@@ -273,7 +273,7 @@ void mainmenuEvents(MENU& mainMenu, RectangleShape mainItems[],bool& mode_is,boo
 				play = false;
 				men = false;
 				whenpressed_detector.play();
-				MODE = '2';
+				MODE = 'a';
 				///// this to control drawing your menu ///////////////
 				maps = true;
 				mode_is = true;
@@ -391,7 +391,4 @@ void modesEvents(MENU& mode, RectangleShape modesItems[], bool& play, bool& musi
 		MODE = '2';
 		break;
 	}
-
-
-
 }

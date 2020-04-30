@@ -11,14 +11,26 @@ using namespace sf;
 using namespace std;
 
 
-// Elements respectivly: Theme, Map, Mode
-char USER_SETTINGS[3];
-
 int main(void)
 {
 	LOAD_USER_SETTINGS(USER_SETTINGS);	
+	choosenTheme = USER_SETTINGS[0];
+	switch (choosenTheme)
+	{
+	case 'h':
+		place = 0;
+		break;
+	case 'f':
+		place = 1;
+		break;
+	case 'i':
+		place = 2;
+		break;
+	case 'c':
+		place = 3;
+		break;
+	}
 	bool themePlaying = true;
-
 	//MODE(t for training, 2 for 2 player , a for ai)
 	char MODE = 'a';
 
@@ -303,7 +315,7 @@ int main(void)
 				return 0;
 			}
 
-			if (opt)
+			if (opt && !play)
 			{
 				if (Keyboard::isKeyPressed(Keyboard::Right))
 				{
@@ -318,7 +330,7 @@ int main(void)
 				place--;
 					//cout << place << '\n';
 				}
-				ChangeVolumebyClick(window);
+			
 				SubmitTheme();
 			}
 
@@ -342,6 +354,7 @@ int main(void)
 			if (opt)
 			{
 				VolumeChanger(window);
+				ChangeVolumebyClick(window);
 				theme.setVolume(VolumeValue);
 			}
 
@@ -821,7 +834,7 @@ int main(void)
 
 		if (opt)
 		{
-			SelectTheme();
+			SelectTheme(play);
 			// To See which of the themes is choosen
 			for (int x = 0; x < 4; x++)
 			{

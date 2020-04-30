@@ -8,11 +8,13 @@ using namespace std;
 
 
 //////////////////////////////Option menus//////////////////////////////
-
+// Elements respectivly: Theme, Map, Mode
+char USER_SETTINGS[3];
+//indicate theme
+char choosenTheme;
 // to Control the height that theme goes to
 #define PADDING 15.f
 #define VOLRADIUS 20.f
-char c = 'c'; //indicate theme
 // Size of The Themes
 Vector2f Theme_size(100,100);
 
@@ -64,7 +66,10 @@ Vector2i pos_Mouse;
 	bool isChoosen[4] = {};
 	//  to make sure that we only call theme change one time after choosing one
 	bool  done = false;
+	// to track the choosen theme h = 0 , f = 1 , i  = 2 , c = 3
 	int place = 3;
+	// to make at least one theme choosen
+	bool ThemeCheck = true;
 
 /*
 		FUNCTIONS
@@ -117,7 +122,7 @@ void SubmitTheme()
 	}
 }
 // To Select the Theme after the left Mouse button is is Pressed
-void SelectTheme()
+void SelectTheme(bool inPause)
 {
 	themes[0] = hell_theme;
 	themes[1] = forest_theme;
@@ -125,11 +130,12 @@ void SelectTheme()
 	themes[3] = classic_theme;
 	for (int i = 0; i < 4; i++)
 	{
-		if (IsMouseIn(themes[i]))
+		if (IsMouseIn(themes[i]) && !inPause)
 			onHold[i] = true;
 		else
 			onHold[i] = false;
 
+		
 		onHold[place] = true;
 
 		// Checks if any theme is choosen in order not to choose or modify the position of the others
@@ -143,19 +149,21 @@ void SelectTheme()
 					Steps[i]++;
 				}
 			}
-			else
+			else if (Steps[i] > 0)
 			{
-				if (Steps[i] > 0)
-				{
-					themes[i].setPosition(themes[i].getPosition().x, themes[i].getPosition().y + 1.f);
-					Steps[i]--;
-				}
+				themes[i].setPosition(themes[i].getPosition().x, themes[i].getPosition().y + 1.f);
+				Steps[i]--;
 			}
 			// make an outline when the theme is ready to be choosen
 			if (Steps[i] == PADDING)
 			{
 				themes[i].setOutlineThickness(1);
 				themes[i].setOutlineColor(Color::White);
+				if (ThemeCheck)
+				{
+					isChoosen[i] = true;
+					ThemeCheck = false;
+				}
 			}
 			else
 			{
