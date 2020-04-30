@@ -31,6 +31,9 @@ Event event;
 // Structures
 struct PAD
 {
+	
+	int id;
+
 	// Width is constant
 	const int width = 20;
 
@@ -111,18 +114,37 @@ struct PAD
 	// to set the bounds change the constant PADDINGTOP & PADDINGBOTTOM
 	bool boundcheck()
 	{
-		if (rect.getPosition().y - length / 2 < PADDINGTOP)
+		if (id != 3)
 		{
-			rect.move(0, -velocity);
-			return true;
-		}
-		if (rect.getPosition().y + length / 2 > GAMEHEIGHT - PADDINGBOTTOM)
-		{
-			rect.move(0, -velocity);
-			return true;
-		}
-		return false;
+			if (rect.getPosition().y - length / 2 < PADDINGTOP)
+			{
+				rect.move(0, -velocity);
+				return true;
+			}
+			if (rect.getPosition().y + length / 2 > GAMEHEIGHT - PADDINGBOTTOM)
+			{
+				rect.move(0, -velocity);
+				return true;
+			}
+			return false;
 
+		}
+		else
+		{
+			if (rect.getPosition().y - length / 2 < PADDINGTOP + 50)
+			{
+				rect.move(0, -velocity);
+				return true;
+			}
+			if (rect.getPosition().y + length / 2 > GAMEHEIGHT - PADDINGBOTTOM -50)
+			{
+				rect.move(0, -velocity);
+				return true;
+			}
+			return false;
+
+		}
+		
 	}
 };
 
@@ -138,7 +160,7 @@ struct BALL
 
 	// Multiplies by 2 every 5 seconds and resets when one of the players scores
 	int added_velocity = 0;
-	Clock clock;
+	Clock clock, Collisionclock;
 	void gain_velocity(void)
 	{
 		Time t = clock.getElapsedTime();
@@ -461,7 +483,7 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 	bool return_value = false;
 	if (
 		// to check if the ball has gone into the shape after moving
-		ball.circle.getPosition().x + ballRadius > shape.getPosition().x - shape.getSize().x / 2
+		(ball.circle.getPosition().x + ballRadius > shape.getPosition().x - shape.getSize().x / 2
 		&&
 		// to check that the ball is at right side of the shape's orgin
 		ball.circle.getPosition().x + ballRadius < shape.getPosition().x
@@ -469,7 +491,9 @@ bool isCollidingFromLeft(BALL& ball, RectangleShape& shape)
 		// to apply collision when only the ball or some of it is touching the left side of the shape
 		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
-		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2)
+		//||
+		///ball.circle.getGlobalBounds().intersects(shape.getGlobalBounds())
 		)
 	{
 		return_value = true;
@@ -489,7 +513,7 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 	bool return_value = false;
 	if (
 		// to check if the ball has gone into the shape after moving
-		ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
+		(ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
 		&&
 		// to check that the ball is at left side of the shape's orgin
 		ball.circle.getPosition().x - ballRadius > shape.getPosition().x
@@ -497,10 +521,9 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape, bool up, bool down,
 		// to apply collision when only the ball or some of it is touching the left side of the shape
 		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
-		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2)
 		||
 		ball.circle.getGlobalBounds().intersects(shape.getGlobalBounds())
-
 		)
 	{
 		return_value = true;
@@ -694,7 +717,7 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 	bool return_value = false;
 	if (
 		// to check if the ball has gone into the shape after moving
-		ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
+		(ball.circle.getPosition().x - ballRadius < shape.getPosition().x + shape.getSize().x / 2
 		&&
 		// to check that the ball is at left side of the shape's orgin
 		ball.circle.getPosition().x - ballRadius > shape.getPosition().x
@@ -702,7 +725,9 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 		// to apply collision when only the ball or some of it is touching the left side of the shape
 		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
-		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2)
+		//||
+		//ball.circle.getGlobalBounds().intersects(shape.getGlobalBounds())
 		)
 	{
 		return_value = true;
@@ -727,39 +752,32 @@ bool isColliding(BALL& ball, RectangleShape& shape)
 	bool return_value = false;
 	// From top
 	if (
-		// to apply collision when only the ball or some of it is touching the upper side of the shape
-		ball.circle.getPosition().x +ballRadius  >= shape.getPosition().x - shape.getSize().x/2.f 
+		(ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
 		&&
-		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x/2.f
-		&&
-		// to check if the ball has gone into the shape after moving
-		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y /2.f
-		&& 
-		// to check that the ball is at upper side of the shape's orgin
 		ball.circle.getPosition().y + ballRadius < shape.getPosition().y
+		&&
+		ball.circle.getPosition().x + ballRadius <= shape.getPosition().x + shape.getSize().x / 2
+		&&
+		ball.circle.getPosition().x - ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
-		ball.circle.setPosition(ball.circle.getPosition().x ,shape.getPosition().y - ballRadius - shape.getSize().y / 2 - 0.5f);
+		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
 		cout << "TOP" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
 	}
 	// From Bottom
 	if (
-		// to apply collision when only the ball or some of it is touching the down side of the shape
-		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2.f
+		(ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
 		&&
-		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2.f
-		&&
-		// to check if the ball has gone into the shape after moving
-		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2.f
-		&&
-		// to check that the ball is at down side of the shape's orgin
 		ball.circle.getPosition().y - ballRadius > shape.getPosition().y
+		&&
+		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
+		&&
+		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
-		
-		ball.circle.setPosition(ball.circle.getPosition().x, shape.getPosition().y + ballRadius + shape.getSize().y / 2 + 0.5f);
+		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
 		cout << "BOT" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
@@ -895,7 +913,7 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 		pad.loadFromFile("resources/sfx/classic/pad.wav");
 		wall.loadFromFile("resources/sfx/classic/wall.wav");
 		score.loadFromFile("resources/sfx/classic/score.wav");
-
+		background.loadFromFile("dump");
 	}
 
 	//Set files
@@ -1114,14 +1132,37 @@ void map_collision(BALL& ball, RectangleShape& obsTop, RectangleShape& obsBot, P
 		{
 			pad4.velocity *= -1;
 		}
-		if (!isCollidingFromLeft(ball, pad3.rect) && !isCollidingFromRight(ball, pad3.rect))
+		int time = 100;
+		if (ball.Collisionclock.getElapsedTime().asMilliseconds() >= time && isCollidingFromRight(ball, pad3.rect))
 		{
-			isColliding(ball, pad3.rect);
+			ball.Collisionclock.restart().asMilliseconds();				
 		}
-		if (!isCollidingFromLeft(ball, pad4.rect) && !isCollidingFromRight(ball, pad4.rect))
+
+		if (ball.Collisionclock.getElapsedTime().asMilliseconds() >= time && isCollidingFromLeft(ball, pad3.rect))
 		{
-			isColliding(ball, pad4.rect);
+			ball.Collisionclock.restart().asMilliseconds();
 		}
+
+		if (ball.Collisionclock.getElapsedTime().asMilliseconds() >= time && isColliding(ball, pad3.rect))		
+		{
+			ball.Collisionclock.restart().asMilliseconds();
+		}
+
+
+		if (ball.Collisionclock.getElapsedTime().asMilliseconds() >= time && isCollidingFromRight(ball, pad4.rect))
+		{
+			ball.Collisionclock.restart().asMilliseconds();
+		}
+		if (ball.Collisionclock.getElapsedTime().asMilliseconds() >= time && isCollidingFromLeft(ball, pad4.rect))
+		{
+			ball.Collisionclock.restart().asMilliseconds();
+		}
+
+		if (ball.Collisionclock.getElapsedTime().asMilliseconds() >= time && isColliding(ball, pad4.rect))
+		{
+			ball.Collisionclock.restart().asMilliseconds();			
+		}
+
 	}
 }
 

@@ -225,11 +225,13 @@ int main(void)
 	// Pads
 	PAD pad1;
 	pad1.ResetPad(1,MODE);
-
+	pad1.id = 1;
 	PAD pad2;
 	pad2.ResetPad(2,MODE);
-
+	pad2.id = 2;
 	PAD pad3, pad4;
+	pad3.id = 3;
+	pad4.id = 3;
 
 	// Ball
 	BALL ball;
@@ -627,8 +629,10 @@ int main(void)
 
 			// Ball Movement
 			ball.circle.move(ball.xVelocity, ball.yVelocity);
-			if (mapNum == 0 || MODE == 't')
+			if (mapNum != 3 || MODE == 't')
+			{
 				ball.gain_velocity();
+			}
 
 			//Sound / Collisions
 			// Ball hit wall sound
