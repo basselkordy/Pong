@@ -299,6 +299,21 @@ int main(void)
 	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, obstacleTop, obstacleBot , obsTopTex, obsBotTex);
 	
 	choosing_arrow.setPosition(40, 280);
+
+	/////////////////////////////////////////////////////////////////////////
+	RectangleShape pause_part;
+	RectangleShape menu_part;
+	Texture tex_partpause;
+	Texture tex_partmenu;
+	tex_partpause.loadFromFile("resources/menu tex/for game pause.png");
+	tex_partmenu.loadFromFile("resources/menu tex/for game menu.png");
+	pause_part.setPosition(300, 100);
+	menu_part.setPosition(300, 50);
+	pause_part.setSize(Vector2f(200, 420));
+	menu_part.setSize(Vector2f(200, 440));
+	pause_part.setTexture(&tex_partpause);
+	menu_part.setTexture(&tex_partmenu);
+
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
 
@@ -711,7 +726,7 @@ int main(void)
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
 					window.clear(Color::Black);
-					DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
 					DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 					window.display();
 					play = false;
@@ -747,7 +762,7 @@ int main(void)
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
 					window.clear(Color::Black);
-					DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
 					DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 					window.display();
 					play = false;
@@ -757,22 +772,24 @@ int main(void)
 		}
 
 		//Determing the end point of game
-		if (scorep1 == 10)
-		{
-			p1win_detector = 1;
-			gameOver(playerName1);
-			addToLog(playerName1, playerName2);
-			play = false;
-			themePlaying = false;
+		if (MODE != 't') {
+			if (scorep1 == 10)
+			{
+				p1win_detector = 1;
+				gameOver(playerName1);
+				addToLog(playerName1, playerName2);
+				play = false;
+				themePlaying = false;
 
-		}
-		else if (scorep2 == 10)
-		{
-			p2win_detector = 1;
-			gameOver(playerName2);
-			addToLog(playerName2, playerName1);
-			play = false;
-			themePlaying = false;
+			}
+			else if (scorep2 == 10)
+			{
+				p2win_detector = 1;
+				gameOver(playerName2);
+				addToLog(playerName2, playerName1);
+				play = false;
+				themePlaying = false;
+			}
 		}
 		// reset the score of p1 and p2
 		if (!play) {
@@ -793,13 +810,16 @@ int main(void)
 		
 		if (play)
 		{
-			 DrawGame(window, backg, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
+			 DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
 			 DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 			 men = false;
 
-			//rendering pause window(draw pause window if option window is not opened)
-			 if (pause && !opt)
+			 //rendering pause window(draw pause window if option window is not opened)
+			 if (pause && !opt) {
+				 window.draw(pause_part);
 				 drawMenu(window, pauseItems, 3);
+			 }
+
 
 			if (opt) {
 				DrawOptionMenu(window);
@@ -866,10 +886,13 @@ int main(void)
 			}
 
 			// Rendering main menu
+
 			if (men) {
+				window.draw(menu_part);
 				drawMenu(window, menuItems, 5);
 
 			}
+
 			if (leader)
 			{
 				viewLeaderboard(window);

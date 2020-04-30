@@ -839,8 +839,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		backgT.loadFromFile("resources/vfx/hell/hellbackg3.png");
 
-		obsTopTex.loadFromFile("resources/vfx/hell/fireMapTexture.png");
-		obsBotTex.loadFromFile("resources/vfx/hell/fireMapTexture.png");
+		obsTopTex.loadFromFile("resources/vfx/hell map.png");
+		obsBotTex.loadFromFile("resources/vfx/hell map.png");
+
 
 
 		// sfx
@@ -865,6 +866,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		backgT.loadFromFile("resources/vfx/ice/icebackglight.png");
 
+		obsTopTex.loadFromFile("resources/vfx/ice map .png");
+		obsBotTex.loadFromFile("resources/vfx/ice map .png");
+
 
 
 		// sfx
@@ -888,6 +892,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		backgT.loadFromFile("resources/vfx/forest/forestbackg.png");
 
+		obsTopTex.loadFromFile("resources/vfx/tex map .png");
+		obsBotTex.loadFromFile("resources/vfx/tex map .png");
+
 
 
 		pad.loadFromFile("resources/sfx/forest/pad.wav");
@@ -908,6 +915,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		ball.texture.loadFromFile("resources/vfx/classic/classicball.png");
 
+		obsTopTex.loadFromFile("resources/vfx/dump.png");
+		obsBotTex.loadFromFile("resources/vfx/dump.png");
 		
 
 		pad.loadFromFile("resources/sfx/classic/pad.wav");
@@ -988,7 +997,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 }
 
 // Takes references to everything drawn in game and handles their drawing conditions
-void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
 {
 
 	// Background
@@ -1018,11 +1027,13 @@ void DrawGame(RenderWindow& window,RectangleShape& backg, PAD& pad1, PAD& pad2, 
 		window.draw(pad3.rect);
 		window.draw(pad4.rect);
 	}
-	//draw score of player 1 
-	window.draw(lblscorep1);
+	if (MODE != 't'){
+		//draw score of player 1 
+		window.draw(lblscorep1);
 
-	//draw score of player 2
-	window.draw(lblscorep2);
+		//draw score of player 2
+		window.draw(lblscorep2);
+      }
 
 }
 
@@ -1035,13 +1046,13 @@ void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad
 	{
 		obsTop.setSize(Vector2f(200, 150));
 		obsTop.setOrigin(Vector2f(obsTop.getSize().x / 2, obsTop.getSize().y / 2));
-		obsTop.setPosition(Vector2f(400, (obsTop.getSize().y / 2)));
+		obsTop.setPosition(Vector2f(400, (obsTop.getSize().y / 2)-20));
 		//obsTop.setFillColor(Color::Red);
 		
 
 		obsBot.setSize(Vector2f(200, 150));
 		obsBot.setOrigin(Vector2f(obsBot.getSize().x / 2, obsBot.getSize().y / 2));
-		obsBot.setPosition(Vector2f(400, (600 - obsBot.getSize().y / 2)));
+		obsBot.setPosition(Vector2f(400, (600 - obsBot.getSize().y / 2)+20));
 		//obsBot.setFillColor(Color::Yellow);
 		
 	}
@@ -1050,7 +1061,7 @@ void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad
 		obsTop.setSize(Vector2f(50, 150));
 		obsTop.setOrigin(Vector2f(obsTop.getSize().x / 2, obsTop.getSize().y / 2));
 		obsTop.setPosition(Vector2f(400, 300));
-		obsTop.setFillColor(Color::Red);
+		//obsTop.setFillColor(Color::Red);
 	}
 	else if (mapnum == 3)
 	{
