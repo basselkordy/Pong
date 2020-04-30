@@ -7,6 +7,8 @@ using namespace sf;
 using namespace std;
 
 
+
+
 //////////////////////////////Option menus//////////////////////////////
 // Elements respectivly: Theme, Map, Mode
 char USER_SETTINGS[3];
@@ -23,32 +25,34 @@ Vector2i pos_Mouse;
 
 // scroll bar
 	// the modifier
-	CircleShape vol_changer;
+	RectangleShape vol_changer;
+	Texture volCircleTex;
 	// current Position of the vol_changers
-	Vector2f pos_volumeChanger(700, 350);
+	Vector2f pos_volumeChanger(550, 453);
 	// the bar
 	RectangleShape bar;
+	Texture volBarTex;
 	// Volume Value bar
 	RectangleShape VolumeValueBar;
-
+	
 
 // Themes
 	// Hell Theme
 	RectangleShape hell_theme;
 	Texture tex_hell;
-	Vector2f pos_hell(100, 200);
+	Vector2f pos_hell(100, 250);
 	// Forest Theme
 	RectangleShape forest_theme;
 	Texture tex_forest;
-	Vector2f pos_forest(300, 200);
+	Vector2f pos_forest(300, 250);
 	// Ice Theme
 	RectangleShape ice_theme;
 	Texture tex_ice;
-	Vector2f pos_ice(500, 200);
+	Vector2f pos_ice(500, 250);
 	// Classic Theme
 	RectangleShape classic_theme;
 	Texture tex_classic;
-	Vector2f pos_classic(700, 200);
+	Vector2f pos_classic(700, 250);
 	vector<RectangleShape> themes = { hell_theme,forest_theme,ice_theme, classic_theme};
 
 	// variables
@@ -71,6 +75,20 @@ Vector2i pos_Mouse;
 	// to make at least one theme choosen
 	bool ThemeCheck = true;
 
+//Texts
+
+	//Option menu texts
+	
+	RectangleShape optionHeader, volumeHeader, themeHeader;
+	Texture optionTex, volumeTex, themeTex;
+
+	//Map menu texts
+	
+	RectangleShape playHeader, mapHeader, modeHeader;
+	Texture playHeaderTex, mapHeaderTex, modeHeaderTex;
+
+
+	RectangleShape choosing_arrow;
 /*
 		FUNCTIONS
 */
@@ -209,24 +227,36 @@ void DrawOptionMenu(RenderWindow& window)
 		forest_theme.setTexture(&tex_forest);
 		ice_theme.setTexture(&tex_ice);
 		classic_theme.setTexture(&tex_classic);
+
 		// vol_changer Settings
-		vol_changer.setFillColor(Color(232, 90, 4));
-		vol_changer.setRadius(VOLRADIUS);
-		vol_changer.setOrigin(VOLRADIUS, VOLRADIUS);
+		volCircleTex.loadFromFile("resources/menu tex/volumeCircle.png");
+		vol_changer.setTexture(&volCircleTex);
+		vol_changer.setSize(Vector2f(25, 75));
+		vol_changer.setOrigin(vol_changer.getSize().x / 2.f, vol_changer.getSize().y / 2.f);
+
+		//vol_changer.setFillColor(Color(232, 90, 4));
+		//vol_changer.setRadius(VOLRADIUS);
+		//vol_changer.setOrigin(VOLRADIUS, VOLRADIUS);
+
 		///// bar Settings
-		bar.setSize(Vector2f(600, 40));
-		bar.setFillColor(Color(95, 77, 55));
+		volBarTex.loadFromFile("resources/menu tex/volumeBar.png");
+		bar.setTexture(&volBarTex);
+		bar.setSize(Vector2f(400, 200));
+		//bar.setFillColor(Color(95, 77, 55));
 		bar.setOrigin(bar.getSize() / 2.f);
-		bar.setPosition(400, 350);
+		bar.setPosition(400, 450);
+
 		// volume Value bar Settings
-		VolumeValueBar.setPosition(100, 350);
+		VolumeValueBar.setPosition(100, 450);
 		VolumeValueBar.setFillColor(Color(232, 164, 31));
 		VolumeValueBar.setOrigin(0, bar.getSize().y / 2.f);
+
 		///// Setting the Size
 		hell_theme.setSize(Theme_size);
 		forest_theme.setSize(Theme_size);
 		ice_theme.setSize(Theme_size);
 		classic_theme.setSize(Theme_size);
+
 		///// Setting the Origin
 		hell_theme.setOrigin(Theme_size / 2.f);
 		forest_theme.setOrigin(Theme_size / 2.f);
@@ -246,7 +276,25 @@ void DrawOptionMenu(RenderWindow& window)
 	VolumeValueBar.setSize(Vector2f(diff, bar.getSize().y));
 
 
+	//Headers
 
+	optionTex.loadFromFile("resources/menu tex/OptionButton.png");
+	optionHeader.setTexture(&optionTex);
+	optionHeader.setSize(Vector2f(200, 100));
+	optionHeader.setOrigin(optionHeader.getSize().x / 2, optionHeader.getSize().y / 2);
+	optionHeader.setPosition(GAMEWIDTH / 2, 50);
+
+	themeTex.loadFromFile("resources/menu tex/themeButton.png");
+	themeHeader.setTexture(&themeTex);
+	themeHeader.setSize(Vector2f(100, 50));
+	themeHeader.setOrigin(themeHeader.getSize().x / 2, themeHeader.getSize().y / 2);
+	themeHeader.setPosition(GAMEWIDTH / 2, 140);
+
+	volumeTex.loadFromFile("resources/menu tex/volumeButton.png");
+	volumeHeader.setTexture(&volumeTex);
+	volumeHeader.setSize(Vector2f(100, 50));
+	volumeHeader.setOrigin(volumeHeader.getSize().x / 2, volumeHeader.getSize().y / 2);
+	volumeHeader.setPosition(GAMEWIDTH / 2, 370);
 
 
 	///// The Rendering part
@@ -260,8 +308,11 @@ void DrawOptionMenu(RenderWindow& window)
 	window.draw(forest_theme);
 	window.draw(classic_theme);
 	window.draw(bar);
-	window.draw(VolumeValueBar);
+	//window.draw(VolumeValueBar);
 	window.draw(vol_changer);
+	window.draw(volumeHeader);
+	window.draw(themeHeader);
+	window.draw(optionHeader);
 
 
 }
@@ -552,19 +603,21 @@ void Trans(RectangleShape& body,int i)
 			}
 		}
 }
+
 // to draw the map menu
 void DrawMapMenu(RenderWindow& window)
 {
 	if(!isDone)
 	{
 		tex_maps[0].loadFromFile("resources/vfx/maps/_1.jpg");
+		
 		tex_maps[1].loadFromFile("resources/vfx/maps/_2.jpg");
 		tex_maps[2].loadFromFile("resources/vfx/maps/_3.jpg");
 		tex_maps[3].loadFromFile("resources/vfx/maps/_4.jpg");
 
 		for (int i = 0; i < 4; i++)
 		{
-			maps_rect[i].setPosition(currentpos_maps[i], 150);
+			maps_rect[i].setPosition(currentpos_maps[i], 280);
 			maps_rect[i].setSize(Vector2f(100, 100));
 			maps_rect[i].setOrigin(maps_rect[i].getSize() / 2.f);
 			maps_rect[i].setTexture(&tex_maps[i]);
@@ -576,6 +629,10 @@ void DrawMapMenu(RenderWindow& window)
 	}
 	
 	//window.clear(Color(150,150,150));
+    window.draw(playHeader);
+	window.draw(mapHeader);
+	window.draw(modeHeader);
+	window.draw(choosing_arrow);
 	window.draw(maps_rect[back]);
 	window.draw(maps_rect[backback]);
 
@@ -624,13 +681,13 @@ void setPauseMenu(MENU& pauseMenu, RectangleShape text[], int width, int height)
 	text[0].setFillColor(sf::Color::White);
 	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 1));
 
-	texture_option.loadFromFile("resources/menu tex/OptionButton.png");
+	texture_option.loadFromFile("resources/menu tex/PauseOptionButton.png");
 	text[1].setSize(Vector2f(100.0f, 50.0f));
 	text[1].setTexture(&texture_option);
 	text[1].setFillColor(sf::Color::White);
 	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 2));
 
-	texture_menu.loadFromFile("resources/menu tex/ExitButton.png");
+	texture_menu.loadFromFile("resources/menu tex/PauseExitButton.png");
 	text[2].setSize(Vector2f(100.0f, 50.0f));
 	text[2].setTexture(&texture_menu);
 	text[2].setFillColor(sf::Color::White);
@@ -690,23 +747,48 @@ void setMainMenu(MENU& mainMenu, RectangleShape text[], int width, int height)
 	}
 }
 
+
+
 void modes_display(MENU& mode, RectangleShape text[], int width, int height)
 {
 	//sound of switching
 	mode.switchingBuffer.loadFromFile("resources/sfx/main_menu/switch.wav");
 	mode.switching.setBuffer(mode.switchingBuffer);
 
+	font.loadFromFile("resources/fonts/ARCADECLASSIC.ttf");
+
+	playHeaderTex.loadFromFile("resources/menu tex/playButton.png");
+	playHeader.setTexture(&playHeaderTex);
+	playHeader.setSize(Vector2f(200, 100));
+	playHeader.setOrigin(playHeader.getSize().x / 2, playHeader.getSize().y / 2);
+	playHeader.setPosition(GAMEWIDTH / 2, 50);
+
+	mapHeaderTex.loadFromFile("resources/menu tex/mapButton.png");
+	mapHeader.setTexture(&mapHeaderTex);
+	mapHeader.setSize(Vector2f(100, 50));
+	mapHeader.setOrigin(mapHeader.getSize().x / 2, mapHeader.getSize().y / 2);
+	mapHeader.setPosition(GAMEWIDTH / 2, 140);
+
+	modeHeaderTex.loadFromFile("resources/menu tex/modeButton.png");
+	modeHeader.setTexture(&modeHeaderTex);
+	modeHeader.setSize(Vector2f(100, 50));
+	modeHeader.setOrigin(modeHeader.getSize().x / 2, modeHeader.getSize().y / 2);
+	modeHeader.setPosition(GAMEWIDTH / 2, 440);
+
+	choosing_arrow.setSize(Vector2f(50, 10));
+	choosing_arrow.setFillColor(Color::White);
+
 	
 	texture_single.loadFromFile("resources/menu tex/singleButton.png");
 	text[0].setSize(Vector2f(100.0f, 50.0f));
 	text[0].setTexture(&texture_single);
-	text[0].setFillColor(sf::Color::Black);
+	text[0].setFillColor(Color(92, 92, 92));
 	text[0].setPosition(sf::Vector2f((width / (2+1)*1)-50, height -100));
 
 	texture_multi.loadFromFile("resources/menu tex/multiButton.png");
 	text[1].setSize(Vector2f(100.0f, 50.0f));
 	text[1].setTexture(&texture_multi);
-	text[1].setFillColor(sf::Color::Black);
+	text[1].setFillColor(Color(92,92,92));
 	text[1].setPosition(sf::Vector2f((width / (2+1)*2)-50, height - 100));
 
 	mode.selectedItemIndex = 0;
@@ -716,6 +798,7 @@ void modes_display(MENU& mode, RectangleShape text[], int width, int height)
 		text[0].setFillColor(sf::Color::White);
 		
 	}
+	
 }
 
 //Menu Drawing
@@ -725,6 +808,7 @@ void drawMenu(RenderWindow& menuWindow, RectangleShape text[], int noOfItems)
 	{
 		menuWindow.draw(text[i]);
 	}
+	
 }
 
 void moveUp(MENU& menu, int noOfItems, RectangleShape text[], int no)
@@ -759,9 +843,9 @@ void moveleft(MENU& menu, int noOfItems, RectangleShape text[])
 	if (menu.selectedItemIndex - 1 >= 0)
 	{
 
-		text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
+		text[menu.selectedItemIndex].setFillColor(Color(92, 92, 92));
 		menu.selectedItemIndex--;
-		text[menu.selectedItemIndex].setFillColor(sf::Color::White);
+		text[menu.selectedItemIndex].setFillColor(Color::White);
 	    menu.switching.play();
 		
 	}
@@ -773,7 +857,7 @@ void moveright(MENU& menu, RectangleShape text[], int noOfItems)
 {
 	if (menu.selectedItemIndex + 1 < noOfItems)
 	{
-		text[menu.selectedItemIndex].setFillColor(sf::Color::Black);
+		text[menu.selectedItemIndex].setFillColor(Color(92, 92, 92));
 		menu.selectedItemIndex++;
 	    text[menu.selectedItemIndex].setFillColor(sf::Color::White);
 	    menu.switching.play();

@@ -1,4 +1,4 @@
-// Header containing custom functions, includes, structs definitons, and the Event object
+// Headers containing custom functions, includes, structs definitons, and the Event object
 #include "functions.h"
 #include "leaderboard.h"
 #include "Menus.h"
@@ -147,7 +147,7 @@ int main(void)
 
 	//option font
 	Font font;
-	if (!font.loadFromFile("resources/fonts/Pacifico.ttf"))
+	if (!font.loadFromFile("resources/fonts/ARCADECLASSIC.ttf"))
 		return EXIT_FAILURE;
 
 	//option message
@@ -185,7 +185,7 @@ int main(void)
 	//Score
 	//font of score
 	sf::Font scorefont;
-	scorefont.loadFromFile("resources/fonts/Pacifico.ttf");
+	scorefont.loadFromFile("resources/fonts/ARCADECLASSIC.ttf");
 
 	// score of players
 	float scorep1 = 0;
@@ -210,7 +210,7 @@ int main(void)
 	//losing/wining message
 	//lw_font
 	Font lw_font;
-	lw_font.loadFromFile("resources/fonts/Youmurdererbb-pwoK.otf");
+	lw_font.loadFromFile("resources/fonts/ARCADECLASSIC.ttf");
 	//p1 winning message
 	Text pWin;
 	textInit(pWin, lw_font,'W');
@@ -275,7 +275,7 @@ int main(void)
 	RectangleShape backg;
 	backg.setSize(Vector2f(800.0, 600.0));
 
-   set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c);
+  
 
 
 	// States
@@ -288,11 +288,15 @@ int main(void)
 
 	//Map
 	RectangleShape obstacleTop, obstacleBot;
+	Texture obsTopTex,obsBotTex;
 	
 
 	mapNum = USER_SETTINGS[1];
 	setSelectedMap();
 
+	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, obstacleTop, obstacleBot , obsTopTex, obsBotTex);
+	
+	choosing_arrow.setPosition(40, 280);
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
 
@@ -357,7 +361,7 @@ int main(void)
 				ChangeVolumebyClick(window);
 				theme.setVolume(VolumeValue);
 			}
-
+			
 			///// maps Events ////////////
 			if (maps) {
 				
@@ -367,7 +371,20 @@ int main(void)
 				if (Keyboard::isKeyPressed(Keyboard::Down) && mapKeys)
 					mapKeys = false;
 
+				if (mapKeys)
+				{
+					choosing_arrow.setPosition(40, 280);
+					
 
+					
+				}
+				else
+				{
+					choosing_arrow.setPosition(40, GAMEHEIGHT - 80);
+					
+					
+				}
+				
 				/// here you will but the events function and other related functions "badr"  as the following wa as you like brdo ////////
 				if (
 					(Mouse::isButtonPressed(Mouse::Left) && IsMouseIn(maps_rect[right_map]))
@@ -419,11 +436,27 @@ int main(void)
 			{
 				if (MODE == 'a')
 				{
+					getNameBoxTex.loadFromFile("resources/menu tex/getPlayerName.png");
+					getNameBox.setTexture(&getNameBoxTex);
+					getNameBox.setSize(Vector2f(700, 100));
+					getNameBox.setOrigin(getNameBox.getSize().x / 2, getNameBox.getSize().y / 2);
+					getNameBox.setPosition(GAMEWIDTH / 2, 110);
+
+					textBoxTex.loadFromFile("resources/menu tex/textBox.png");
+					textBox.setTexture(&textBoxTex);
+					textBox.setSize(Vector2f(700, 105));
+					textBox.setOrigin(textBox.getSize().x / 2, textBox.getSize().y / 2);
+					textBox.setPosition(GAMEWIDTH / 2, 315);
+
 					if (!savePlayer1)
 					{
 						playerName1 = "AI";
 						playerText.setString(playerName1);
+						playerText.setOrigin(playerText.getGlobalBounds().width / 2, playerText.getGlobalBounds().height / 2);
+						playerText.setPosition(GAMEWIDTH / 2, -10);
+						playerText.setFillColor(Color::White);
 						savePlayer1 = true;
+						
 					}
 					else if (!savePlayer2)
 					{
@@ -443,6 +476,7 @@ int main(void)
 						//cout << playerName1 << playerName2 << endl;
 					}
 				}
+				
 			}
 
 			//the way that leads to main menu (dos backspace htrg3 llmenu mn ay 7eta)
@@ -459,7 +493,7 @@ int main(void)
 
 		
 
-		cout << maps_rect[0].getPosition().x << endl;
+		//cout << maps_rect[0].getPosition().x << endl;
 		if (times)
 		{
 			for (int i = 0; i < 4; i++)
@@ -492,6 +526,7 @@ int main(void)
 		if (!savePlayer1)
 		{
 			textInit(playerText, messagePlayerText, font, 1);
+
 		}
 		else if (!savePlayer2)
 		{
@@ -780,6 +815,8 @@ int main(void)
 
 		if (getPlayerName)
 		{
+			window.draw(textBox);
+			window.draw(getNameBox);
 			window.draw(messagePlayerText);
 			window.draw(playerText);
 		}
@@ -791,12 +828,13 @@ int main(void)
 				DrawMapMenu(window);
 				//window.clear();
 				drawMenu(window, modesItems, 2);
+				
 			}
 			
 			//rendering winning message
 			//p1 win
 			if (p1win_detector) {
-				pWin.setString(playerName1 + " wins");
+				pWin.setString(playerName1 + "   wins");
 
 				window.draw(pWin);
 				window.draw(option);
@@ -809,6 +847,9 @@ int main(void)
 				window.draw(pWin);
 				window.draw(option);
 			}
+			//sets origin of text to center for easy positioning (placed here because the string can't be empty for it to function properly)
+			pWin.setOrigin(pWin.getLocalBounds().width / 2.f, pWin.getLocalBounds().height / 2.f);
+			pWin.setPosition(GAMEWIDTH / 2, 200);
 
 
 			//render option window
@@ -840,7 +881,7 @@ int main(void)
 			{
 				if (Steps[x] == PADDING && isChoosen[x] && !done)
 				{
-					themeChange(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, scor, background_bfr,x, USER_SETTINGS);
+					themeChange(pad1, pad2, ball, backgT, backg, obstacleTop, obstacleBot, obsTopTex, obsBotTex, pad, wall, scor, background_bfr, c, scor, background_bfr,x, USER_SETTINGS);
 				}
 			}
 

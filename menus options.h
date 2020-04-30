@@ -1,26 +1,31 @@
 #pragma once
 
-void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
+
+
+RectangleShape getNameBox, textBox; 
+Texture getNameBoxTex, textBoxTex;
+
+void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg, RectangleShape& obsTop, RectangleShape& obsBot, Texture& obsTopTex, Texture& obsBotTex,
 	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr,int index, char USER_SETTINGS[3])
 {
 	switch (index)
 	{
 	case 0:
-		set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'h');
+		set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'h', obsTop, obsBot, obsTopTex, obsBotTex);
 		c = 'h';
 		break;
 		case 1:
-			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f');
+			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f', obsTop, obsBot, obsTopTex, obsBotTex);
 			c = 'f';
 
 			break;
 		case 2:
-			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i');
+			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i', obsTop, obsBot, obsTopTex, obsBotTex);
 			c = 'i';
 
 			break;
 		case 3:
-			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'c');
+			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'c', obsTop, obsBot, obsTopTex, obsBotTex);
 			c = 'c';
 
 	}
@@ -117,12 +122,13 @@ void textInit(Text& text, Font& font, ostringstream& ssScore, int player)
 //Initializes the options text
 void textInit(Text& option, Font& font)
 {
-
+	
 	option.setFont(font);
-	option.setCharacterSize(40);
-	option.setPosition(200.f, 425.f);
+	option.setCharacterSize(20);
 	option.setFillColor(Color::White);
-	option.setString("Press Backspace to return");
+	option.setString("Press  Backspace  to  return");
+	option.setOrigin(option.getGlobalBounds().width / 2.0, option.getGlobalBounds().height / 2.0);
+	option.setPosition(GAMEWIDTH / 2 , GAMEHEIGHT / 2 + 250);
 }
 
 //Initializes the player name and prompt message
@@ -130,20 +136,26 @@ void textInit(Text& playerText, Text& messagePlayerText, Font& font, int playerN
 {
 	playerText.setFont(font);
 	playerText.setCharacterSize(40);
-	playerText.setPosition(200.f, 425.f);
+	playerText.setOrigin(playerText.getGlobalBounds().width / 2, playerText.getGlobalBounds().height / 2);
+	playerText.setPosition(GAMEWIDTH / 2, 300);
 	playerText.setFillColor(Color::White);
 
 	messagePlayerText.setFont(font);
 	messagePlayerText.setCharacterSize(40);
-	messagePlayerText.setPosition(100.f, 100.f);
+	messagePlayerText.setOrigin(messagePlayerText.getGlobalBounds().width / 2, messagePlayerText.getGlobalBounds().height / 2);
+	messagePlayerText.setPosition(GAMEWIDTH / 2, 100);
 	messagePlayerText.setFillColor(Color::White);
+
+
+	
+
 	if (playerNum == 1)
 	{
-		messagePlayerText.setString("Please enter name of player 1!");
+		messagePlayerText.setString("Please  enter  name  of  player  1!");
 	}
 	else if (playerNum == 2)
 	{
-		messagePlayerText.setString("Please enter name of player 2!");
+		messagePlayerText.setString("Please  enter  name  of  player  2!");
 	}
 
 }
@@ -153,7 +165,6 @@ void textInit(Text& playerText, Text& messagePlayerText, Font& font, int playerN
 void textInit(Text& win, Font& font, char c)
 {
 	win.setCharacterSize(100);
-	win.setPosition(GAMEHEIGHT / 2, 100);
 	win.setFillColor(sf::Color::White);
 	win.setFont(font);
 }

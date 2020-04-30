@@ -795,7 +795,7 @@ int ai_move(PAD& pad, BALL& ball)
 
 //Control themes functions , takes char indicating selected theme and switches all elements accordingly
 void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
-	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c)
+	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c, RectangleShape& obsTop, RectangleShape& obsBot , Texture& obsTopTex, Texture& obsBotTex)
 {
 	//Hell
 	if (c == 'h')
@@ -812,7 +812,10 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 		ball.texture.loadFromFile("resources/vfx/hell/hellball.png");
 
 
-		backgT.loadFromFile("resources/vfx/hell/hellbackg.jpg");
+		backgT.loadFromFile("resources/vfx/hell/hellbackg3.png");
+
+		obsTopTex.loadFromFile("resources/vfx/hell/fireMapTexture.png");
+		obsBotTex.loadFromFile("resources/vfx/hell/fireMapTexture.png");
 
 
 		// sfx
@@ -826,16 +829,16 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 	//Ice
 	else if (c == 'i')
 	{
-		pad1.texture.loadFromFile("resources/vfx/ice/icepadleft.png");
+		pad1.texture.loadFromFile("resources/vfx/ice/icepadleft2.png");
 
 
-		pad2.texture.loadFromFile("resources/vfx/ice/icepadright.png");
+		pad2.texture.loadFromFile("resources/vfx/ice/icepadright2.png");
 
 
 		ball.texture.loadFromFile("resources/vfx/ice/iceball.png");
 
 
-		backgT.loadFromFile("resources/vfx/ice/icebackg.png");
+		backgT.loadFromFile("resources/vfx/ice/icebackglight.png");
 
 
 
@@ -893,6 +896,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 	ball.circle.setTexture(&ball.texture);
 	pad1.rect.setTexture(&pad1.texture);
 	pad2.rect.setTexture(&pad2.texture);
+	obsTop.setTexture(&obsTopTex);
+	obsBot.setTexture(&obsBotTex);
 
 }
 ////////// MODES /////////
@@ -1006,13 +1011,13 @@ void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad
 		obsTop.setSize(Vector2f(200, 150));
 		obsTop.setOrigin(Vector2f(obsTop.getSize().x / 2, obsTop.getSize().y / 2));
 		obsTop.setPosition(Vector2f(400, (obsTop.getSize().y / 2)));
-		obsTop.setFillColor(Color::Red);
+		//obsTop.setFillColor(Color::Red);
 		
 
 		obsBot.setSize(Vector2f(200, 150));
 		obsBot.setOrigin(Vector2f(obsBot.getSize().x / 2, obsBot.getSize().y / 2));
 		obsBot.setPosition(Vector2f(400, (600 - obsBot.getSize().y / 2)));
-		obsBot.setFillColor(Color::Yellow);
+		//obsBot.setFillColor(Color::Yellow);
 		
 	}
 	else if (mapnum == 2)

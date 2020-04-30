@@ -5,12 +5,16 @@
 #include <string>
 #include <sstream>
 using namespace std;
+using namespace sf;
 
 sf::String playerInput;
 sf::Text playerText;
 sf::Text playerNameLeader;
 sf::Text playerScoreLeader;
 sf::Font font;
+Text headerLeader;
+RectangleShape HeaderLeader,frame;
+Texture headerTexture, frameTex;
 const int LEADERBOARD_SIZE = 5;
 
 //Read leaderboard from text file named "leaderboard.txt" and save the data into a vector of pairs
@@ -37,8 +41,25 @@ void getLeaderboard()
 
 void viewLeaderboard(RenderWindow& window)
 {
-    font.loadFromFile("resources/fonts/Pacifico.ttf");
+    font.loadFromFile("resources/fonts/ARCADECLASSIC.ttf");
     getLeaderboard();
+
+    //LeaderBoard header
+    headerTexture.loadFromFile("resources/menu tex/LeadButton.png");
+    HeaderLeader.setTexture(&headerTexture);
+    HeaderLeader.setSize(Vector2f(200, 100));
+    HeaderLeader.setOrigin(HeaderLeader.getSize().x / 2, HeaderLeader.getSize().y / 2);
+    HeaderLeader.setPosition(GAMEWIDTH / 2, 50);
+   
+
+    //LeaderBoard frame
+    frameTex.loadFromFile("resources/menu tex/leaderFrame.png");
+    frame.setTexture(&frameTex);
+    frame.setSize(Vector2f(400, 490));
+    frame.setOrigin(frame.getSize().x / 2, frame.getSize().y / 2);
+    frame.setPosition(GAMEWIDTH / 2, 340);
+    
+
     playerNameLeader.setFont(font);
     playerNameLeader.setCharacterSize(40);
     playerNameLeader.setPosition(100.f, 100.f);
@@ -48,19 +69,21 @@ void viewLeaderboard(RenderWindow& window)
     playerScoreLeader.setCharacterSize(40);
     playerScoreLeader.setFillColor(Color::White);
     int currentLeaderBoardSize = leaderboard.size();
+    window.draw(frame);
     for (int i = 1; i <= min(LEADERBOARD_SIZE, currentLeaderBoardSize); i++)
     {
-        playerNameLeader.setPosition(100.f, 100.f * i);
+        playerNameLeader.setPosition(250.f, 100.f * i);
         playerNameLeader.setString(leaderboard[i-1].first);
 
         std::ostringstream scores;
         scores << leaderboard[i-1].second;
-        playerScoreLeader.setPosition(400.f, 100.f * i);
+        playerScoreLeader.setPosition(500.f, 100.f * i);
         playerScoreLeader.setString(scores.str());
 
         window.draw(playerNameLeader);
         window.draw(playerScoreLeader);
     }
+    window.draw(HeaderLeader);
     leaderboard.clear();
 }
 
