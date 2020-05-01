@@ -302,17 +302,12 @@ int main(void)
 
 	/////////////////////////////////////////////////////////////////////////
 	RectangleShape pause_part;
-	RectangleShape menu_part;
 	Texture tex_partpause;
 	Texture tex_partmenu;
 	tex_partpause.loadFromFile("resources/menu tex/for game pause.png");
-	tex_partmenu.loadFromFile("resources/menu tex/for game menu.png");
 	pause_part.setPosition(300, 100);
-	menu_part.setPosition(300, 50);
 	pause_part.setSize(Vector2f(200, 420));
-	menu_part.setSize(Vector2f(200, 440));
 	pause_part.setTexture(&tex_partpause);
-	menu_part.setTexture(&tex_partmenu);
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
@@ -437,7 +432,8 @@ int main(void)
 			}
 
 			//Main Menu Events/Sound
-			if (men) {
+			if (men) 
+			{
 				//Event
 				if (event.type == Event::KeyReleased) {
 					//Navigation
@@ -606,7 +602,7 @@ int main(void)
 			RandomPos(ball,mapNum,obstacleTop);
 			pad1.ResetPad(1,MODE);
 			pad2.ResetPad(2,MODE);
-
+			ball.clock.restart();
 			////reseting power ups /////////////
 			longate.isSpawned = 0; longate.isActive = 0;
 			freeze.isSpawned = 0;  freeze.isActive = 0;
@@ -888,9 +884,7 @@ int main(void)
 			// Rendering main menu
 
 			if (men) {
-				window.draw(menu_part);
 				drawMenu(window, menuItems, 5);
-
 			}
 
 			if (leader)

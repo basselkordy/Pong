@@ -488,3 +488,8 @@ Winner: a
 Thu Apr 30 22:27:58 2020
 
 
+d Vs ad
+Winner: d
+Fri May  1 02:47:40 2020
+
+

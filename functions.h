@@ -839,8 +839,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		backgT.loadFromFile("resources/vfx/hell/hellbackg3.png");
 
-		obsTopTex.loadFromFile("resources/vfx/hell map.png");
-		obsBotTex.loadFromFile("resources/vfx/hell map.png");
+		obsBotTex.loadFromFile("resources/vfx/hell/maptexture.png");
+		obsTopTex.loadFromFile("resources/vfx/hell/maptexture.png");
 
 
 
@@ -866,8 +866,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		backgT.loadFromFile("resources/vfx/ice/icebackglight.png");
 
-		obsTopTex.loadFromFile("resources/vfx/ice map .png");
-		obsBotTex.loadFromFile("resources/vfx/ice map .png");
+		obsTopTex.loadFromFile("resources/vfx/ice/maptexture.png");
+		obsBotTex.loadFromFile("resources/vfx/ice/maptexture.png");
 
 
 
@@ -892,8 +892,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		backgT.loadFromFile("resources/vfx/forest/forestbackg.png");
 
-		obsTopTex.loadFromFile("resources/vfx/tex map .png");
-		obsBotTex.loadFromFile("resources/vfx/tex map .png");
+		obsTopTex.loadFromFile("resources/vfx/forest/maptexture.png");
+		obsBotTex.loadFromFile("resources/vfx/forest/maptexture.png");
 
 
 
@@ -915,14 +915,14 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		ball.texture.loadFromFile("resources/vfx/classic/classicball.png");
 
-		obsTopTex.loadFromFile("resources/vfx/dump.png");
-		obsBotTex.loadFromFile("resources/vfx/dump.png");
-		
+		obsTopTex.loadFromFile("resources/vfx/classic/maptexture.png");
+		obsBotTex.loadFromFile("resources/vfx/classic/maptexture.png");
+
 
 		pad.loadFromFile("resources/sfx/classic/pad.wav");
 		wall.loadFromFile("resources/sfx/classic/wall.wav");
 		score.loadFromFile("resources/sfx/classic/score.wav");
-		background.loadFromFile("dump");
+		background.loadFromFile("resources/sfx/classic/background.ogg");
 	}
 
 	//Set files

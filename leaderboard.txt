@@ -1,6 +1,6 @@
 w 19
-d 18
-d 18
+d 19
+d 19
 ayman 13
 a 10
 badr 8
