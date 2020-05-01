@@ -693,25 +693,25 @@ void setPauseMenu(MENU& pauseMenu, RectangleShape text[], int width, int height)
 	text[0].setSize(Vector2f(100.0f, 50.0f));
 	text[0].setTexture(&texture_resume);
 	text[0].setFillColor(sf::Color::White);
-	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 1));
+	text[0].setPosition(sf::Vector2f((width / 2) - 50, (height / (5 + 1) * 1)+20));
 
 	texture_option.loadFromFile("resources/menu tex/PauseOptionButton.png");
 	text[1].setSize(Vector2f(100.0f, 50.0f));
 	text[1].setTexture(&texture_option);
 	text[1].setFillColor(sf::Color::White);
-	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 2));
+	text[1].setPosition(sf::Vector2f((width / 2) - 50, (height / (5 + 1) * 2) + 20));
 
 	texture_menu.loadFromFile("resources/menu tex/PauseExitButton.png");
 	text[2].setSize(Vector2f(100.0f, 50.0f));
 	text[2].setTexture(&texture_menu);
 	text[2].setFillColor(sf::Color::White);
-	text[2].setPosition(sf::Vector2f((width / 2) - 50, height / (3 + 1) * 3));
+	text[2].setPosition(sf::Vector2f((width / 2) - 50, (height / (5 + 1) * 3) + 20));
 
 	pauseMenu.selectedItemIndex = 0;
 
 	if (pauseMenu.selectedItemIndex == 0) {
 		text[0].setSize(Vector2f(150, 75));
-		text[0].setPosition(sf::Vector2f((width / 2) - 80, height / (3 + 1) * (0.75)));
+		text[0].setPosition(sf::Vector2f((width / 2) - 75, height / (6 + 1) * (1.25)));
 	}
 }
 
@@ -726,38 +726,38 @@ void setMainMenu(MENU& mainMenu, RectangleShape text[], int width, int height)
 	text[0].setSize(Vector2f(100.0f, 50.0f));
 	text[0].setTexture(&texture_play);
 	text[0].setFillColor(sf::Color::White);
-	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 1));
+	text[0].setPosition(sf::Vector2f((width / 2) - 50, height / (7 + 1) * (1 + 1)));
 
 	texture_opt.loadFromFile("resources/menu tex/OptionButton.png");
 	text[1].setSize(Vector2f(100.0f, 50.0f));
 	text[1].setTexture(&texture_opt);
 	text[1].setFillColor(sf::Color::White);
-	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 2));
+	text[1].setPosition(sf::Vector2f((width / 2) - 50, height / (7 + 1) * (2 + 1)));
 
 	texture_lead.loadFromFile("resources/menu tex/LeadButton.png");
 	text[2].setSize(Vector2f(100.0f, 50.0f));
 	text[2].setTexture(&texture_lead);
 	text[2].setFillColor(sf::Color::White);
-	text[2].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 3));
+	text[2].setPosition(sf::Vector2f((width / 2) - 50, height / (7 + 1) * (3 + 1)));
 
 	texture_train.loadFromFile("resources/menu tex/TrainingButton.png");
 	text[3].setSize(Vector2f(100.0f, 50.0f));
 	text[3].setTexture(&texture_train);
 	text[3].setFillColor(sf::Color::White);
-	text[3].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 4));
+	text[3].setPosition(sf::Vector2f((width / 2) - 50, height / (7 + 1) * (4 + 1)));
 
 	texture_exit.loadFromFile("resources/menu tex/ExitButton.png");
 	text[4].setSize(Vector2f(100.0f, 50.0f));
 	text[4].setTexture(&texture_exit);
 	text[4].setFillColor(sf::Color::White);
-	text[4].setPosition(sf::Vector2f((width / 2) - 50, height / (6 + 1) * 5));
+	text[4].setPosition(sf::Vector2f((width / 2) - 50, height / (7 + 1) * (5+1)));
 
 	mainMenu.selectedItemIndex = 0;
 
 	////when opening the game
 	if (mainMenu.selectedItemIndex == 0) {
 		text[0].setSize(Vector2f(150, 75));
-		text[0].setPosition(sf::Vector2f((width / 2) - 80, height / (6 + 1) * (0.75)));
+		text[0].setPosition(sf::Vector2f((800 / 2) - 80, 600 / (7 + 1) * (1.5)));
 	}
 }
 
@@ -825,15 +825,15 @@ void drawMenu(RenderWindow& menuWindow, RectangleShape text[], int noOfItems)
 	
 }
 
-void moveUp(MENU& menu, int noOfItems, RectangleShape text[], int no)
+void moveUp(MENU& menu, int noOfItems, RectangleShape text[], float no)
 {
-	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (7) * (menu.selectedItemIndex + 1.5)));
 	text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
 	if (!menu.selectedItemIndex)
 		menu.selectedItemIndex = noOfItems;
 	menu.selectedItemIndex--;
 	text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.75)));
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (7) * (menu.selectedItemIndex + 1.25)));
 	menu.switching.play();
 	
 }
@@ -841,12 +841,12 @@ void moveUp(MENU& menu, int noOfItems, RectangleShape text[], int no)
 void moveDown(MENU& menu, RectangleShape text[], int noOfItems, int no)
 {
 	
-	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (no) * (menu.selectedItemIndex + 1)));
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 50, 600 / (7) * (menu.selectedItemIndex + 1.5)));
 	text[menu.selectedItemIndex].setSize(Vector2f(100, 50));
 	menu.selectedItemIndex++;
 	menu.selectedItemIndex %= noOfItems;
 	text[menu.selectedItemIndex].setSize(Vector2f(150, 75));
-	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (no) * (menu.selectedItemIndex + 0.80)));
+	text[menu.selectedItemIndex].setPosition(sf::Vector2f((800 / 2) - 75, 600 / (7) * (menu.selectedItemIndex + 1.25)));
 	menu.switching.play();
 	
 }

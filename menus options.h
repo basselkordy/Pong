@@ -5,27 +5,27 @@
 RectangleShape getNameBox, textBox; 
 Texture getNameBoxTex, textBoxTex;
 
-void themeChange(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg, RectangleShape& obsTop, RectangleShape& obsBot, Texture& obsTopTex, Texture& obsBotTex,
+void themeChange(PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Texture& backgT, RectangleShape& backg, RectangleShape& obsTop, RectangleShape& obsBot, Texture& obsTopTex, Texture& obsBotTex,
 	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr,int index, char USER_SETTINGS[3])
 {
 	switch (index)
 	{
 	case 0:
-		set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'h', obsTop, obsBot, obsTopTex, obsBotTex);
+		set_theme(pad1, pad2,pad3,pad4, ball, backgT, backg, pad, wall, scor, background_bfr, 'h', obsTop, obsBot, obsTopTex, obsBotTex);
 		c = 'h';
 		break;
 		case 1:
-			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'f', obsTop, obsBot, obsTopTex, obsBotTex);
+			set_theme(pad1, pad2, pad3, pad4, ball, backgT, backg, pad, wall, scor, background_bfr, 'f', obsTop, obsBot, obsTopTex, obsBotTex);
 			c = 'f';
 
 			break;
 		case 2:
-			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'i', obsTop, obsBot, obsTopTex, obsBotTex);
+			set_theme(pad1, pad2, pad3, pad4, ball, backgT, backg, pad, wall, scor, background_bfr, 'i', obsTop, obsBot, obsTopTex, obsBotTex);
 			c = 'i';
 
 			break;
 		case 3:
-			set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, 'c', obsTop, obsBot, obsTopTex, obsBotTex);
+			set_theme(pad1, pad2, pad3, pad4, ball, backgT, backg, pad, wall, scor, background_bfr, 'c', obsTop, obsBot, obsTopTex, obsBotTex);
 			c = 'c';
 
 	}

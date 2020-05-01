@@ -139,6 +139,15 @@ int main(void)
 	menu2.setSize(Vector2f(800, 600));
 	menu2.setTexture(&menu_back2);
 	Clock time;
+
+	/////////////////////////////head in main ///////////////////
+	RectangleShape head;
+	head.setPosition(270, 30);
+	head.setSize(Vector2f(250, 75));
+	Texture head_tex;
+	head_tex.loadFromFile("resources/menu tex/main head.png");
+	head.setTexture(&head_tex);
+
 	////////////////////////////////////////////////////
 
 	//Options
@@ -233,6 +242,8 @@ int main(void)
 	pad3.id = 3;
 	pad4.id = 3;
 
+	
+
 	// Ball
 	BALL ball;
 
@@ -296,7 +307,7 @@ int main(void)
 	mapNum = USER_SETTINGS[1];
 	setSelectedMap();
 
-	set_theme(pad1, pad2, ball, backgT, backg, pad, wall, scor, background_bfr, c, obstacleTop, obstacleBot , obsTopTex, obsBotTex);
+	set_theme(pad1, pad2,pad3,pad4, ball, backgT, backg, pad, wall, scor, background_bfr, c, obstacleTop, obstacleBot , obsTopTex, obsBotTex);
 	
 	choosing_arrow.setPosition(40, 280);
 
@@ -305,9 +316,19 @@ int main(void)
 	Texture tex_partpause;
 	Texture tex_partmenu;
 	tex_partpause.loadFromFile("resources/menu tex/for game pause.png");
-	pause_part.setPosition(300, 100);
-	pause_part.setSize(Vector2f(200, 420));
+	pause_part.setPosition(300, 105);
+	pause_part.setSize(Vector2f(200, 280));
 	pause_part.setTexture(&tex_partpause);
+
+	//////////////////////////head of pause ////////////////////
+	RectangleShape pause_head;
+	Texture tex_pausehead;
+	tex_pausehead.loadFromFile("resources/menu tex/pause head.png");
+	pause_head.setPosition(270, 30);
+	pause_head.setSize(Vector2f(250, 75));
+	pause_head.setTexture(&tex_pausehead);
+
+
 
 	////////////////////////////////////////////////// GAME LOOP ///////////////////////////////////////////////////////////////////////////
 
@@ -813,6 +834,7 @@ int main(void)
 			 //rendering pause window(draw pause window if option window is not opened)
 			 if (pause && !opt) {
 				 window.draw(pause_part);
+				 window.draw(pause_head);
 				 drawMenu(window, pauseItems, 3);
 			 }
 
@@ -884,6 +906,7 @@ int main(void)
 			// Rendering main menu
 
 			if (men) {
+				window.draw(head);
 				drawMenu(window, menuItems, 5);
 			}
 
@@ -902,7 +925,7 @@ int main(void)
 			{
 				if (Steps[x] == PADDING && isChoosen[x] && !done)
 				{
-					themeChange(pad1, pad2, ball, backgT, backg, obstacleTop, obstacleBot, obsTopTex, obsBotTex, pad, wall, scor, background_bfr, c, scor, background_bfr,x, USER_SETTINGS);
+					themeChange(pad1, pad2,pad3 ,pad4, ball, backgT, backg, obstacleTop, obstacleBot, obsTopTex, obsBotTex, pad, wall, scor, background_bfr, c, scor, background_bfr,x, USER_SETTINGS);
 				}
 			}
 

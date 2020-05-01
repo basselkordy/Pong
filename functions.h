@@ -748,41 +748,48 @@ bool isCollidingFromRight(BALL& ball, RectangleShape& shape)
 // A general Collision detection (Disabled for now) to be used with other objects
 bool isColliding(BALL& ball, RectangleShape& shape)
 {
-	 //this collison is disabled for the pads//
+	//this collison is disabled for the pads//
 	bool return_value = false;
 	// From top
 	if (
-		(ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2
+		// to apply collision when only the ball or some of it is touching the upper side of the shape
+		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2.f
 		&&
+		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2.f
+		&&
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().y + ballRadius >= shape.getPosition().y - shape.getSize().y / 2.f
+		&&
+		// to check that the ball is at upper side of the shape's orgin
 		ball.circle.getPosition().y + ballRadius < shape.getPosition().y
-		&&
-		ball.circle.getPosition().x + ballRadius <= shape.getPosition().x + shape.getSize().x / 2
-		&&
-		ball.circle.getPosition().x - ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
-		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 + 0.1f, ball.circle.getPosition().y);
+		ball.circle.setPosition(ball.circle.getPosition().x, shape.getPosition().y - ballRadius - shape.getSize().y / 2 - 0.5f);
 		cout << "TOP" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
 	}
 	// From Bottom
 	if (
-		(ball.circle.getPosition().y - ballRadius < shape.getPosition().y + shape.getSize().y / 2
+		// to apply collision when only the ball or some of it is touching the down side of the shape
+		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2.f
 		&&
+		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2.f
+		&&
+		// to check if the ball has gone into the shape after moving
+		ball.circle.getPosition().y - ballRadius <= shape.getPosition().y + shape.getSize().y / 2.f
+		&&
+		// to check that the ball is at down side of the shape's orgin
 		ball.circle.getPosition().y - ballRadius > shape.getPosition().y
-		&&
-		ball.circle.getPosition().x - ballRadius <= shape.getPosition().x + shape.getSize().x / 2
-		&&
-		ball.circle.getPosition().x + ballRadius >= shape.getPosition().x - shape.getSize().x / 2)
 		)
 	{
-		//ball.circle.setPosition(shape.getPosition().x + ballRadius + shape.getSize().x / 2 - 0.1f, ball.circle.getPosition().y);
+
+		ball.circle.setPosition(ball.circle.getPosition().x, shape.getPosition().y + ballRadius + shape.getSize().y / 2 + 0.5f);
 		cout << "BOT" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
 	}
-	
+
 	return return_value;
 }
 
@@ -819,7 +826,7 @@ int ai_move(PAD& pad, BALL& ball)
 //////////////  THEMES ////////////////
 
 //Control themes functions , takes char indicating selected theme and switches all elements accordingly
-void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape& backg,
+void set_theme(PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Texture& backgT, RectangleShape& backg,
 	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c, RectangleShape& obsTop, RectangleShape& obsBot , Texture& obsTopTex, Texture& obsBotTex)
 {
 	//Hell
@@ -833,6 +840,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		pad2.texture.loadFromFile("resources/vfx/hell/hellpadright.png");
 
+        pad3.texture.loadFromFile("resources/vfx/hell/hellpadright.png");
+
+        pad4.texture.loadFromFile("resources/vfx/hell/hellpadleft.png");
 
 		ball.texture.loadFromFile("resources/vfx/hell/hellball.png");
 
@@ -842,7 +852,8 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 		obsBotTex.loadFromFile("resources/vfx/hell/maptexture.png");
 		obsTopTex.loadFromFile("resources/vfx/hell/maptexture.png");
 
-
+		
+		
 
 		// sfx
 		pad.loadFromFile("resources/sfx/fire/pad.wav");
@@ -860,6 +871,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		pad2.texture.loadFromFile("resources/vfx/ice/icepadright2.png");
 
+		pad3.texture.loadFromFile("resources/vfx/ice/icepadright.png");
+
+		pad4.texture.loadFromFile("resources/vfx/ice/icepadleft.png");
 
 		ball.texture.loadFromFile("resources/vfx/ice/iceball.png");
 
@@ -886,6 +900,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		pad2.texture.loadFromFile("resources/vfx/forest/forestpadright.png");
 
+		pad3.texture.loadFromFile("resources/vfx/forest/forestpadright.png");
+
+		pad4.texture.loadFromFile("resources/vfx/forest/forestpadleft.png");
 
 		ball.texture.loadFromFile("resources/vfx/forest/forestball.png");
 
@@ -912,6 +929,9 @@ void set_theme(PAD& pad1, PAD& pad2, BALL& ball, Texture& backgT, RectangleShape
 
 		pad2.texture.loadFromFile("resources/vfx/classic/classicpad.png");
 
+		pad3.texture.loadFromFile("resources/vfx/classic/classicpad.png");
+
+		pad4.texture.loadFromFile("resources/vfx/classic/classicpad.png");
 
 		ball.texture.loadFromFile("resources/vfx/classic/classicball.png");
 
@@ -1039,8 +1059,9 @@ void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1
 
 //Maps
 char mode;
+
 //Takes reference to map components and handles their initilization 
-void set_map(RectangleShape& obsTop, RectangleShape& obsBot, PAD& pad3, PAD& pad4, int mapnum)
+void set_map(RectangleShape& obsTop , RectangleShape& obsBot, PAD& pad3, PAD& pad4, int mapnum)
 {
 	if (mapnum == 1)
 	{
