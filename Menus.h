@@ -89,6 +89,8 @@ Vector2i pos_Mouse;
 
 
 	RectangleShape choosing_arrow;
+	Texture chooseTex;
+	
 /*
 		FUNCTIONS
 */
@@ -789,9 +791,15 @@ void modes_display(MENU& mode, RectangleShape text[], int width, int height)
 	modeHeader.setOrigin(modeHeader.getSize().x / 2, modeHeader.getSize().y / 2);
 	modeHeader.setPosition(GAMEWIDTH / 2, 440);
 
-	choosing_arrow.setSize(Vector2f(50, 10));
-	choosing_arrow.setFillColor(Color::White);
-
+	if (!choosing_arrow.getTexture())
+	{
+		chooseTex.loadFromFile("resources/vfx/choosing arrow.png");
+		choosing_arrow.setSize(Vector2f(150, 150));
+		choosing_arrow.setTexture(&chooseTex);
+		choosing_arrow.setFillColor(Color::White);
+		choosing_arrow.setRotation(110);
+	}
+	
 	
 	texture_single.loadFromFile("resources/menu tex/singleButton.png");
 	text[0].setSize(Vector2f(100.0f, 50.0f));

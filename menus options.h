@@ -6,7 +6,7 @@ RectangleShape getNameBox, textBox;
 Texture getNameBoxTex, textBoxTex;
 
 void themeChange(PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Texture& backgT, RectangleShape& backg, RectangleShape& obsTop, RectangleShape& obsBot, Texture& obsTopTex, Texture& obsBotTex,
-	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char c,SoundBuffer& scor, SoundBuffer& background_bfr,int index, char USER_SETTINGS[3])
+	SoundBuffer& pad, SoundBuffer& wall, SoundBuffer& score, SoundBuffer& background, char& c,SoundBuffer& scor, SoundBuffer& background_bfr,int index, char USER_SETTINGS[3])
 {
 	switch (index)
 	{

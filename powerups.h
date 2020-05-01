@@ -166,7 +166,8 @@ void initialize_powerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp
 	invis.sound.setBuffer(invsbfr);
 
 	//Reverse
-	reverse.rect.setFillColor(Color::Yellow); //pUp color
+	reverse.texture.loadFromFile("resources/vfx/PowerUps/Reverse.png");
+	reverse.rect.setTexture(&reverse.texture);
 	reverse.rect.setSize(Vector2f(30.0f, 30.0f));
 	reverse.sound.setBuffer(reversebuffer);
 
@@ -419,7 +420,7 @@ void SpawnPowerups(pUp& reverse, pUp& longate, pUp& freeze, pUp& slow, pUp& invi
 			invis.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
 			invis.isSpawned = 1; //change spawned state
 		}
-		if (reverse.isActive == false && reverse.isSpawned == false && rand() % 10000 > 9994 && MODE == '2')
+		if (reverse.isActive == false && reverse.isSpawned == false && rand() % 10000 > 9000 && MODE == '2')
 		{
 			reverse.rect.setPosition(150 + (rand() % (GAMEWIDTH - 300)), 50 + (rand() % (GAMEHEIGHT - 100))); //random position for spawn
 			reverse.isSpawned = 1; //change spawned state

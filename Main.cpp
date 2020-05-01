@@ -193,6 +193,22 @@ int main(void)
 	//Scores / Win lose
 	//Score
 	//font of score
+	RectangleShape scoreLBack, scoreRBack;
+	Texture scoreLBackTex, scoreRBackTex;
+
+	scoreLBackTex.loadFromFile("resources/vfx/scoreback.png");
+	scoreLBack.setSize(Vector2f(220, 220));
+	scoreLBack.setOrigin(scoreLBack.getSize().x /2 , scoreLBack.getSize().y / 2);
+	scoreLBack.setPosition(303, 33);
+	scoreLBack.setTexture(&scoreLBackTex);
+
+	scoreRBackTex.loadFromFile("resources/vfx/scoreback.png");
+	scoreRBack.setSize(Vector2f(220, 220));
+	scoreRBack.setOrigin(scoreLBack.getSize().x / 2, scoreLBack.getSize().y / 2);
+	scoreRBack.setPosition(453, 46);
+	scoreRBack.setTexture(&scoreLBackTex);
+	scoreRBack.setRotation(180);
+	
 	sf::Font scorefont;
 	scorefont.loadFromFile("resources/fonts/ARCADECLASSIC.ttf");
 
@@ -309,7 +325,7 @@ int main(void)
 
 	set_theme(pad1, pad2,pad3,pad4, ball, backgT, backg, pad, wall, scor, background_bfr, c, obstacleTop, obstacleBot , obsTopTex, obsBotTex);
 	
-	choosing_arrow.setPosition(40, 280);
+	choosing_arrow.setPosition(220, 240);
 
 	/////////////////////////////////////////////////////////////////////////
 	RectangleShape pause_part;
@@ -327,6 +343,23 @@ int main(void)
 	pause_head.setPosition(270, 30);
 	pause_head.setSize(Vector2f(250, 75));
 	pause_head.setTexture(&tex_pausehead);
+
+
+	//How to play texts
+
+	Text howToPlay, tips;
+
+	howToPlay.setCharacterSize(60);
+	howToPlay.setString("How to play");
+	howToPlay.setFont(font);
+	howToPlay.setOrigin(howToPlay.getGlobalBounds().width / 2, howToPlay.getGlobalBounds().height / 2);
+	howToPlay.setPosition(400, 40);
+
+	tips.setCharacterSize(30);
+	tips.setString("\t Use   Up   Down   for   right   pad   control \n \t \t \t Use    W    S   for   left   pad   Control \nScore  10  points   in   your   opponent   to   win");
+	tips.setFont(font);
+	tips.setOrigin(tips.getGlobalBounds().width / 2, tips.getGlobalBounds().height / 2);
+	tips.setPosition(450, 150);
 
 
 
@@ -400,22 +433,25 @@ int main(void)
 				
 
 				if (Keyboard::isKeyPressed(Keyboard::Up) && !mapKeys)
+				{
 					mapKeys = true;
+					modes_s.switching.play();
+				}
 				if (Keyboard::isKeyPressed(Keyboard::Down) && mapKeys)
+				{
 					mapKeys = false;
+					modes_s.switching.play();
+				}
 
 				if (mapKeys)
 				{
-					choosing_arrow.setPosition(40, 280);
-					
-
-					
+					choosing_arrow.setPosition(220, 240);
+			
 				}
 				else
 				{
-					choosing_arrow.setPosition(40, GAMEHEIGHT - 80);
-					
-					
+					choosing_arrow.setPosition(220, GAMEHEIGHT - 115);
+				
 				}
 				
 				/// here you will but the events function and other related functions "badr"  as the following wa as you like brdo ////////
@@ -455,6 +491,10 @@ int main(void)
 			//Main Menu Events/Sound
 			if (men) 
 			{
+				//Reseting selection of modes
+				modes_s.selectedItemIndex = 0;
+				modesItems[0].setFillColor(Color::White);
+				modesItems[1].setFillColor(Color(92, 92, 92));
 				//Event
 				if (event.type == Event::KeyReleased) {
 					//Navigation
@@ -468,19 +508,19 @@ int main(void)
 			//Name input
 			if (getPlayerName)
 			{
+				getNameBoxTex.loadFromFile("resources/menu tex/getPlayerName.png");
+				getNameBox.setTexture(&getNameBoxTex);
+				getNameBox.setSize(Vector2f(700, 100));
+				getNameBox.setOrigin(getNameBox.getSize().x / 2, getNameBox.getSize().y / 2);
+				getNameBox.setPosition(GAMEWIDTH / 2, 110);
+
+				textBoxTex.loadFromFile("resources/menu tex/textBox.png");
+				textBox.setTexture(&textBoxTex);
+				textBox.setSize(Vector2f(700, 105));
+				textBox.setOrigin(textBox.getSize().x / 2, textBox.getSize().y / 2);
+				textBox.setPosition(GAMEWIDTH / 2, 315);
 				if (MODE == 'a')
 				{
-					getNameBoxTex.loadFromFile("resources/menu tex/getPlayerName.png");
-					getNameBox.setTexture(&getNameBoxTex);
-					getNameBox.setSize(Vector2f(700, 100));
-					getNameBox.setOrigin(getNameBox.getSize().x / 2, getNameBox.getSize().y / 2);
-					getNameBox.setPosition(GAMEWIDTH / 2, 110);
-
-					textBoxTex.loadFromFile("resources/menu tex/textBox.png");
-					textBox.setTexture(&textBoxTex);
-					textBox.setSize(Vector2f(700, 105));
-					textBox.setOrigin(textBox.getSize().x / 2, textBox.getSize().y / 2);
-					textBox.setPosition(GAMEWIDTH / 2, 315);
 
 					if (!savePlayer1)
 					{
@@ -635,12 +675,13 @@ int main(void)
 		//Game Mechanics
 		//searchGameMechanics (Movement - Sound / Collision - Powerups)
 		//searchSound
+		
 		if (play && !pause && !opt)
 		{
 			//Movement
 			// Pad1 Movement
 			//depends on the mode
-			Modes(pad1, ball, MODE, pad1.isFrozen, pad1.isSlow, W, S);
+			Modes(pad1, ball, MODE, pad1.isFrozen, pad1.isSlow, W, S, mapNum);
 
 
 			// Pad2 Movement
@@ -743,7 +784,7 @@ int main(void)
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
 					window.clear(Color::Black);
-					DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum, scoreLBack, scoreRBack, c, howToPlay, tips);
 					DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 					window.display();
 					play = false;
@@ -779,7 +820,7 @@ int main(void)
 				while (resetClock.getElapsedTime() < milliseconds(250))
 				{
 					window.clear(Color::Black);
-					DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum);
+					DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2, obstacleTop, obstacleBot, mapNum, scoreLBack, scoreRBack, c ,howToPlay, tips);
 					DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 					window.display();
 					play = false;
@@ -827,7 +868,7 @@ int main(void)
 		
 		if (play)
 		{
-			 DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum);
+			 DrawGame(window, backg,MODE, pad1, pad2, pad3, pad4, ball, lblscorep1, lblscorep2,obstacleTop,obstacleBot,mapNum , scoreLBack, scoreRBack, c, howToPlay, tips);
 			 DrawPowerups(window, longate, freeze, slow, invis, reverse, shorten);
 			 men = false;
 

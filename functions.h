@@ -765,7 +765,7 @@ bool isColliding(BALL& ball, RectangleShape& shape)
 		)
 	{
 		ball.circle.setPosition(ball.circle.getPosition().x, shape.getPosition().y - ballRadius - shape.getSize().y / 2 - 0.5f);
-		cout << "TOP" << endl;
+		//cout << "TOP" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
 	}
@@ -785,7 +785,7 @@ bool isColliding(BALL& ball, RectangleShape& shape)
 	{
 
 		ball.circle.setPosition(ball.circle.getPosition().x, shape.getPosition().y + ballRadius + shape.getSize().y / 2 + 0.5f);
-		cout << "BOT" << endl;
+		//cout << "BOT" << endl;
 		ball.yVelocity *= -1;
 		return_value = true;
 	}
@@ -950,6 +950,8 @@ void set_theme(PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Texture& 
 	ball.circle.setTexture(&ball.texture);
 	pad1.rect.setTexture(&pad1.texture);
 	pad2.rect.setTexture(&pad2.texture);
+	pad3.rect.setTexture(&pad3.texture);
+	pad4.rect.setTexture(&pad4.texture);
 	obsTop.setTexture(&obsTopTex);
 	obsBot.setTexture(&obsBotTex);
 
@@ -958,7 +960,7 @@ void set_theme(PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Texture& 
 
 
 
-void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S)
+void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S, int& mapNum)
 {
 	//AI player mode
 	if (c == 'a')
@@ -1007,6 +1009,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 	//trainig mode
 	if (c == 't')
 	{
+		mapNum = 0;
 		pad.length = GAMEHEIGHT;
 		pad.rect.setSize(Vector2f(pad.width, GAMEHEIGHT));
 		pad.rect.setOrigin(pad.width / 2.f, pad.length / 2.f);
@@ -1017,7 +1020,7 @@ void Modes(PAD& pad, BALL& ball, char c, bool froze, bool slow, bool& W, bool& S
 }
 
 // Takes references to everything drawn in game and handles their drawing conditions
-void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum)
+void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1, PAD& pad2, PAD& pad3, PAD& pad4, BALL& ball, Text& lblscorep1, Text& lblscorep2, RectangleShape& obsTop, RectangleShape& obsBot, int mapnum, RectangleShape& scoreLBack, RectangleShape& scoreRBack, char  c, Text howToPlay, Text tips)
 {
 
 	// Background
@@ -1032,7 +1035,16 @@ void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1
 	if (!pad2.isInvis)
 		window.draw(pad2.rect);
 
+	//Score background
+
+	if (MODE == 't' && c == 'c')
+	{
+		window.draw(howToPlay);
+		window.draw(tips);
+	}
+
 	//Draw map components
+
 	if (mapnum == 1)
 	{
 		window.draw(obsTop);
@@ -1047,6 +1059,12 @@ void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1
 		window.draw(pad3.rect);
 		window.draw(pad4.rect);
 	}
+	if (c != 'c' && MODE != 't')
+	{
+		window.draw(scoreLBack);
+		window.draw(scoreRBack);
+
+	}
 	if (MODE != 't'){
 		//draw score of player 1 
 		window.draw(lblscorep1);
@@ -1054,7 +1072,6 @@ void DrawGame(RenderWindow& window, RectangleShape& backg, char& MODE, PAD& pad1
 		//draw score of player 2
 		window.draw(lblscorep2);
       }
-
 }
 
 //Maps
